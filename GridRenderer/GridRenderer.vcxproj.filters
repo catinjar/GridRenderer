@@ -1,0 +1,63 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Source Files\third_party">
+      <UniqueIdentifier>{2d847517-c1e4-4a5a-a4de-84772f9becad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\third_party\imgui">
+      <UniqueIdentifier>{e6af109e-0def-4fd3-b55a-3a0bb0840d69}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PROGRAMMING\Curiosity\OpenGL\Src\Thirdpart\imgui\imgui.cpp">
+      <Filter>Source Files\third_party\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PROGRAMMING\Curiosity\OpenGL\Src\Thirdpart\imgui\imgui_demo.cpp">
+      <Filter>Source Files\third_party\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PROGRAMMING\Curiosity\OpenGL\Src\Thirdpart\imgui\imgui_draw.cpp">
+      <Filter>Source Files\third_party\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PROGRAMMING\Curiosity\OpenGL\Src\Thirdpart\imgui\imgui_impl_sdl_gl3.cpp">
+      <Filter>Source Files\third_party\imgui</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\PROGRAMMING\Curiosity\OpenGL\Src\Thirdpart\imgui\imconfig.h">
+      <Filter>Source Files\third_party\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PROGRAMMING\Curiosity\OpenGL\Src\Thirdpart\imgui\imgui.h">
+      <Filter>Source Files\third_party\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PROGRAMMING\Curiosity\OpenGL\Src\Thirdpart\imgui\imgui_impl_sdl_gl3.h">
+      <Filter>Source Files\third_party\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PROGRAMMING\Curiosity\OpenGL\Src\Thirdpart\imgui\imgui_internal.h">
+      <Filter>Source Files\third_party\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PROGRAMMING\Curiosity\OpenGL\Src\Thirdpart\imgui\stb_rect_pack.h">
+      <Filter>Source Files\third_party\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PROGRAMMING\Curiosity\OpenGL\Src\Thirdpart\imgui\stb_textedit.h">
+      <Filter>Source Files\third_party\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PROGRAMMING\Curiosity\OpenGL\Src\Thirdpart\imgui\stb_truetype.h">
+      <Filter>Source Files\third_party\imgui</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
