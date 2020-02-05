@@ -16,48 +16,57 @@
     <Filter Include="Source Files\third_party">
       <UniqueIdentifier>{2d847517-c1e4-4a5a-a4de-84772f9becad}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\third_party\imgui">
-      <UniqueIdentifier>{e6af109e-0def-4fd3-b55a-3a0bb0840d69}</UniqueIdentifier>
+    <Filter Include="Source Files\third_party\misc">
+      <UniqueIdentifier>{cc8626c1-3c65-4f24-b8c8-2489c7f35c39}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\PROGRAMMING\Curiosity\OpenGL\Src\Thirdpart\imgui\imgui.cpp">
-      <Filter>Source Files\third_party\imgui</Filter>
+    <ClCompile Include="src\third_party\imgui\imgui.cpp">
+      <Filter>Source Files\third_party</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\PROGRAMMING\Curiosity\OpenGL\Src\Thirdpart\imgui\imgui_demo.cpp">
-      <Filter>Source Files\third_party\imgui</Filter>
+    <ClCompile Include="src\third_party\imgui\imgui_demo.cpp">
+      <Filter>Source Files\third_party</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\PROGRAMMING\Curiosity\OpenGL\Src\Thirdpart\imgui\imgui_draw.cpp">
-      <Filter>Source Files\third_party\imgui</Filter>
+    <ClCompile Include="src\third_party\imgui\imgui_draw.cpp">
+      <Filter>Source Files\third_party</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\PROGRAMMING\Curiosity\OpenGL\Src\Thirdpart\imgui\imgui_impl_sdl_gl3.cpp">
-      <Filter>Source Files\third_party\imgui</Filter>
+    <ClCompile Include="src\third_party\imgui\imgui_impl_opengl3.cpp">
+      <Filter>Source Files\third_party</Filter>
+    </ClCompile>
+    <ClCompile Include="src\third_party\imgui\imgui_impl_sdl.cpp">
+      <Filter>Source Files\third_party</Filter>
+    </ClCompile>
+    <ClCompile Include="src\third_party\imgui\imgui_widgets.cpp">
+      <Filter>Source Files\third_party</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\PROGRAMMING\Curiosity\OpenGL\Src\Thirdpart\imgui\imconfig.h">
-      <Filter>Source Files\third_party\imgui</Filter>
+    <ClInclude Include="src\third_party\imgui\imconfig.h">
+      <Filter>Source Files\third_party</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\PROGRAMMING\Curiosity\OpenGL\Src\Thirdpart\imgui\imgui.h">
-      <Filter>Source Files\third_party\imgui</Filter>
+    <ClInclude Include="src\third_party\imgui\imgui.h">
+      <Filter>Source Files\third_party</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\PROGRAMMING\Curiosity\OpenGL\Src\Thirdpart\imgui\imgui_impl_sdl_gl3.h">
-      <Filter>Source Files\third_party\imgui</Filter>
+    <ClInclude Include="src\third_party\imgui\imgui_impl_opengl3.h">
+      <Filter>Source Files\third_party</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\PROGRAMMING\Curiosity\OpenGL\Src\Thirdpart\imgui\imgui_internal.h">
-      <Filter>Source Files\third_party\imgui</Filter>
+    <ClInclude Include="src\third_party\imgui\imgui_impl_sdl.h">
+      <Filter>Source Files\third_party</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\PROGRAMMING\Curiosity\OpenGL\Src\Thirdpart\imgui\stb_rect_pack.h">
-      <Filter>Source Files\third_party\imgui</Filter>
+    <ClInclude Include="src\third_party\imgui\imgui_internal.h">
+      <Filter>Source Files\third_party</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\PROGRAMMING\Curiosity\OpenGL\Src\Thirdpart\imgui\stb_textedit.h">
-      <Filter>Source Files\third_party\imgui</Filter>
+    <ClInclude Include="src\third_party\imgui\imstb_rectpack.h">
+      <Filter>Source Files\third_party</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\PROGRAMMING\Curiosity\OpenGL\Src\Thirdpart\imgui\stb_truetype.h">
-      <Filter>Source Files\third_party\imgui</Filter>
+    <ClInclude Include="src\third_party\imgui\imstb_textedit.h">
+      <Filter>Source Files\third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="src\third_party\imgui\imstb_truetype.h">
+      <Filter>Source Files\third_party</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -2,11 +2,12 @@
 
 #include <iostream>
 
-#include <glew/glew.h>
+#include <GL/glew.h>
 #include <SDL2/SDL.h>
 
 #include "third_party/imgui/imgui.h"
-#include "third_party/imgui/imgui_impl_sdl_gl3.h"
+#include "third_party/imgui/imgui_impl_sdl.h"
+#include "third_party/imgui/imgui_impl_opengl3.h"
 
 const int SCREEN_WIDTH = 1280;
 const int SCREEN_HEIGHT = 720;
@@ -15,6 +16,7 @@ bool running = true;
 
 SDL_Window* window = nullptr;
 SDL_GLContext glContext = nullptr;
+ImGuiIO* imguiIO = nullptr;
 
 bool init()
 {
@@ -53,8 +55,14 @@ bool init()
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
 
+	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
-	ImGui_ImplSdlGL3_Init(window);
+	imguiIO = &ImGui::GetIO();
+	
+	ImGui::StyleColorsDark();
+	
+	ImGui_ImplSDL2_InitForOpenGL(window, glContext);
+	ImGui_ImplOpenGL3_Init("#version 450");
 
 	return true;
 }
@@ -65,7 +73,7 @@ void input()
 
 	while (SDL_PollEvent(&event))
 	{
-		ImGui_ImplSdlGL3_ProcessEvent(&event);
+		ImGui_ImplSDL2_ProcessEvent(&event);
 
 		if (event.type == SDL_QUIT ||
 			event.type == SDL_KEYUP && event.key.keysym.sym == SDLK_ESCAPE)
@@ -88,27 +96,32 @@ void update()
 
 void UI()
 {
-	ImGui_ImplSdlGL3_NewFrame(window);
+	ImGui_ImplOpenGL3_NewFrame();
+	ImGui_ImplSDL2_NewFrame(window);
+	ImGui::NewFrame();
 
-	ImGui::Begin("Options");
-
-	ImGui::End();
+	static bool showDemoWindow = true;
+	ImGui::ShowDemoWindow(&showDemoWindow);
 }
 
 void render()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-	glViewport(0, 0, (int)ImGui::GetIO().DisplaySize.x, (int)ImGui::GetIO().DisplaySize.y);
 	ImGui::Render();
-	ImGui_ImplSdlGL3_RenderDrawData(ImGui::GetDrawData());
+	glViewport(0, 0, (int)imguiIO->DisplaySize.x, (int)imguiIO->DisplaySize.y);
+	glClearColor(0.7f, 0.65f, 0.9f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT);
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
 	SDL_GL_SwapWindow(window);
 }
 
 void cleanup()
 {
-	ImGui_ImplSdlGL3_Shutdown();
+	ImGui_ImplOpenGL3_Shutdown();
+	ImGui_ImplSDL2_Shutdown();
+	ImGui::DestroyContext();
 
 	SDL_GL_DeleteContext(glContext);
 	glContext = nullptr;
