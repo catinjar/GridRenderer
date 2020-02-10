@@ -4,6 +4,7 @@
 
 #include <GL/glew.h>
 #include <SDL2/SDL.h>
+#include <nfd/nfd.h>
 
 #include "third_party/imgui/imgui.h"
 #include "third_party/imgui/imgui_impl_sdl.h"
@@ -14,9 +15,48 @@ const int SCREEN_HEIGHT = 720;
 
 bool running = true;
 
+struct Grid
+{
+	bool loaded = false;
+	nfdchar_t* filePath = nullptr;
+
+	void OpenFileDialog()
+	{
+		if (loaded)
+		{
+			free(filePath);
+			filePath = nullptr;
+			loaded = false;
+		}
+
+		nfdresult_t result = NFD_OpenDialog(nullptr, nullptr, &filePath);
+
+		if (result == NFD_OKAY)
+		{
+			loaded = true;
+			std::cout << filePath << std::endl;
+		}
+		else if (result == NFD_CANCEL)
+		{
+			std::cout << "NFD: User pressed cancel" << std::endl;
+		}
+		else
+		{
+			std::cout << "NFD Error: " << NFD_GetError() << std::endl;
+		}
+	}
+
+	bool IsLoaded()
+	{
+		return loaded;
+	}
+};
+
 SDL_Window* window = nullptr;
 SDL_GLContext glContext = nullptr;
 ImGuiIO* imguiIO = nullptr;
+
+Grid grid;
 
 bool init()
 {
@@ -102,6 +142,19 @@ void UI()
 
 	static bool showDemoWindow = true;
 	ImGui::ShowDemoWindow(&showDemoWindow);
+
+	static bool showOptionsWindow = true;
+	ImGui::Begin("Options", &showOptionsWindow);
+
+	if (grid.IsLoaded())
+		ImGui::Text(grid.filePath);
+	else
+		ImGui::Text("No file loaded");
+
+	if (ImGui::Button("Load .dat"))
+		grid.OpenFileDialog();
+
+	ImGui::End();
 }
 
 void render()
