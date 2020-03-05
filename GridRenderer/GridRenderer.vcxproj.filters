@@ -42,6 +42,15 @@
     <ClCompile Include="src\third_party\imgui\imgui_widgets.cpp">
       <Filter>Source Files\third_party</Filter>
     </ClCompile>
+    <ClCompile Include="src\Grid.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ShaderProgram.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\App.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\third_party\imgui\imconfig.h">
@@ -67,6 +76,15 @@
     </ClInclude>
     <ClInclude Include="src\third_party\imgui\imstb_truetype.h">
       <Filter>Source Files\third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Grid.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ShaderProgram.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\App.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -4,59 +4,19 @@
 
 #include <GL/glew.h>
 #include <SDL2/SDL.h>
-#include <nfd/nfd.h>
 
 #include "third_party/imgui/imgui.h"
 #include "third_party/imgui/imgui_impl_sdl.h"
 #include "third_party/imgui/imgui_impl_opengl3.h"
 
+#include "App.h"
+
 const int SCREEN_WIDTH = 1280;
 const int SCREEN_HEIGHT = 720;
-
-bool running = true;
-
-struct Grid
-{
-	bool loaded = false;
-	nfdchar_t* filePath = nullptr;
-
-	void OpenFileDialog()
-	{
-		if (loaded)
-		{
-			free(filePath);
-			filePath = nullptr;
-			loaded = false;
-		}
-
-		nfdresult_t result = NFD_OpenDialog(nullptr, nullptr, &filePath);
-
-		if (result == NFD_OKAY)
-		{
-			loaded = true;
-			std::cout << filePath << std::endl;
-		}
-		else if (result == NFD_CANCEL)
-		{
-			std::cout << "NFD: User pressed cancel" << std::endl;
-		}
-		else
-		{
-			std::cout << "NFD Error: " << NFD_GetError() << std::endl;
-		}
-	}
-
-	bool IsLoaded()
-	{
-		return loaded;
-	}
-};
 
 SDL_Window* window = nullptr;
 SDL_GLContext glContext = nullptr;
 ImGuiIO* imguiIO = nullptr;
-
-Grid grid;
 
 bool init()
 {
@@ -107,69 +67,6 @@ bool init()
 	return true;
 }
 
-void input()
-{
-	SDL_Event event;
-
-	while (SDL_PollEvent(&event))
-	{
-		ImGui_ImplSDL2_ProcessEvent(&event);
-
-		if (event.type == SDL_QUIT ||
-			event.type == SDL_KEYUP && event.key.keysym.sym == SDLK_ESCAPE)
-		{
-			running = false;
-		}
-	}
-
-	if (ImGui::GetIO().WantCaptureMouse ||
-		ImGui::GetIO().WantCaptureKeyboard)
-	{
-		return;
-	}
-}
-
-void update()
-{
-
-}
-
-void UI()
-{
-	ImGui_ImplOpenGL3_NewFrame();
-	ImGui_ImplSDL2_NewFrame(window);
-	ImGui::NewFrame();
-
-	static bool showDemoWindow = true;
-	ImGui::ShowDemoWindow(&showDemoWindow);
-
-	static bool showOptionsWindow = true;
-	ImGui::Begin("Options", &showOptionsWindow);
-
-	if (grid.IsLoaded())
-		ImGui::Text(grid.filePath);
-	else
-		ImGui::Text("No file loaded");
-
-	if (ImGui::Button("Load .dat"))
-		grid.OpenFileDialog();
-
-	ImGui::End();
-}
-
-void render()
-{
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-
-	ImGui::Render();
-	glViewport(0, 0, (int)imguiIO->DisplaySize.x, (int)imguiIO->DisplaySize.y);
-	glClearColor(0.7f, 0.65f, 0.9f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT);
-	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
-	SDL_GL_SwapWindow(window);
-}
-
 void cleanup()
 {
 	ImGui_ImplOpenGL3_Shutdown();
@@ -193,12 +90,11 @@ int main(void)
 		return -1;
 	}
 
-	while (running)
+	App app(window);
+
+	while (app.isRunning())
 	{
-		input();
-		UI();
-		update();
-		render();
+		app.frame();
 	}
 
 	cleanup();
