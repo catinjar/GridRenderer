@@ -13,11 +13,13 @@ public:
 	ShaderProgram(const std::string& vertexShaderFilename, const std::string& fragmentShaderFilename);
 	~ShaderProgram();
 
-	void use() const;
-	void compile();
+	void Use() const;
+	void Compile();
+
+	GLuint operator[](const char* name) const;
 
 #ifdef _DEBUG
-	void hotloadChanges();
+	void HotloadChanges();
 #endif
 
 private:

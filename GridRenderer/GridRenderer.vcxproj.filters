@@ -19,6 +19,9 @@
     <Filter Include="Source Files\third_party\misc">
       <UniqueIdentifier>{cc8626c1-3c65-4f24-b8c8-2489c7f35c39}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\shaders">
+      <UniqueIdentifier>{d8c0f409-0286-4aa6-a9b5-ce3d9629f5b0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -49,6 +52,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\App.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CameraController.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -86,5 +92,16 @@
     <ClInclude Include="src\App.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\CameraController.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="shaders\points.frag">
+      <Filter>Source Files\shaders</Filter>
+    </None>
+    <None Include="shaders\points.vert">
+      <Filter>Source Files\shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -16,23 +16,22 @@ App::App(SDL_Window* window)
 
 App::~App()
 {
-
 }
 
-void App::frame()
+void App::Frame()
 {
-	input();
-	ui();
-	update();
-	render();
+	Input();
+	UI();
+	Update();
+	Render();
 }
 
-bool App::isRunning()
+bool App::IsRunning()
 {
 	return m_isRunning;
 }
 
-void App::input()
+void App::Input()
 {
 	SDL_Event event;
 
@@ -52,9 +51,11 @@ void App::input()
 	{
 		return;
 	}
+
+	m_camera.Input();
 }
 
-void App::ui()
+void App::UI()
 {
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplSDL2_NewFrame(m_window);
@@ -67,7 +68,15 @@ void App::ui()
 	static bool showOptionsWindow = true;
 	ImGui::Begin("Options", &showOptionsWindow);
 
-	auto gridFilePath = m_grid.getFilePath();
+	DrawFileUI();
+	m_grid.DrawUI();
+
+	ImGui::End();
+}
+
+void App::DrawFileUI()
+{
+	auto gridFilePath = m_grid.GetFilePath();
 
 	if (gridFilePath.length() > 0)
 		ImGui::Text(gridFilePath.c_str());
@@ -82,7 +91,7 @@ void App::ui()
 		if (result == NFD_OKAY)
 		{
 			std::cout << "NFD: File path is " << filePath << std::endl;
-			m_grid.load(filePath);
+			m_grid.Load(filePath);
 		}
 		else if (result == NFD_CANCEL)
 		{
@@ -93,26 +102,27 @@ void App::ui()
 			std::cout << "NFD Error: " << NFD_GetError() << std::endl;
 		}
 	}
-
-	ImGui::End();
 }
 
-void App::update()
+void App::Update()
 {
+	m_camera.Update();
+
 #ifdef _DEBUG
-	m_pointsShaderProgram.hotloadChanges();
+	m_pointsShaderProgram.HotloadChanges();
 #endif
 }
 
-void App::render()
+void App::Render()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
 
 	glClearColor(0.7f, 0.65f, 0.9f, 1.0f);
 
-	m_pointsShaderProgram.use();
-	m_grid.draw();
+	m_pointsShaderProgram.Use();
+	m_camera.ApplyUniforms(m_pointsShaderProgram);
+	m_grid.Draw();
 
 	auto imguiIO = &ImGui::GetIO();
 	glViewport(0, 0, (int)imguiIO->DisplaySize.x, (int)imguiIO->DisplaySize.y);

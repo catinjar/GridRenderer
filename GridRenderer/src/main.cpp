@@ -18,7 +18,7 @@ SDL_Window* window = nullptr;
 SDL_GLContext glContext = nullptr;
 ImGuiIO* imguiIO = nullptr;
 
-bool init()
+bool Init()
 {
 	bool success = true;
 
@@ -54,6 +54,7 @@ bool init()
 	glClearColor(0.7f, 0.65f, 0.9f, 1.0f);
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
+	glEnable(GL_PROGRAM_POINT_SIZE);
 
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -67,7 +68,7 @@ bool init()
 	return true;
 }
 
-void cleanup()
+void Cleanup()
 {
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplSDL2_Shutdown();
@@ -84,7 +85,7 @@ void cleanup()
 
 int main(void)
 {
-	if (!init())
+	if (!Init())
 	{
 		std::cout << "Failed to initialize!" << std::endl;
 		return -1;
@@ -92,12 +93,12 @@ int main(void)
 
 	App app(window);
 
-	while (app.isRunning())
+	while (app.IsRunning())
 	{
-		app.frame();
+		app.Frame();
 	}
 
-	cleanup();
+	Cleanup();
 
 	return 0;
 }
