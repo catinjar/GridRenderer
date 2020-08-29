@@ -30,5 +30,5 @@ private:
 	Grid m_grid;
 	CameraController m_camera;
 
-	ShaderProgram m_pointsShaderProgram = ShaderProgram("shaders\\points.vert", "shaders\\points.frag");
+	ShaderProgram m_defaultShaderProgram = ShaderProgram("shaders\\points.vert", "shaders\\points.frag");
 };

@@ -3,27 +3,7 @@
 #include <fstream>
 #include <iostream>
 
-// TODO: Move this to misc
-std::string ReadAllText(const std::string& filename)
-{
-	std::string text;
-	std::ifstream file(filename, std::ios::in);
-
-	if (!file.good())
-	{
-		std::cout << "ShaderProgram: Can't read file " << filename << std::endl;
-		std::terminate();
-	}
-
-	file.seekg(0, std::ios::end);
-	text.resize((const unsigned int)file.tellg());
-	file.seekg(0, std::ios::beg);
-	file.read(&text[0], text.size());
-
-	file.close();
-
-	return text;
-}
+#include "Misc.h"
 
 void CheckShaderErrors(const std::string& filename, const GLuint shader)
 {
@@ -46,7 +26,7 @@ GLuint CreateShader(const GLuint shaderType, const std::string& filename)
 {
 	const GLuint shader = glCreateShader(shaderType);
 
-	const std::string shaderSource = ReadAllText(filename);
+	const std::string shaderSource = misc::ReadAllText(filename);
 	const GLchar* shaderSourcePtr = shaderSource.c_str();
 	const int shaderSourceSize = shaderSource.size();
 
@@ -127,6 +107,7 @@ GLuint ShaderProgram::operator[](const char* name) const
 }
 
 #ifdef _DEBUG
+
 void ShaderProgram::HotloadChanges()
 {
 	const uint32_t HOTLOAD_MIN_DELAY_MILLIS = 1000;
@@ -157,4 +138,5 @@ void ShaderProgram::HotloadChanges()
 	if (changed)
 		Compile();
 }
+
 #endif

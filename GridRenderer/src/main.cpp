@@ -16,12 +16,9 @@ const int SCREEN_HEIGHT = 720;
 
 SDL_Window* window = nullptr;
 SDL_GLContext glContext = nullptr;
-ImGuiIO* imguiIO = nullptr;
 
-bool Init()
+bool InitSDL()
 {
-	bool success = true;
-
 	if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
 	{
 		std::cout << "SDL could not initialize! SDL_Error: " << SDL_GetError() << std::endl;
@@ -36,7 +33,7 @@ bool Init()
 		std::cout << "Failed to create window! SDL_Error: " << SDL_GetError() << std::endl;
 		return false;
 	}
-	
+
 	glContext = SDL_GL_CreateContext(window);
 
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG);
@@ -48,27 +45,45 @@ bool Init()
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 5);
 	SDL_GL_SetSwapInterval(1);
 
+	return true;
+}
+
+void InitGlew()
+{
 	glewExperimental = true;
 	glewInit();
+}
 
-	glClearColor(0.7f, 0.65f, 0.9f, 1.0f);
+void InitOpenGL()
+{
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
 	glEnable(GL_PROGRAM_POINT_SIZE);
+}
 
+void InitImGui()
+{
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
-	imguiIO = &ImGui::GetIO();
-	
 	ImGui::StyleColorsDark();
-	
+
 	ImGui_ImplSDL2_InitForOpenGL(window, glContext);
 	ImGui_ImplOpenGL3_Init("#version 450");
+}
+
+bool Init()
+{
+	if (!InitSDL())
+		return false;
+	
+	InitGlew();
+	InitOpenGL();
+	InitImGui();
 
 	return true;
 }
 
-void Cleanup()
+void Shutdown()
 {
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplSDL2_Shutdown();
@@ -98,7 +113,7 @@ int main(void)
 		app.Frame();
 	}
 
-	Cleanup();
+	Shutdown();
 
 	return 0;
 }

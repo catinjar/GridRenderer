@@ -3,11 +3,12 @@
 #include <iostream>
 
 #include <SDL2/SDL.h>
-#include <nfd/nfd.h>
 
 #include "third_party/imgui/imgui.h"
 #include "third_party/imgui/imgui_impl_sdl.h"
 #include "third_party/imgui/imgui_impl_opengl3.h"
+
+#include "NFDHelper.h"
 
 App::App(SDL_Window* window)
 	: m_window(window)
@@ -39,10 +40,14 @@ void App::Input()
 	{
 		ImGui_ImplSDL2_ProcessEvent(&event);
 
-		if (event.type == SDL_QUIT ||
-			event.type == SDL_KEYUP && event.key.keysym.sym == SDLK_ESCAPE)
+		if (event.type == SDL_QUIT || event.type == SDL_KEYUP && event.key.keysym.sym == SDLK_ESCAPE)
 		{
 			m_isRunning = false;
+		}
+
+		if (event.type == SDL_MOUSEWHEEL)
+		{
+			m_camera.Scroll(event.wheel.y);
 		}
 	}
 
@@ -76,40 +81,20 @@ void App::UI()
 
 void App::DrawFileUI()
 {
-	auto gridFilePath = m_grid.GetFilePath();
-
-	if (gridFilePath.length() > 0)
-		ImGui::Text(gridFilePath.c_str());
-	else
-		ImGui::Text("No file loaded");
-
 	if (ImGui::Button("Load .dat"))
 	{
-		nfdchar_t* filePath = nullptr;
-		nfdresult_t result = NFD_OpenDialog(nullptr, nullptr, &filePath);
-
-		if (result == NFD_OKAY)
-		{
-			std::cout << "NFD: File path is " << filePath << std::endl;
+		std::string filePath;
+		if (NFD_ChooseFile(filePath))
 			m_grid.Load(filePath);
-		}
-		else if (result == NFD_CANCEL)
-		{
-			std::cout << "NFD: User pressed cancel" << std::endl;
-		}
-		else
-		{
-			std::cout << "NFD Error: " << NFD_GetError() << std::endl;
-		}
 	}
 }
 
 void App::Update()
 {
-	m_camera.Update();
+	m_camera.Update(m_grid);
 
 #ifdef _DEBUG
-	m_pointsShaderProgram.HotloadChanges();
+	m_defaultShaderProgram.HotloadChanges();
 #endif
 }
 
@@ -118,11 +103,11 @@ void App::Render()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
 
-	glClearColor(0.7f, 0.65f, 0.9f, 1.0f);
+	glClearColor(0.0f, 191.0f / 255.0f, 1.0f, 1.0f);
 
-	m_pointsShaderProgram.Use();
-	m_camera.ApplyUniforms(m_pointsShaderProgram);
-	m_grid.Draw();
+	m_defaultShaderProgram.Use();
+	m_camera.ApplyUniforms(m_defaultShaderProgram);
+	m_grid.Draw(m_defaultShaderProgram);
 
 	auto imguiIO = &ImGui::GetIO();
 	glViewport(0, 0, (int)imguiIO->DisplaySize.x, (int)imguiIO->DisplaySize.y);

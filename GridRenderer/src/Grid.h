@@ -8,27 +8,12 @@
 
 #include "ShaderProgram.h"
 
-class ShaderProgram;
+class Zone;
 
-class Zone
+enum class RenderMode
 {
-public:
-	Zone();
-	virtual ~Zone();
-
-	void Draw() const;
-	void SetData(const std::vector<glm::vec3>& vertices, const std::vector<GLuint>& indices);
-	void DrawUI(int index);
-
-private:
-	std::vector<glm::vec3> m_vertices;
-	std::vector<GLuint> m_indices;
-
-	GLuint m_vao = 0;
-	GLuint m_vbo = 0;
-	GLuint m_ibo = 0;
-
-	int m_indexCount = 0;
+	Points,
+	Lines
 };
 
 class Grid
@@ -37,21 +22,21 @@ public:
 	Grid();
 	virtual ~Grid();
 
-	void Draw() const;
+	void Draw(const ShaderProgram& shader) const;
 	void Load(const std::string& filename);
 	void DrawUI();
 
-	std::string GetFilePath() { return m_filePath; }
+	glm::vec3 GetCenter() const { return m_center; }
 
 private:
+	void CalculateCenter();
+
+	bool m_isLoaded = false;
 	std::string m_filePath;
 	std::vector<Zone> m_zones;
-	//std::vector<glm::vec3> m_vertices;
-	//std::vector<GLuint> m_indices;
 
-	//GLuint m_vao = 0;
-	//GLuint m_vbo = 0;
-	//GLuint m_ibo = 0;
+	RenderMode m_renderMode = RenderMode::Lines;
 
-	//uint32_t m_vertexDrawCount = 0;
+	glm::vec3 m_center = glm::vec3();
+	glm::vec3 m_color = glm::vec3(1.0f, 1.0f, 1.0f);
 };
