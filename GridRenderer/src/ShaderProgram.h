@@ -20,13 +20,13 @@ public:
 	GLuint operator[](const char* name) const;
 
 private:
-	GLuint m_programId = 0;
+	GLuint programId = 0;
 
-	std::string m_vertexShaderFilename;
-	std::string m_fragmentShaderFilename;
+	std::string vertexShaderFilename;
+	std::string fragmentShaderFilename;
 
-	std::uint64_t m_lastCompileTs = 0;
+	std::uint64_t lastCompileTs = 0;
 
-	fs::file_time_type m_vertexShaderTs;
-	fs::file_time_type m_fragmentShaderTs;
+	fs::file_time_type vertexShaderTs;
+	fs::file_time_type fragmentShaderTs;
 };

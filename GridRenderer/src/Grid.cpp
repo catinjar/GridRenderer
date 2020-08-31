@@ -19,19 +19,19 @@ Grid::~Grid()
 
 void Grid::Draw(const ShaderProgram& shader) const
 {
-	glUniform3f(shader["defaultColor"], m_color.r, m_color.g, m_color.b);
+	glUniform3f(shader["defaultColor"], color.r, color.g, color.b);
 
-	for (const auto& zone : m_zones)
+	for (const auto& zone : zones)
 	{
-		zone.Draw(m_renderMode);
+		zone.Draw(renderMode);
 	}
 }
 
 void Grid::Load(const std::string& filename)
 {
-	m_filePath = filename;
+	filePath = filename;
 
-	m_zones.clear();
+	zones.clear();
 
 	const auto tecplotGrid = tecplot::Parse(filename);
 
@@ -39,49 +39,49 @@ void Grid::Load(const std::string& filename)
 	{
 		Zone zone;
 		zone.SetData(tecplotZone);
-		m_zones.push_back(zone);
+		zones.push_back(zone);
 	}
 
 	CalculateCenter();
 
-	m_isLoaded = true;
+	isLoaded = true;
 }
 
 void Grid::CalculateCenter()
 {
 	glm::vec3 sum = glm::vec3();
 
-	for (const auto& zone : m_zones)
+	for (const auto& zone : zones)
 	{
 		sum += zone.GetCenter();
 	}
 
-	m_center = sum / (float)m_zones.size();
+	center = sum / (float)zones.size();
 }
 
 void Grid::DrawUI()
 {
-	if (!m_isLoaded)
+	if (!isLoaded)
 	{
 		ImGui::Text("No grid loaded");
 		return;
 	}
 
-	ImGui::Text(m_filePath.c_str());
+	ImGui::Text(filePath.c_str());
 
 	ImGui::Text("Render Mode:");
-	if (ImGui::RadioButton("Lines", m_renderMode == RenderMode::Lines))
-		m_renderMode = RenderMode::Lines;
+	if (ImGui::RadioButton("Lines", renderMode == RenderMode::Lines))
+		renderMode = RenderMode::Lines;
 	ImGui::SameLine();
-	if (ImGui::RadioButton("Points", m_renderMode == RenderMode::Points))
-		m_renderMode = RenderMode::Points;
+	if (ImGui::RadioButton("Points", renderMode == RenderMode::Points))
+		renderMode = RenderMode::Points;
 
-	ImGui::ColorEdit3("Color", &m_color[0]);
+	ImGui::ColorEdit3("Color", &color[0]);
 
 	ImGui::Text("Zones:");
 
-	for (int i = 0; i < m_zones.size(); ++i)
+	for (int i = 0; i < zones.size(); ++i)
 	{
-		m_zones[i].DrawUI(i);
+		zones[i].DrawUI(i);
 	}
 }

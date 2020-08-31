@@ -20,27 +20,27 @@ private:
 	void KeyboardInput();
 	void MouseInput();
 
-	float m_phi;
-	float m_theta;
+	float phi;
+	float theta;
 
-	float m_phiDelta = 0.0f;
-	float m_thetaDelta = 0.0f;
+	float phiDelta = 0.0f;
+	float thetaDelta = 0.0f;
 
-	float m_distanceFromOrigin;
+	float distanceFromOrigin;
 
-	glm::mat4 m_projection;
-	glm::mat4 m_view;
+	glm::mat4 projection;
+	glm::mat4 view;
 
-	glm::vec3 m_position;
-	glm::vec3 m_look;
-	glm::vec3 m_up;
+	glm::vec3 position;
+	glm::vec3 look;
+	glm::vec3 up;
 	
-	float m_cameraSpeed;
+	float cameraSpeed;
 	
-	glm::vec2 m_mousePosition = glm::vec2();
-	float m_mouseSensitivity;
-	float m_scrollSensitivity;
+	glm::vec2 mousePosition = glm::vec2();
+	float mouseSensitivity;
+	float scrollSensitivity;
 	
-	float m_pitchDelta = 0.0f;
-	float m_yawDelta = 0.0f;
+	float pitchDelta = 0.0f;
+	float yawDelta = 0.0f;
 };

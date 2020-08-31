@@ -57,53 +57,53 @@ void CheckProgramErrors(GLuint program)
 
 ShaderProgram::ShaderProgram(const std::string& vertexShaderFilename, const std::string& fragmentShaderFilename)
 {
-	m_vertexShaderFilename = vertexShaderFilename;
-	m_fragmentShaderFilename = fragmentShaderFilename;
+	this->vertexShaderFilename = vertexShaderFilename;
+	this->fragmentShaderFilename = fragmentShaderFilename;
 
-	m_vertexShaderTs = fs::last_write_time(vertexShaderFilename);
-	m_fragmentShaderTs = fs::last_write_time(fragmentShaderFilename);
+	vertexShaderTs = fs::last_write_time(vertexShaderFilename);
+	fragmentShaderTs = fs::last_write_time(fragmentShaderFilename);
 
 	Compile();
 }
 
 ShaderProgram::~ShaderProgram()
 {
-	glDeleteProgram(m_programId);
+	glDeleteProgram(programId);
 }
 
 void ShaderProgram::Use() const
 {
-	if (m_programId == 0)
+	if (programId == 0)
 		return;
 
-	glUseProgram(m_programId);
+	glUseProgram(programId);
 }
 
 void ShaderProgram::Compile()
 {
-	if (m_programId > 0)
-		glDeleteProgram(m_programId);
+	if (programId > 0)
+		glDeleteProgram(programId);
 
-	m_programId = glCreateProgram();
+	programId = glCreateProgram();
 
-	const GLuint vertexShaderId = CreateShader(GL_VERTEX_SHADER, m_vertexShaderFilename);
-	glAttachShader(m_programId, vertexShaderId);
+	const GLuint vertexShaderId = CreateShader(GL_VERTEX_SHADER, vertexShaderFilename);
+	glAttachShader(programId, vertexShaderId);
 	glDeleteShader(vertexShaderId);
 	
-	const GLuint fragmentShaderId = CreateShader(GL_FRAGMENT_SHADER, m_fragmentShaderFilename);
-	glAttachShader(m_programId, fragmentShaderId);
+	const GLuint fragmentShaderId = CreateShader(GL_FRAGMENT_SHADER, fragmentShaderFilename);
+	glAttachShader(programId, fragmentShaderId);
 	glDeleteShader(fragmentShaderId);
 
-	glLinkProgram(m_programId);
+	glLinkProgram(programId);
 
-	CheckProgramErrors(m_programId);
+	CheckProgramErrors(programId);
 
-	m_lastCompileTs = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count(); // TODO: Move to misc
+	lastCompileTs = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count(); // TODO: Move to misc
 }
 
 GLuint ShaderProgram::operator[](const char* name) const
 {
-	return glGetUniformLocation(m_programId, name);
+	return glGetUniformLocation(programId, name);
 }
 
 void ShaderProgram::HotloadChanges()
@@ -112,25 +112,25 @@ void ShaderProgram::HotloadChanges()
 
 	const auto now = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 
-	if (now - m_lastCompileTs < HOTLOAD_MIN_DELAY_MILLIS)
+	if (now - lastCompileTs < HOTLOAD_MIN_DELAY_MILLIS)
 		return;
 
 	bool changed = false;
 
 	{
-		const auto ts = fs::last_write_time(m_vertexShaderFilename);
-		if (ts > m_vertexShaderTs)
+		const auto ts = fs::last_write_time(vertexShaderFilename);
+		if (ts > vertexShaderTs)
 		{
-			m_vertexShaderTs = ts;
+			vertexShaderTs = ts;
 			changed = true;
 		}
 	}
 
 	{
-		const auto ts = fs::last_write_time(m_fragmentShaderFilename);
-		if (ts > m_fragmentShaderTs)
+		const auto ts = fs::last_write_time(fragmentShaderFilename);
+		if (ts > fragmentShaderTs)
 		{
-			m_fragmentShaderTs = ts;
+			fragmentShaderTs = ts;
 			changed = true;
 		}
 	}

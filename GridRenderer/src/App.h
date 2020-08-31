@@ -27,15 +27,15 @@ private:
 	void DrawFileUI();
 	void DrawSettings();
 
-	SDL_Window* m_window;
+	SDL_Window* window;
 
-	bool m_isRunning = true;
+	bool isRunning = true;
 
-	Grid m_grid;
-	CameraController m_camera;
+	Grid grid;
+	CameraController camera;
 
 	bool isHotloadEnabled = true;
 	bool isImguiDemoEnabled = false;
 
-	ShaderProgram m_defaultShaderProgram = ShaderProgram("shaders\\points.vert", "shaders\\points.frag");
+	ShaderProgram defaultShaderProgram = ShaderProgram("shaders\\points.vert", "shaders\\points.frag");
 };

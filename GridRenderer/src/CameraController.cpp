@@ -16,53 +16,53 @@ CameraController::CameraController()
 	SDL_DisplayMode displayMode;
 	SDL_GetCurrentDisplayMode(0, &displayMode);
 
-	m_position = glm::vec3(1.0f, 4.0f, 8.0f);
-	m_look = glm::vec3(0.0f, -0.6f, -1.0f);
-	m_up = glm::vec3(0.0f, 1.0f, 0.0f);
+	position = glm::vec3(1.0f, 4.0f, 8.0f);
+	look = glm::vec3(0.0f, -0.6f, -1.0f);
+	up = glm::vec3(0.0f, 1.0f, 0.0f);
 
-	m_projection = glm::perspective(45.0f, (float)displayMode.w / (float)displayMode.h, 0.1f, 10000.0f);
-	m_view = glm::lookAt(m_position, m_position + m_look, glm::vec3(0.0f, 1.0f, 0.0f));
+	projection = glm::perspective(45.0f, (float)displayMode.w / (float)displayMode.h, 0.1f, 10000.0f);
+	view = glm::lookAt(position, position + look, glm::vec3(0.0f, 1.0f, 0.0f));
 
-	m_cameraSpeed = 0.05f;
-	m_mouseSensitivity = 0.002f;
-	m_scrollSensitivity = 0.1f;
+	cameraSpeed = 0.05f;
+	mouseSensitivity = 0.002f;
+	scrollSensitivity = 0.1f;
 
-	m_phi = glm::pi<float>() / 2.0f;
-	m_theta = 0.0f;
+	phi = glm::pi<float>() / 2.0f;
+	theta = 0.0f;
 
-	m_distanceFromOrigin = 3.0f;
+	distanceFromOrigin = 3.0f;
 }
 
 void CameraController::Update(const Grid& grid)
 {
-	/*const glm::vec3 pitchAxis = glm::cross(m_look, m_up);
-	const glm::quat pitchQuat = glm::angleAxis(m_pitchDelta, pitchAxis);
-	const glm::quat yawQuat = glm::angleAxis(m_yawDelta, glm::vec3(0.0f, 1.0f, 0.0f));
+	/*const glm::vec3 pitchAxis = glm::cross(look, up);
+	const glm::quat pitchQuat = glm::angleAxis(pitchDelta, pitchAxis);
+	const glm::quat yawQuat = glm::angleAxis(yawDelta, glm::vec3(0.0f, 1.0f, 0.0f));
 	const glm::quat temp = glm::normalize(pitchQuat * yawQuat);
 
-	m_look = glm::rotate(temp, m_look);
-	m_up = glm::rotate(temp, m_up);
+	look = glm::rotate(temp, look);
+	up = glm::rotate(temp, up);
 
-	m_view = glm::lookAt(m_position, m_position + m_look, glm::vec3(0.0f, 1.0f, 0.0f));
+	view = glm::lookAt(position, position + look, glm::vec3(0.0f, 1.0f, 0.0f));
 
-	m_pitchDelta *= 0.75f;
-	m_yawDelta *= 0.75f;*/
+	pitchDelta *= 0.75f;
+	yawDelta *= 0.75f;*/
 
-	m_phi -= m_phiDelta;
-	m_theta += m_thetaDelta;
+	phi -= phiDelta;
+	theta += thetaDelta;
 
-	m_phiDelta *= 0.75f;
-	m_thetaDelta *= 0.75f;
+	phiDelta *= 0.75f;
+	thetaDelta *= 0.75f;
 
-	m_phi = glm::clamp(m_phi, 0.001f, glm::pi<float>() - 0.001f);
+	phi = glm::clamp(phi, 0.001f, glm::pi<float>() - 0.001f);
 
-	m_position.x = glm::sin(m_phi) * glm::cos(m_theta);
-	m_position.y = glm::cos(m_phi);
-	m_position.z = glm::sin(m_phi) * glm::sin(m_theta);
+	position.x = glm::sin(phi) * glm::cos(theta);
+	position.y = glm::cos(phi);
+	position.z = glm::sin(phi) * glm::sin(theta);
 
-	m_position *= m_distanceFromOrigin;
+	position *= distanceFromOrigin;
 
-	m_view = glm::lookAt(m_position, grid.GetCenter(), glm::vec3(0.0f, 1.0f, 0.0f));
+	view = glm::lookAt(position, grid.GetCenter(), glm::vec3(0.0f, 1.0f, 0.0f));
 }
 
 void CameraController::Input()
@@ -73,26 +73,26 @@ void CameraController::Input()
 
 void CameraController::Scroll(float amount)
 {
-	m_distanceFromOrigin -= amount * m_scrollSensitivity;
+	distanceFromOrigin -= amount * scrollSensitivity;
 }
 
 void CameraController::KeyboardInput()
 {
 	/*const Uint8* keyboardState = SDL_GetKeyboardState(nullptr);
 
-	const glm::vec3 right = glm::normalize(glm::cross(m_up, m_look));
+	const glm::vec3 right = glm::normalize(glm::cross(up, look));
 
 	if (keyboardState[SDL_SCANCODE_W])
-		m_position += m_look * m_cameraSpeed;
+		position += look * cameraSpeed;
 
 	if (keyboardState[SDL_SCANCODE_S])
-		m_position -= m_look * m_cameraSpeed;
+		position -= look * cameraSpeed;
 
 	if (keyboardState[SDL_SCANCODE_A])
-		m_position += right * m_cameraSpeed;
+		position += right * cameraSpeed;
 
 	if (keyboardState[SDL_SCANCODE_D])
-		m_position -= right * m_cameraSpeed;*/
+		position -= right * cameraSpeed;*/
 }
 
 void CameraController::MouseInput()
@@ -100,23 +100,23 @@ void CameraController::MouseInput()
 	int x, y;
 	const Uint32 mouseState = SDL_GetMouseState(&x, &y);
 
-	const float deltaX = x - m_mousePosition.x;
-	const float deltaY = y - m_mousePosition.y;
+	const float deltaX = x - mousePosition.x;
+	const float deltaY = y - mousePosition.y;
 
-	m_mousePosition.x = (float)x;
-	m_mousePosition.y = (float)y;
+	mousePosition.x = (float)x;
+	mousePosition.y = (float)y;
 
 	if (mouseState & SDL_BUTTON(SDL_BUTTON_RIGHT))
 	{
-		//m_yawDelta = -deltaX * m_mouseSensitivity;
-		//m_pitchDelta = -deltaY * m_mouseSensitivity;
-		m_phiDelta = deltaY * m_mouseSensitivity;
-		m_thetaDelta = deltaX * m_mouseSensitivity;
+		//yawDelta = -deltaX * mouseSensitivity;
+		//pitchDelta = -deltaY * mouseSensitivity;
+		phiDelta = deltaY * mouseSensitivity;
+		thetaDelta = deltaX * mouseSensitivity;
 	}
 }
 
 void CameraController::ApplyUniforms(const ShaderProgram& shaderProgram)
 {
-	glUniformMatrix4fv(shaderProgram["view"], 1, false, &m_view[0][0]);
-	glUniformMatrix4fv(shaderProgram["projection"], 1, false, &m_projection[0][0]);
+	glUniformMatrix4fv(shaderProgram["view"], 1, false, &view[0][0]);
+	glUniformMatrix4fv(shaderProgram["projection"], 1, false, &projection[0][0]);
 }

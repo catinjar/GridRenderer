@@ -11,7 +11,7 @@
 #include "NFDHelper.h"
 
 App::App(SDL_Window* window)
-	: m_window(window)
+	: window(window)
 {
 }
 
@@ -29,7 +29,7 @@ void App::Frame()
 
 bool App::IsRunning()
 {
-	return m_isRunning;
+	return isRunning;
 }
 
 void App::Input()
@@ -42,12 +42,12 @@ void App::Input()
 
 		if (event.type == SDL_QUIT || event.type == SDL_KEYUP && event.key.keysym.sym == SDLK_ESCAPE)
 		{
-			m_isRunning = false;
+			isRunning = false;
 		}
 
 		if (event.type == SDL_MOUSEWHEEL)
 		{
-			m_camera.Scroll(event.wheel.y);
+			camera.Scroll(event.wheel.y);
 		}
 	}
 
@@ -57,13 +57,13 @@ void App::Input()
 		return;
 	}
 
-	m_camera.Input();
+	camera.Input();
 }
 
 void App::UI()
 {
 	ImGui_ImplOpenGL3_NewFrame();
-	ImGui_ImplSDL2_NewFrame(m_window);
+	ImGui_ImplSDL2_NewFrame(window);
 	ImGui::NewFrame();
 
 	DrawOptionsWindow();
@@ -89,7 +89,7 @@ void App::DrawGridWindow()
 {
 	ImGui::Begin("Grid");
 
-	m_grid.DrawUI();
+	grid.DrawUI();
 
 	ImGui::End();
 }
@@ -106,16 +106,16 @@ void App::DrawFileUI()
 	{
 		std::string filePath;
 		if (NFD_ChooseFile(filePath))
-			m_grid.Load(filePath);
+			grid.Load(filePath);
 	}
 }
 
 void App::Update()
 {
-	m_camera.Update(m_grid);
+	camera.Update(grid);
 
 	if (isHotloadEnabled)
-		m_defaultShaderProgram.HotloadChanges();
+		defaultShaderProgram.HotloadChanges();
 }
 
 void App::Render()
@@ -125,14 +125,14 @@ void App::Render()
 
 	glClearColor(0.0f, 191.0f / 255.0f, 1.0f, 1.0f);
 
-	m_defaultShaderProgram.Use();
-	m_camera.ApplyUniforms(m_defaultShaderProgram);
-	m_grid.Draw(m_defaultShaderProgram);
+	defaultShaderProgram.Use();
+	camera.ApplyUniforms(defaultShaderProgram);
+	grid.Draw(defaultShaderProgram);
 
 	auto imguiIO = &ImGui::GetIO();
 	glViewport(0, 0, (int)imguiIO->DisplaySize.x, (int)imguiIO->DisplaySize.y);
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-	SDL_GL_SwapWindow(m_window);
+	SDL_GL_SwapWindow(window);
 }

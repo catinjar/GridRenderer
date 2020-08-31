@@ -26,17 +26,17 @@ public:
 	void Load(const std::string& filename);
 	void DrawUI();
 
-	glm::vec3 GetCenter() const { return m_center; }
+	glm::vec3 GetCenter() const { return center; }
 
 private:
 	void CalculateCenter();
 
-	bool m_isLoaded = false;
-	std::string m_filePath;
-	std::vector<Zone> m_zones;
+	bool isLoaded = false;
+	std::string filePath;
+	std::vector<Zone> zones;
 
-	RenderMode m_renderMode = RenderMode::Lines;
+	RenderMode renderMode = RenderMode::Lines;
 
-	glm::vec3 m_center = glm::vec3();
-	glm::vec3 m_color = glm::vec3(1.0f, 1.0f, 1.0f);
+	glm::vec3 center = glm::vec3();
+	glm::vec3 color = glm::vec3(1.0f, 1.0f, 1.0f);
 };

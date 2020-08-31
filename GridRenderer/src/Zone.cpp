@@ -7,15 +7,15 @@
 
 Zone::Zone()
 {
-	glGenVertexArrays(1, &m_vao);
-	glBindVertexArray(m_vao);
+	glGenVertexArrays(1, &vao);
+	glBindVertexArray(vao);
 
-	glGenBuffers(1, &m_vbo);
-	glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
+	glGenBuffers(1, &vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glBufferData(GL_ARRAY_BUFFER, 0, nullptr, GL_STATIC_DRAW);
 
-	glGenBuffers(1, &m_ibo);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ibo);
+	glGenBuffers(1, &ibo);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, 0, nullptr, GL_STATIC_DRAW);
 
 	glBindVertexArray(0);
@@ -24,46 +24,46 @@ Zone::Zone()
 
 Zone::~Zone()
 {
-	glDeleteBuffers(1, &m_vao);
-	glDeleteBuffers(1, &m_vbo);
-	glDeleteBuffers(1, &m_ibo);
+	glDeleteBuffers(1, &vao);
+	glDeleteBuffers(1, &vbo);
+	glDeleteBuffers(1, &ibo);
 }
 
 glm::vec3 Zone::GetCenter() const
 {
 	glm::vec3 sum = glm::vec3();
 
-	for (const auto vertex : m_vertices)
+	for (const auto vertex : vertices)
 	{
 		sum += vertex;
 	}
 
-	return sum / (float)m_vertices.size();
+	return sum / (float)vertices.size();
 }
 
 void Zone::Draw(RenderMode renderMode) const
 {
-	if (!m_isActive)
+	if (!isActive)
 	{
 		return;
 	}
 
-	if (m_vao <= 0 || m_vbo <= 0)
+	if (vao <= 0 || vbo <= 0)
 	{
 		std::cout << "Grid's VAO and VBO are not initialized" << std::endl;
 		return;
 	}
 
-	glBindVertexArray(m_vao);
+	glBindVertexArray(vao);
 	
 	switch (renderMode)
 	{
 	case RenderMode::Lines:
-		glDrawElements(GL_LINES, m_indexCount, GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_LINES, indexCount, GL_UNSIGNED_INT, 0);
 		break;
 
 	case RenderMode::Points:
-		glDrawArrays(GL_POINTS, 0, m_vertices.size());
+		glDrawArrays(GL_POINTS, 0, vertices.size());
 		break;
 	}
 
@@ -74,28 +74,28 @@ std::vector<GLuint> CalculateIndices(const tecplot::TecplotZone& tecplotZone);
 
 void Zone::SetData(const tecplot::TecplotZone& tecplotZone)
 {
-	m_vertices = tecplotZone.vertices;
+	vertices = tecplotZone.vertices;
 	
-	m_indices = CalculateIndices(tecplotZone);
-	m_indexCount = m_indices.size();
+	indices = CalculateIndices(tecplotZone);
+	indexCount = indices.size();
 
-	m_param1 = tecplotZone.param1;
-	m_param2 = tecplotZone.param2;
-	m_param3 = tecplotZone.param3;
+	param1 = tecplotZone.param1;
+	param2 = tecplotZone.param2;
+	param3 = tecplotZone.param3;
 
-	uint32_t vertexCount = m_vertices.size();
+	uint32_t vertexCount = vertices.size();
 	uint32_t coordsSize = vertexCount * sizeof(GLfloat) * 3;
 	uint32_t paramSize = vertexCount * sizeof(GLfloat);
 
-	glBindVertexArray(m_vao);
+	glBindVertexArray(vao);
 
-	glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glBufferData(GL_ARRAY_BUFFER, vertexCount * sizeof(GLfloat) * 6, nullptr, GL_STATIC_DRAW);
 
-	glBufferSubData(GL_ARRAY_BUFFER, 0,								coordsSize,							(GLfloat*)m_vertices.data());
-	glBufferSubData(GL_ARRAY_BUFFER, coordsSize,					m_param1.size() * sizeof(GLfloat),	(GLfloat*)m_param1.data());
-	glBufferSubData(GL_ARRAY_BUFFER, coordsSize + paramSize,		m_param2.size() * sizeof(GLfloat),	(GLfloat*)m_param2.data());
-	glBufferSubData(GL_ARRAY_BUFFER, coordsSize + paramSize * 2,	m_param3.size() * sizeof(GLfloat),	(GLfloat*)m_param3.data());
+	glBufferSubData(GL_ARRAY_BUFFER, 0,								coordsSize,							(GLfloat*)vertices.data());
+	glBufferSubData(GL_ARRAY_BUFFER, coordsSize,					param1.size() * sizeof(GLfloat),	(GLfloat*)param1.data());
+	glBufferSubData(GL_ARRAY_BUFFER, coordsSize + paramSize,		param2.size() * sizeof(GLfloat),	(GLfloat*)param2.data());
+	glBufferSubData(GL_ARRAY_BUFFER, coordsSize + paramSize * 2,	param3.size() * sizeof(GLfloat),	(GLfloat*)param3.data());
 
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (void*)0);
@@ -109,8 +109,8 @@ void Zone::SetData(const tecplot::TecplotZone& tecplotZone)
 	glEnableVertexAttribArray(3);
 	glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, sizeof(GLfloat), (void*)(vertexCount * sizeof(GLfloat) * 5));
 
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ibo);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_indices.size() * sizeof(GLuint), m_indices.data(), GL_STATIC_DRAW);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLuint), indices.data(), GL_STATIC_DRAW);
 
 	glBindVertexArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -122,7 +122,7 @@ void Zone::DrawUI(int index)
 
 	ImGui::Text("Zone #%i", index);
 	ImGui::SameLine(ImGui::GetWindowWidth() - 60);
-	ImGui::Checkbox("##isActive", &m_isActive);
+	ImGui::Checkbox("##isActive", &isActive);
 
 	ImGui::PopID();
 }

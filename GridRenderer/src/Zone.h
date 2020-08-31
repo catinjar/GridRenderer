@@ -21,18 +21,18 @@ public:
 	glm::vec3 GetCenter() const;
 
 private:
-	bool m_isActive = true;
+	bool isActive = true;
 	
-	std::vector<glm::vec3> m_vertices;
-	std::vector<GLuint> m_indices;
+	std::vector<glm::vec3> vertices;
+	std::vector<GLuint> indices;
 	
-	std::vector<GLfloat> m_param1;
-	std::vector<GLfloat> m_param2;
-	std::vector<GLfloat> m_param3;
+	std::vector<GLfloat> param1;
+	std::vector<GLfloat> param2;
+	std::vector<GLfloat> param3;
 
-	GLuint m_vao = 0;
-	GLuint m_vbo = 0;
-	GLuint m_ibo = 0;
+	GLuint vao = 0;
+	GLuint vbo = 0;
+	GLuint ibo = 0;
 
-	int m_indexCount = 0;
+	int indexCount = 0;
 };
