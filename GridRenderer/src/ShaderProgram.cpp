@@ -106,13 +106,13 @@ GLuint ShaderProgram::operator[](const char* name) const
 	return glGetUniformLocation(m_programId, name);
 }
 
-#ifdef _DEBUG
-
 void ShaderProgram::HotloadChanges()
 {
 	const uint32_t HOTLOAD_MIN_DELAY_MILLIS = 1000;
 
-	if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() - m_lastCompileTs < HOTLOAD_MIN_DELAY_MILLIS)
+	const auto now = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+
+	if (now - m_lastCompileTs < HOTLOAD_MIN_DELAY_MILLIS)
 		return;
 
 	bool changed = false;
@@ -138,5 +138,3 @@ void ShaderProgram::HotloadChanges()
 	if (changed)
 		Compile();
 }
-
-#endif

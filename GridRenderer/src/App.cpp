@@ -66,17 +66,38 @@ void App::UI()
 	ImGui_ImplSDL2_NewFrame(m_window);
 	ImGui::NewFrame();
 
-	static bool showDemoWindow = false;
-	if (showDemoWindow)
-		ImGui::ShowDemoWindow(&showDemoWindow);
+	DrawOptionsWindow();
+	DrawGridWindow();
 
-	static bool showOptionsWindow = true;
-	ImGui::Begin("Options", &showOptionsWindow);
+	if (isImguiDemoEnabled)
+		ImGui::ShowDemoWindow(&isImguiDemoEnabled);
+
+	ImGui::End();
+}
+
+void App::DrawOptionsWindow()
+{
+	ImGui::Begin("Options");
 
 	DrawFileUI();
+	DrawSettings();
+
+	ImGui::End();
+}
+
+void App::DrawGridWindow()
+{
+	ImGui::Begin("Grid");
+
 	m_grid.DrawUI();
 
 	ImGui::End();
+}
+
+void App::DrawSettings()
+{
+	ImGui::Checkbox("Shader Hotloading", &isHotloadEnabled);
+	ImGui::Checkbox("Show ImGui Demo", &isImguiDemoEnabled);
 }
 
 void App::DrawFileUI()
@@ -93,9 +114,8 @@ void App::Update()
 {
 	m_camera.Update(m_grid);
 
-#ifdef _DEBUG
-	m_defaultShaderProgram.HotloadChanges();
-#endif
+	if (isHotloadEnabled)
+		m_defaultShaderProgram.HotloadChanges();
 }
 
 void App::Render()

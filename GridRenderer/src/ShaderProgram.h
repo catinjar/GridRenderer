@@ -15,12 +15,9 @@ public:
 
 	void Use() const;
 	void Compile();
+	void HotloadChanges();
 
 	GLuint operator[](const char* name) const;
-
-#ifdef _DEBUG
-	void HotloadChanges();
-#endif
 
 private:
 	GLuint m_programId = 0;

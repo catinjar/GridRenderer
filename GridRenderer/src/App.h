@@ -21,7 +21,11 @@ private:
 	void Update();
 	void Render();
 	
+	void DrawOptionsWindow();
+	void DrawGridWindow();
+
 	void DrawFileUI();
+	void DrawSettings();
 
 	SDL_Window* m_window;
 
@@ -29,6 +33,9 @@ private:
 
 	Grid m_grid;
 	CameraController m_camera;
+
+	bool isHotloadEnabled = true;
+	bool isImguiDemoEnabled = false;
 
 	ShaderProgram m_defaultShaderProgram = ShaderProgram("shaders\\points.vert", "shaders\\points.frag");
 };
