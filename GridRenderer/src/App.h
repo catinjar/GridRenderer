@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 #include "Grid.h"
 #include "CameraController.h"
 #include "ShaderProgram.h"
@@ -22,10 +24,13 @@ private:
 	void Render();
 	
 	void DrawOptionsWindow();
-	void DrawGridWindow();
-
 	void DrawFileUI();
 	void DrawSettings();
+
+	void DrawGridWindow();
+
+	void DrawMaterialWindow();
+	void RecompileShaderProgram();
 
 	SDL_Window* window;
 
@@ -37,5 +42,8 @@ private:
 	bool isHotloadEnabled = true;
 	bool isImguiDemoEnabled = false;
 
-	ShaderProgram defaultShaderProgram = ShaderProgram("shaders\\points.vert", "shaders\\points.frag");
+	std::string vertexShaderFilename = "shaders\\default.vert";
+	std::string fragmentShaderFilename = "shaders\\default.frag";
+
+	ShaderProgram shaderProgram = ShaderProgram(vertexShaderFilename, fragmentShaderFilename);
 };

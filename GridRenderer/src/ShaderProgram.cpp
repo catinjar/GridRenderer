@@ -138,3 +138,12 @@ void ShaderProgram::HotloadChanges()
 	if (changed)
 		Compile();
 }
+
+void ShaderProgram::SetShaders(const std::string& vertexShaderFilename, const std::string& fragmentShaderFilename)
+{
+	this->vertexShaderFilename = vertexShaderFilename;
+	this->fragmentShaderFilename = fragmentShaderFilename;
+
+	Compile();
+}
+
