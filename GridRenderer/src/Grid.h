@@ -22,7 +22,7 @@ public:
 	Grid();
 	virtual ~Grid();
 
-	void Draw(const ShaderProgram& shader) const;
+	void Draw() const;
 	void Load(const std::string& filename);
 	void DrawUI();
 
@@ -38,5 +38,4 @@ private:
 	RenderMode renderMode = RenderMode::Lines;
 
 	glm::vec3 center = glm::vec3();
-	glm::vec3 color = glm::vec3(1.0f, 1.0f, 1.0f);
 };

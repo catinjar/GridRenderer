@@ -86,7 +86,6 @@ void App::DrawOptionsWindow()
 
 void App::DrawSettings()
 {
-	ImGui::Checkbox("Shader Hotloading", &isHotloadEnabled);
 	ImGui::Checkbox("Show ImGui Demo", &isImguiDemoEnabled);
 }
 
@@ -111,42 +110,13 @@ void App::DrawGridWindow()
 
 void App::DrawMaterialWindow()
 {
-	ImGui::Begin("Material");
-
-	ImGui::Text(vertexShaderFilename.c_str());
-	ImGui::SameLine();
-	
-	// TODO: Check file extension
-	if (ImGui::Button("Select##Vertex"))
-	{
-		if (NFD_ChooseFile(vertexShaderFilename))
-			RecompileShaderProgram();
-	}
-
-	ImGui::Text(fragmentShaderFilename.c_str());
-	ImGui::SameLine();
-
-	if (ImGui::Button("Select##Fragment"))
-	{
-		if (NFD_ChooseFile(fragmentShaderFilename))
-			RecompileShaderProgram();
-	}
-
-	ImGui::End();
-}
-
-// TODO: Move shader selection inside ShaderProgram
-void App::RecompileShaderProgram()
-{
-	shaderProgram.SetShaders(vertexShaderFilename, fragmentShaderFilename);
+	material.DrawUI();
 }
 
 void App::Update()
 {
 	camera.Update(grid);
-
-	if (isHotloadEnabled)
-		shaderProgram.HotloadChanges();
+	material.Update();
 }
 
 void App::Render()
@@ -156,9 +126,8 @@ void App::Render()
 
 	glClearColor(0.0f, 191.0f / 255.0f, 1.0f, 1.0f);
 
-	shaderProgram.Use();
-	camera.ApplyUniforms(shaderProgram);
-	grid.Draw(shaderProgram);
+	material.Render(camera, grid);
+	grid.Draw();
 
 	auto imguiIO = &ImGui::GetIO();
 	glViewport(0, 0, (int)imguiIO->DisplaySize.x, (int)imguiIO->DisplaySize.y);

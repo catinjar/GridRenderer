@@ -69,6 +69,9 @@
     <ClCompile Include="src\NFDHelper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Material.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\third_party\imgui\imconfig.h">
@@ -117,6 +120,9 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="src\NFDHelper.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Material.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

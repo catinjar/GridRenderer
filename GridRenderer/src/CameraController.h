@@ -16,6 +16,9 @@ public:
 
 	void ApplyUniforms(const ShaderProgram& shaderProgram);
 
+	glm::mat4 GetProjection() const { return projection; }
+	glm::mat4 GetView() const { return view; }
+
 private:
 	void KeyboardInput();
 	void MouseInput();

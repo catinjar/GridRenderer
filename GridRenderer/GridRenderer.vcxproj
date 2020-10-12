@@ -23,6 +23,7 @@
     <ClCompile Include="src\CameraController.cpp" />
     <ClCompile Include="src\Grid.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\Material.cpp" />
     <ClCompile Include="src\Misc.cpp" />
     <ClCompile Include="src\NFDHelper.cpp" />
     <ClCompile Include="src\ShaderProgram.cpp" />
@@ -39,6 +40,7 @@
     <ClInclude Include="src\App.h" />
     <ClInclude Include="src\CameraController.h" />
     <ClInclude Include="src\Grid.h" />
+    <ClInclude Include="src\Material.h" />
     <ClInclude Include="src\Misc.h" />
     <ClInclude Include="src\NFDHelper.h" />
     <ClInclude Include="src\ShaderProgram.h" />

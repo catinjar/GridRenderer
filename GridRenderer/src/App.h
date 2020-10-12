@@ -3,6 +3,7 @@
 #include <string>
 
 #include "Grid.h"
+#include "Material.h"
 #include "CameraController.h"
 #include "ShaderProgram.h"
 
@@ -37,13 +38,8 @@ private:
 	bool isRunning = true;
 
 	Grid grid;
+	Material material;
 	CameraController camera;
 
-	bool isHotloadEnabled = true;
 	bool isImguiDemoEnabled = false;
-
-	std::string vertexShaderFilename = "shaders\\default.vert";
-	std::string fragmentShaderFilename = "shaders\\default.frag";
-
-	ShaderProgram shaderProgram = ShaderProgram(vertexShaderFilename, fragmentShaderFilename);
 };

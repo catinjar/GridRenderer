@@ -17,10 +17,8 @@ Grid::~Grid()
 {
 }
 
-void Grid::Draw(const ShaderProgram& shader) const
+void Grid::Draw() const
 {
-	glUniform3f(shader["defaultColor"], color.r, color.g, color.b);
-
 	for (const auto& zone : zones)
 	{
 		zone.Draw(renderMode);
@@ -75,8 +73,6 @@ void Grid::DrawUI()
 	ImGui::SameLine();
 	if (ImGui::RadioButton("Points", renderMode == RenderMode::Points))
 		renderMode = RenderMode::Points;
-
-	ImGui::ColorEdit3("Color", &color[0]);
 
 	ImGui::Text("Zones:");
 
