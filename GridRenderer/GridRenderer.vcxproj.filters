@@ -48,9 +48,6 @@
     <ClCompile Include="src\Grid.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\ShaderProgram.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\App.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -70,6 +67,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Material.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ShaderMetaData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ShaderMetaData.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -101,9 +104,6 @@
     <ClInclude Include="src\Grid.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\ShaderProgram.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\App.h">
       <Filter>Source Files</Filter>
     </ClInclude>
@@ -123,6 +123,12 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Material.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ShaderMetaData.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ShaderMetaData.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

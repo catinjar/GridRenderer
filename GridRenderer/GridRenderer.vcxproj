@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ShaderMetaData.cpp" />
     <ClCompile Include="src\App.cpp" />
     <ClCompile Include="src\CameraController.cpp" />
     <ClCompile Include="src\Grid.cpp" />
@@ -26,7 +27,7 @@
     <ClCompile Include="src\Material.cpp" />
     <ClCompile Include="src\Misc.cpp" />
     <ClCompile Include="src\NFDHelper.cpp" />
-    <ClCompile Include="src\ShaderProgram.cpp" />
+    <ClCompile Include="src\ShaderMetaData.cpp" />
     <ClCompile Include="src\Tecplot.cpp" />
     <ClCompile Include="src\third_party\imgui\imgui.cpp" />
     <ClCompile Include="src\third_party\imgui\imgui_demo.cpp" />
@@ -37,13 +38,14 @@
     <ClCompile Include="src\Zone.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ShaderMetaData.h" />
     <ClInclude Include="src\App.h" />
     <ClInclude Include="src\CameraController.h" />
     <ClInclude Include="src\Grid.h" />
     <ClInclude Include="src\Material.h" />
     <ClInclude Include="src\Misc.h" />
     <ClInclude Include="src\NFDHelper.h" />
-    <ClInclude Include="src\ShaderProgram.h" />
+    <ClInclude Include="src\ShaderMetaData.h" />
     <ClInclude Include="src\Tecplot.h" />
     <ClInclude Include="src\third_party\imgui\imconfig.h" />
     <ClInclude Include="src\third_party\imgui\imgui.h" />
