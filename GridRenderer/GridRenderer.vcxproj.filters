@@ -20,7 +20,7 @@
       <UniqueIdentifier>{cc8626c1-3c65-4f24-b8c8-2489c7f35c39}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\shaders">
-      <UniqueIdentifier>{d8c0f409-0286-4aa6-a9b5-ce3d9629f5b0}</UniqueIdentifier>
+      <UniqueIdentifier>{9cc00f9a-759b-4b1f-8e7e-9e4717c395fb}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -69,10 +69,10 @@
     <ClCompile Include="src\Material.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ShaderMetaData.cpp">
+    <ClCompile Include="src\ShaderMetaData.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\ShaderMetaData.cpp">
+    <ClCompile Include="src\ShaderProgram.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -125,18 +125,21 @@
     <ClInclude Include="src\Material.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="ShaderMetaData.h">
+    <ClInclude Include="src\ShaderMetaData.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\ShaderMetaData.h">
+    <ClInclude Include="src\ShaderProgram.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="shaders\points.frag">
+    <None Include="shaders\default.frag">
       <Filter>Source Files\shaders</Filter>
     </None>
-    <None Include="shaders\points.vert">
+    <None Include="shaders\default.vert">
+      <Filter>Source Files\shaders</Filter>
+    </None>
+    <None Include="shaders\red.frag">
       <Filter>Source Files\shaders</Filter>
     </None>
   </ItemGroup>

@@ -106,14 +106,19 @@ GLuint ShaderProgram::operator[](const char* name) const
 	return glGetUniformLocation(programId, name);
 }
 
-void ShaderProgram::HotloadChanges()
+GLuint ShaderProgram::operator[](const std::string name) const
+{
+	return glGetUniformLocation(programId, name.c_str());
+}
+
+bool ShaderProgram::HotloadChanges()
 {
 	const uint32_t HOTLOAD_MIN_DELAY_MILLIS = 1000;
 
 	const auto now = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 
 	if (now - lastCompileTs < HOTLOAD_MIN_DELAY_MILLIS)
-		return;
+		return false;
 
 	bool changed = false;
 
@@ -137,6 +142,8 @@ void ShaderProgram::HotloadChanges()
 
 	if (changed)
 		Compile();
+
+	return changed;
 }
 
 void ShaderProgram::SetShaders(const std::string& vertexShaderFilename, const std::string& fragmentShaderFilename)

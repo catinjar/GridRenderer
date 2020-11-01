@@ -1,12 +1,16 @@
 #include "Material.h"
 
 #include "third_party/imgui/imgui.h"
+
 #include "NFDHelper.h"
 
 void Material::Update()
 {
 	if (isHotloadEnabled)
-		shaderProgram.HotloadChanges();
+	{
+		if (shaderProgram.HotloadChanges())
+			shaderMetaData.HotloadChanges();
+	}
 }
 
 void Material::Render(const CameraController& camera, const Grid& grid) const
@@ -19,7 +23,7 @@ void Material::Render(const CameraController& camera, const Grid& grid) const
 	glUniformMatrix4fv(shaderProgram["view"], 1, false, &view[0][0]);
 	glUniformMatrix4fv(shaderProgram["projection"], 1, false, &projection[0][0]);
 
-	glUniform3f(shaderProgram["defaultColor"], color.r, color.g, color.b);
+	shaderMetaData.ApplyUniforms(shaderProgram);
 }
 
 void Material::DrawUI()
@@ -47,7 +51,7 @@ void Material::DrawUI()
 			RecompileShaderProgram();
 	}
 
-	ImGui::ColorEdit3("Color", &color[0]);
+	shaderMetaData.DrawUI();
 
 	ImGui::End();
 }
@@ -56,4 +60,5 @@ void Material::DrawUI()
 void Material::RecompileShaderProgram()
 {
 	shaderProgram.SetShaders(vertexShaderFilename, fragmentShaderFilename);
+	shaderMetaData = ShaderMetaData(vertexShaderFilename, fragmentShaderFilename);
 }

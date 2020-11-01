@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <vector>
 
 namespace misc
 {
@@ -9,4 +10,5 @@ namespace misc
 	void TrimNumberL(std::string& str);
 
 	std::string ReadAllText(const std::string &filename);
+	std::vector<std::string> Split(const std::string& s, char delimiter);
 }

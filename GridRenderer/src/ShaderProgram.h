@@ -15,10 +15,11 @@ public:
 
 	void Use() const;
 	void Compile();
-	void HotloadChanges();
+	bool HotloadChanges();
 	void SetShaders(const std::string& vertexShaderFilename, const std::string& fragmentShaderFilename);
 
 	GLuint operator[](const char* name) const;
+	GLuint operator[](const std::string name) const;
 
 private:
 	GLuint programId = 0;
