@@ -11,4 +11,6 @@ namespace misc
 
 	std::string ReadAllText(const std::string &filename);
 	std::vector<std::string> Split(const std::string& s, char delimiter);
+
+	double GetCurrentTimeInSeconds();
 }

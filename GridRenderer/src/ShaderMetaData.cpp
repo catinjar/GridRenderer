@@ -33,7 +33,7 @@ void ShaderMetaData::ProcessShader(const std::string& shaderFilename)
 		{
 			const auto name = tokens[2].substr(0, tokens[2].length() - 2); // '\r' and ';'
 
-			if (name == "view" || name == "projection") // Reserved uniforms
+			if (name == "view" || name == "projection" || name == "time" || name == "cosTime" || name == "sinTime") // Reserved uniforms
 				continue;
 
 			uniforms.push_back(
@@ -330,17 +330,17 @@ void ShaderMetaData::DrawUI()
 
 		case ShaderDataType::Vec2:
 		case ShaderDataType::dVec2:
-			ImGui::DragFloat2(uniform.name.c_str(), &uniform.vec2[0]);
+			ImGui::DragFloat2(uniform.name.c_str(), &uniform.vec2[0], 0.01f);
 			break;
 
 		case ShaderDataType::Vec3:
 		case ShaderDataType::dVec3:
-			ImGui::DragFloat3(uniform.name.c_str(), &uniform.vec3[0]);
+			ImGui::DragFloat3(uniform.name.c_str(), &uniform.vec3[0], 0.01f);
 			break;
 
 		case ShaderDataType::Vec4:
 		case ShaderDataType::dVec4:
-			ImGui::DragFloat4(uniform.name.c_str(), &uniform.vec4[0]);
+			ImGui::DragFloat4(uniform.name.c_str(), &uniform.vec4[0], 0.01f);
 			break;
 
 		case ShaderDataType::Mat2x2:
@@ -354,7 +354,7 @@ void ShaderMetaData::DrawUI()
 				{
 					ImGui::Text("%ix%i", i, j);
 					ImGui::SameLine();
-					ImGui::DragFloat(("##" + std::to_string(i) + "x" + std::to_string(j)).c_str(), &uniform.mat2x2[i][j]);
+					ImGui::DragFloat(("##" + std::to_string(i) + "x" + std::to_string(j)).c_str(), &uniform.mat2x2[i][j], 0.01f);
 					ImGui::SameLine();
 				}
 
@@ -374,7 +374,7 @@ void ShaderMetaData::DrawUI()
 				{
 					ImGui::Text("%ix%i", i, j);
 					ImGui::SameLine();
-					ImGui::DragFloat(("##" + std::to_string(i) + "x" + std::to_string(j)).c_str(), &uniform.mat2x3[i][j]);
+					ImGui::DragFloat(("##" + std::to_string(i) + "x" + std::to_string(j)).c_str(), &uniform.mat2x3[i][j], 0.01f);
 					ImGui::SameLine();
 				}
 
@@ -394,7 +394,7 @@ void ShaderMetaData::DrawUI()
 				{
 					ImGui::Text("%ix%i", i, j);
 					ImGui::SameLine();
-					ImGui::DragFloat(("##" + std::to_string(i) + "x" + std::to_string(j)).c_str(), &uniform.mat2x4[i][j]);
+					ImGui::DragFloat(("##" + std::to_string(i) + "x" + std::to_string(j)).c_str(), &uniform.mat2x4[i][j], 0.01f);
 					ImGui::SameLine();
 				}
 				
@@ -414,7 +414,7 @@ void ShaderMetaData::DrawUI()
 				{
 					ImGui::Text("%ix%i", i, j);
 					ImGui::SameLine();
-					ImGui::DragFloat(("##" + std::to_string(i) + "x" + std::to_string(j)).c_str(), &uniform.mat3x2[i][j]);
+					ImGui::DragFloat(("##" + std::to_string(i) + "x" + std::to_string(j)).c_str(), &uniform.mat3x2[i][j], 0.01f);
 					ImGui::SameLine();
 				}
 
@@ -435,7 +435,7 @@ void ShaderMetaData::DrawUI()
 				{
 					ImGui::Text("%ix%i", i, j);
 					ImGui::SameLine();
-					ImGui::DragFloat(("##" + std::to_string(i) + "x" + std::to_string(j)).c_str(), &uniform.mat3x3[i][j]);
+					ImGui::DragFloat(("##" + std::to_string(i) + "x" + std::to_string(j)).c_str(), &uniform.mat3x3[i][j], 0.01f);
 					ImGui::SameLine();
 				}
 
@@ -455,7 +455,7 @@ void ShaderMetaData::DrawUI()
 				{
 					ImGui::Text("%ix%i", i, j);
 					ImGui::SameLine();
-					ImGui::DragFloat(("##" + std::to_string(i) + "x" + std::to_string(j)).c_str(), &uniform.mat3x4[i][j]);
+					ImGui::DragFloat(("##" + std::to_string(i) + "x" + std::to_string(j)).c_str(), &uniform.mat3x4[i][j], 0.01f);
 					ImGui::SameLine();
 				}
 
@@ -475,7 +475,7 @@ void ShaderMetaData::DrawUI()
 				{
 					ImGui::Text("%ix%i", i, j);
 					ImGui::SameLine();
-					ImGui::DragFloat(("##" + std::to_string(i) + "x" + std::to_string(j)).c_str(), &uniform.mat4x2[i][j]);
+					ImGui::DragFloat(("##" + std::to_string(i) + "x" + std::to_string(j)).c_str(), &uniform.mat4x2[i][j], 0.01f);
 					ImGui::SameLine();
 				}
 
@@ -495,7 +495,7 @@ void ShaderMetaData::DrawUI()
 				{
 					ImGui::Text("%ix%i", i, j);
 					ImGui::SameLine();
-					ImGui::DragFloat(("##" + std::to_string(i) + "x" + std::to_string(j)).c_str(), &uniform.mat4x3[i][j]);
+					ImGui::DragFloat(("##" + std::to_string(i) + "x" + std::to_string(j)).c_str(), &uniform.mat4x3[i][j], 0.01f);
 					ImGui::SameLine();
 				}
 
@@ -516,7 +516,7 @@ void ShaderMetaData::DrawUI()
 				{
 					ImGui::Text("%ix%i", i, j);
 					ImGui::SameLine();
-					ImGui::DragFloat(("##" + std::to_string(i) + "x" + std::to_string(j)).c_str(), &uniform.mat4x4[i][j]);
+					ImGui::DragFloat(("##" + std::to_string(i) + "x" + std::to_string(j)).c_str(), &uniform.mat4x4[i][j], 0.01f);
 					ImGui::SameLine();
 				}
 

@@ -12,6 +12,8 @@ out float param3;
 uniform mat4 view;
 uniform mat4 projection;
 
+uniform vec4 sinTime;
+
 void main(void)
 {
 	param1 = inParam1;
@@ -19,5 +21,5 @@ void main(void)
 	param3 = inParam3;
 
 	gl_PointSize = 2.0f;
-	gl_Position = projection * view * inPosition;
+	gl_Position = projection * view * (inPosition + vec4(sinTime.x * 2, sinTime.x * 2, sinTime.x * 2, 0.0) / 2.0);
 }

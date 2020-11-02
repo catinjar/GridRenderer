@@ -3,6 +3,7 @@
 #include "third_party/imgui/imgui.h"
 
 #include "NFDHelper.h"
+#include "Misc.h"
 
 void Material::Update()
 {
@@ -24,6 +25,7 @@ void Material::Render(const CameraController& camera, const Grid& grid) const
 	glUniformMatrix4fv(shaderProgram["projection"], 1, false, &projection[0][0]);
 
 	shaderMetaData.ApplyUniforms(shaderProgram);
+	ApplyDefaultUniforms();
 }
 
 void Material::DrawUI()
@@ -61,4 +63,13 @@ void Material::RecompileShaderProgram()
 {
 	shaderProgram.SetShaders(vertexShaderFilename, fragmentShaderFilename);
 	shaderMetaData = ShaderMetaData(vertexShaderFilename, fragmentShaderFilename);
+}
+
+void Material::ApplyDefaultUniforms() const
+{
+	double seconds = misc::GetCurrentTimeInSeconds();
+
+	glUniform4d(shaderProgram["time"], seconds, seconds / 2.0, seconds * 2, seconds * 3);
+	glUniform4f(shaderProgram["sinTime"], glm::sin(seconds), glm::sin(seconds / 2.0), glm::sin(seconds / 4.0), glm::sin(seconds / 8.0));
+	glUniform4f(shaderProgram["cosTime"], glm::cos(seconds), glm::cos(seconds / 2.0), glm::cos(seconds / 4.0), glm::cos(seconds / 8.0));
 }

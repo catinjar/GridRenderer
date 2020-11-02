@@ -16,6 +16,8 @@ public:
 
 private:
 	void RecompileShaderProgram();
+	void ApplyDefaultUniforms() const;
+
 
 	bool isHotloadEnabled = true;
 
