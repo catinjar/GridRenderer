@@ -92,8 +92,19 @@ void App::DrawSettings()
 void App::DrawGridList()
 {
 	if (ImGui::Button("Add"))
-	{
 		grids.push_back(std::make_unique<Grid>());
+
+	if (grids.size() > 1)
+	{
+		ImGui::SameLine();
+
+		if (ImGui::Button("Delete"))
+		{
+			grids.erase(grids.begin() + selectedGridIndex);
+
+			if (selectedGridIndex >= grids.size())
+				selectedGridIndex = grids.size() - 1;
+		}
 	}
 
 	std::vector<const char*> gridNames;
