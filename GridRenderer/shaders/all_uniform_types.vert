@@ -11,6 +11,7 @@ out float param3;
 
 uniform mat4 view;
 uniform mat4 projection;
+uniform mat4 model;
 
 uniform bool boolValue;
 uniform int intValue;
@@ -52,5 +53,5 @@ void main(void)
 	param3 = inParam3;
 
 	gl_PointSize = 2.0f;
-	gl_Position = projection * view * inPosition;
+	gl_Position = projection * view * model * inPosition;
 }

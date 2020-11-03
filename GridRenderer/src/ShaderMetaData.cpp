@@ -33,7 +33,7 @@ void ShaderMetaData::ProcessShader(const std::string& shaderFilename)
 		{
 			const auto name = tokens[2].substr(0, tokens[2].length() - 2); // '\r' and ';'
 
-			if (name == "view" || name == "projection" || name == "time" || name == "cosTime" || name == "sinTime") // Reserved uniforms
+			if (name == "view" || name == "projection" || name == "model" || name == "time" || name == "cosTime" || name == "sinTime") // Reserved uniforms
 				continue;
 
 			uniforms.push_back(

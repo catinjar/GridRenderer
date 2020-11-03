@@ -1,11 +1,11 @@
 #pragma once
 
 #include <string>
+#include <vector>
+#include <memory>
 
 #include "Grid.h"
-#include "Material.h"
 #include "CameraController.h"
-#include "ShaderProgram.h"
 
 struct SDL_Window;
 
@@ -25,20 +25,17 @@ private:
 	void Render();
 	
 	void DrawOptionsWindow();
-	void DrawFileUI();
 	void DrawSettings();
-
-	void DrawGridWindow();
-
-	void DrawMaterialWindow();
-	void RecompileShaderProgram();
+	void DrawGridList();
+	void DrawGridUI();
 
 	SDL_Window* window;
 
 	bool isRunning = true;
 
-	Grid grid;
-	Material material;
+	std::vector<std::unique_ptr<Grid>> grids;
+	int32_t selectedGridIndex = 0;
+
 	CameraController camera;
 
 	bool isImguiDemoEnabled = false;

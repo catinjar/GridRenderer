@@ -13,6 +13,7 @@
 App::App(SDL_Window* window)
 	: window(window)
 {
+	grids.push_back(std::make_unique<Grid>());
 }
 
 App::~App()
@@ -67,8 +68,7 @@ void App::UI()
 	ImGui::NewFrame();
 
 	DrawOptionsWindow();
-	DrawGridWindow();
-	DrawMaterialWindow();
+	DrawGridUI();
 
 	if (isImguiDemoEnabled)
 		ImGui::ShowDemoWindow(&isImguiDemoEnabled);
@@ -78,8 +78,8 @@ void App::DrawOptionsWindow()
 {
 	ImGui::Begin("Options");
 
-	DrawFileUI();
 	DrawSettings();
+	DrawGridList();
 
 	ImGui::End();
 }
@@ -89,34 +89,29 @@ void App::DrawSettings()
 	ImGui::Checkbox("Show ImGui Demo", &isImguiDemoEnabled);
 }
 
-void App::DrawFileUI()
+void App::DrawGridList()
 {
-	if (ImGui::Button("Load .dat"))
+	if (ImGui::Button("Add"))
 	{
-		std::string filePath;
-		if (NFD_ChooseFile(filePath))
-			grid.Load(filePath);
+		grids.push_back(std::make_unique<Grid>());
 	}
+
+	std::vector<const char*> gridNames;
+	for (const auto& grid : grids)
+		gridNames.push_back(grid->GetName());
+
+	ImGui::ListBox("Grids", &selectedGridIndex, &gridNames[0], gridNames.size(), 5);
 }
 
-void App::DrawGridWindow()
+void App::DrawGridUI()
 {
-	ImGui::Begin("Grid");
-
-	grid.DrawUI();
-
-	ImGui::End();
-}
-
-void App::DrawMaterialWindow()
-{
-	material.DrawUI();
+	grids[selectedGridIndex]->DrawUI();
 }
 
 void App::Update()
 {
-	camera.Update(grid);
-	material.Update();
+	camera.Update(*grids[selectedGridIndex]);
+	grids[selectedGridIndex]->Update();
 }
 
 void App::Render()
@@ -126,8 +121,10 @@ void App::Render()
 
 	glClearColor(0.0f, 191.0f / 255.0f, 1.0f, 1.0f);
 
-	material.Render(camera, grid);
-	grid.Draw();
+	for (const auto& grid : grids)
+	{
+		grid->Draw(camera);
+	}
 
 	auto imguiIO = &ImGui::GetIO();
 	glViewport(0, 0, (int)imguiIO->DisplaySize.x, (int)imguiIO->DisplaySize.y);

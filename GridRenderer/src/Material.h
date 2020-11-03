@@ -5,7 +5,8 @@
 #include "ShaderProgram.h"
 #include "ShaderMetaData.h"
 #include "CameraController.h"
-#include "Grid.h"
+
+class Grid;
 
 class Material
 {
@@ -17,7 +18,6 @@ public:
 private:
 	void RecompileShaderProgram();
 	void ApplyDefaultUniforms() const;
-
 
 	bool isHotloadEnabled = true;
 

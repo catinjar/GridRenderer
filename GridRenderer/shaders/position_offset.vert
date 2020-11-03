@@ -13,6 +13,8 @@ uniform mat4 view;
 uniform mat4 projection;
 uniform mat4 model;
 
+uniform vec3 offset;
+
 void main(void)
 {
 	param1 = inParam1;
@@ -20,5 +22,5 @@ void main(void)
 	param3 = inParam3;
 
 	gl_PointSize = 2.0f;
-	gl_Position = projection * view * model * inPosition;
+	gl_Position = projection * view * model * (inPosition + vec4(offset, 0.0));
 }
