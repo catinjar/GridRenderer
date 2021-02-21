@@ -24,16 +24,25 @@
     <ClCompile Include="src\Grid.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Material.cpp" />
+    <ClCompile Include="src\MaterialEditor.cpp" />
     <ClCompile Include="src\Misc.cpp" />
     <ClCompile Include="src\NFDHelper.cpp" />
     <ClCompile Include="src\ShaderMetaData.cpp" />
     <ClCompile Include="src\ShaderProgram.cpp" />
     <ClCompile Include="src\Tecplot.cpp" />
+    <ClCompile Include="src\third_party\imgui-node-editor\crude_json.cpp" />
+    <ClCompile Include="src\third_party\imgui-node-editor\imgui_canvas.cpp" />
+    <ClCompile Include="src\third_party\imgui-node-editor\imgui_node_editor.cpp" />
+    <ClCompile Include="src\third_party\imgui-node-editor\imgui_node_editor_api.cpp" />
+    <ClCompile Include="src\third_party\imgui-node-editor\utilities\builders.cpp" />
+    <ClCompile Include="src\third_party\imgui-node-editor\utilities\drawing.cpp" />
+    <ClCompile Include="src\third_party\imgui-node-editor\utilities\widgets.cpp" />
     <ClCompile Include="src\third_party\imgui\imgui.cpp" />
     <ClCompile Include="src\third_party\imgui\imgui_demo.cpp" />
     <ClCompile Include="src\third_party\imgui\imgui_draw.cpp" />
     <ClCompile Include="src\third_party\imgui\imgui_impl_opengl3.cpp" />
     <ClCompile Include="src\third_party\imgui\imgui_impl_sdl.cpp" />
+    <ClCompile Include="src\third_party\imgui\imgui_tables.cpp" />
     <ClCompile Include="src\third_party\imgui\imgui_widgets.cpp" />
     <ClCompile Include="src\Zone.cpp" />
   </ItemGroup>
@@ -42,11 +51,21 @@
     <ClInclude Include="src\CameraController.h" />
     <ClInclude Include="src\Grid.h" />
     <ClInclude Include="src\Material.h" />
+    <ClInclude Include="src\MaterialEditor.h" />
     <ClInclude Include="src\Misc.h" />
     <ClInclude Include="src\NFDHelper.h" />
     <ClInclude Include="src\ShaderMetaData.h" />
     <ClInclude Include="src\ShaderProgram.h" />
     <ClInclude Include="src\Tecplot.h" />
+    <ClInclude Include="src\third_party\imgui-node-editor\crude_json.h" />
+    <ClInclude Include="src\third_party\imgui-node-editor\imgui_bezier_math.h" />
+    <ClInclude Include="src\third_party\imgui-node-editor\imgui_canvas.h" />
+    <ClInclude Include="src\third_party\imgui-node-editor\imgui_extra_math.h" />
+    <ClInclude Include="src\third_party\imgui-node-editor\imgui_node_editor.h" />
+    <ClInclude Include="src\third_party\imgui-node-editor\imgui_node_editor_internal.h" />
+    <ClInclude Include="src\third_party\imgui-node-editor\utilities\builders.h" />
+    <ClInclude Include="src\third_party\imgui-node-editor\utilities\drawing.h" />
+    <ClInclude Include="src\third_party\imgui-node-editor\utilities\widgets.h" />
     <ClInclude Include="src\third_party\imgui\imconfig.h" />
     <ClInclude Include="src\third_party\imgui\imgui.h" />
     <ClInclude Include="src\third_party\imgui\imgui_impl_opengl3.h" />
@@ -61,6 +80,9 @@
     <None Include="shaders\default.frag" />
     <None Include="shaders\default.vert" />
     <None Include="shaders\red.frag" />
+    <None Include="src\third_party\imgui-node-editor\imgui_bezier_math.inl" />
+    <None Include="src\third_party\imgui-node-editor\imgui_extra_math.inl" />
+    <None Include="src\third_party\imgui-node-editor\imgui_node_editor_internal.inl" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

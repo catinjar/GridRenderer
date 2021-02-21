@@ -14,10 +14,13 @@ App::App(SDL_Window* window)
 	: window(window)
 {
 	grids.push_back(std::make_unique<Grid>());
+
+	materialEditor.Init();
 }
 
 App::~App()
 {
+	materialEditor.Shutdown();
 }
 
 void App::Frame()
@@ -72,6 +75,8 @@ void App::UI()
 
 	if (isImguiDemoEnabled)
 		ImGui::ShowDemoWindow(&isImguiDemoEnabled);
+
+	materialEditor.Draw();
 }
 
 void App::DrawOptionsWindow()
@@ -131,6 +136,10 @@ void App::Render()
 	glEnable(GL_DEPTH_TEST);
 
 	glClearColor(0.0f, 191.0f / 255.0f, 1.0f, 1.0f);
+
+	SDL_DisplayMode displayMode;
+	SDL_GetCurrentDisplayMode(0, &displayMode);
+	glViewport(0, 0, (int)displayMode.w, (int)displayMode.h);
 
 	for (const auto& grid : grids)
 	{

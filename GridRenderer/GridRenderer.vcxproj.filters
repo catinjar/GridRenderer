@@ -16,34 +16,25 @@
     <Filter Include="Source Files\third_party">
       <UniqueIdentifier>{2d847517-c1e4-4a5a-a4de-84772f9becad}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\third_party\misc">
-      <UniqueIdentifier>{cc8626c1-3c65-4f24-b8c8-2489c7f35c39}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\shaders">
       <UniqueIdentifier>{9cc00f9a-759b-4b1f-8e7e-9e4717c395fb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\third_party\imgui">
+      <UniqueIdentifier>{a6d3f480-be8a-40cd-8331-40f73b4dad3f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\third_party\imgui\misc">
+      <UniqueIdentifier>{cc8626c1-3c65-4f24-b8c8-2489c7f35c39}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\third_party\imgui-node-editor">
+      <UniqueIdentifier>{486ece31-2e84-41f1-aa75-aa60fbc5683e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\third_party\imgui-node-editor\utilities">
+      <UniqueIdentifier>{1c7bdd5e-1b3a-4b8c-98e3-14c90d558b86}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\third_party\imgui\imgui.cpp">
-      <Filter>Source Files\third_party</Filter>
-    </ClCompile>
-    <ClCompile Include="src\third_party\imgui\imgui_demo.cpp">
-      <Filter>Source Files\third_party</Filter>
-    </ClCompile>
-    <ClCompile Include="src\third_party\imgui\imgui_draw.cpp">
-      <Filter>Source Files\third_party</Filter>
-    </ClCompile>
-    <ClCompile Include="src\third_party\imgui\imgui_impl_opengl3.cpp">
-      <Filter>Source Files\third_party</Filter>
-    </ClCompile>
-    <ClCompile Include="src\third_party\imgui\imgui_impl_sdl.cpp">
-      <Filter>Source Files\third_party</Filter>
-    </ClCompile>
-    <ClCompile Include="src\third_party\imgui\imgui_widgets.cpp">
-      <Filter>Source Files\third_party</Filter>
     </ClCompile>
     <ClCompile Include="src\Grid.cpp">
       <Filter>Source Files</Filter>
@@ -75,32 +66,53 @@
     <ClCompile Include="src\ShaderProgram.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\third_party\imgui\imgui.cpp">
+      <Filter>Source Files\third_party\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\third_party\imgui\imgui_demo.cpp">
+      <Filter>Source Files\third_party\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\third_party\imgui\imgui_draw.cpp">
+      <Filter>Source Files\third_party\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\third_party\imgui\imgui_impl_opengl3.cpp">
+      <Filter>Source Files\third_party\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\third_party\imgui\imgui_impl_sdl.cpp">
+      <Filter>Source Files\third_party\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\third_party\imgui\imgui_tables.cpp">
+      <Filter>Source Files\third_party\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\third_party\imgui\imgui_widgets.cpp">
+      <Filter>Source Files\third_party\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\third_party\imgui-node-editor\crude_json.cpp">
+      <Filter>Source Files\third_party\imgui-node-editor</Filter>
+    </ClCompile>
+    <ClCompile Include="src\third_party\imgui-node-editor\imgui_canvas.cpp">
+      <Filter>Source Files\third_party\imgui-node-editor</Filter>
+    </ClCompile>
+    <ClCompile Include="src\third_party\imgui-node-editor\imgui_node_editor.cpp">
+      <Filter>Source Files\third_party\imgui-node-editor</Filter>
+    </ClCompile>
+    <ClCompile Include="src\third_party\imgui-node-editor\imgui_node_editor_api.cpp">
+      <Filter>Source Files\third_party\imgui-node-editor</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MaterialEditor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\third_party\imgui-node-editor\utilities\builders.cpp">
+      <Filter>Source Files\third_party\imgui-node-editor\utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="src\third_party\imgui-node-editor\utilities\drawing.cpp">
+      <Filter>Source Files\third_party\imgui-node-editor\utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="src\third_party\imgui-node-editor\utilities\widgets.cpp">
+      <Filter>Source Files\third_party\imgui-node-editor\utilities</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\third_party\imgui\imconfig.h">
-      <Filter>Source Files\third_party</Filter>
-    </ClInclude>
-    <ClInclude Include="src\third_party\imgui\imgui.h">
-      <Filter>Source Files\third_party</Filter>
-    </ClInclude>
-    <ClInclude Include="src\third_party\imgui\imgui_impl_opengl3.h">
-      <Filter>Source Files\third_party</Filter>
-    </ClInclude>
-    <ClInclude Include="src\third_party\imgui\imgui_impl_sdl.h">
-      <Filter>Source Files\third_party</Filter>
-    </ClInclude>
-    <ClInclude Include="src\third_party\imgui\imgui_internal.h">
-      <Filter>Source Files\third_party</Filter>
-    </ClInclude>
-    <ClInclude Include="src\third_party\imgui\imstb_rectpack.h">
-      <Filter>Source Files\third_party</Filter>
-    </ClInclude>
-    <ClInclude Include="src\third_party\imgui\imstb_textedit.h">
-      <Filter>Source Files\third_party</Filter>
-    </ClInclude>
-    <ClInclude Include="src\third_party\imgui\imstb_truetype.h">
-      <Filter>Source Files\third_party</Filter>
-    </ClInclude>
     <ClInclude Include="src\Grid.h">
       <Filter>Source Files</Filter>
     </ClInclude>
@@ -131,6 +143,60 @@
     <ClInclude Include="src\ShaderProgram.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\third_party\imgui\imconfig.h">
+      <Filter>Source Files\third_party\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="src\third_party\imgui\imgui.h">
+      <Filter>Source Files\third_party\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="src\third_party\imgui\imgui_impl_opengl3.h">
+      <Filter>Source Files\third_party\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="src\third_party\imgui\imgui_impl_sdl.h">
+      <Filter>Source Files\third_party\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="src\third_party\imgui\imgui_internal.h">
+      <Filter>Source Files\third_party\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="src\third_party\imgui\imstb_rectpack.h">
+      <Filter>Source Files\third_party\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="src\third_party\imgui\imstb_textedit.h">
+      <Filter>Source Files\third_party\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="src\third_party\imgui\imstb_truetype.h">
+      <Filter>Source Files\third_party\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="src\third_party\imgui-node-editor\crude_json.h">
+      <Filter>Source Files\third_party\imgui-node-editor</Filter>
+    </ClInclude>
+    <ClInclude Include="src\third_party\imgui-node-editor\imgui_bezier_math.h">
+      <Filter>Source Files\third_party\imgui-node-editor</Filter>
+    </ClInclude>
+    <ClInclude Include="src\third_party\imgui-node-editor\imgui_canvas.h">
+      <Filter>Source Files\third_party\imgui-node-editor</Filter>
+    </ClInclude>
+    <ClInclude Include="src\third_party\imgui-node-editor\imgui_extra_math.h">
+      <Filter>Source Files\third_party\imgui-node-editor</Filter>
+    </ClInclude>
+    <ClInclude Include="src\third_party\imgui-node-editor\imgui_node_editor.h">
+      <Filter>Source Files\third_party\imgui-node-editor</Filter>
+    </ClInclude>
+    <ClInclude Include="src\third_party\imgui-node-editor\imgui_node_editor_internal.h">
+      <Filter>Source Files\third_party\imgui-node-editor</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MaterialEditor.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\third_party\imgui-node-editor\utilities\builders.h">
+      <Filter>Source Files\third_party\imgui-node-editor\utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="src\third_party\imgui-node-editor\utilities\drawing.h">
+      <Filter>Source Files\third_party\imgui-node-editor\utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="src\third_party\imgui-node-editor\utilities\widgets.h">
+      <Filter>Source Files\third_party\imgui-node-editor\utilities</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\default.frag">
@@ -141,6 +207,15 @@
     </None>
     <None Include="shaders\red.frag">
       <Filter>Source Files\shaders</Filter>
+    </None>
+    <None Include="src\third_party\imgui-node-editor\imgui_bezier_math.inl">
+      <Filter>Source Files\third_party\imgui-node-editor</Filter>
+    </None>
+    <None Include="src\third_party\imgui-node-editor\imgui_extra_math.inl">
+      <Filter>Source Files\third_party\imgui-node-editor</Filter>
+    </None>
+    <None Include="src\third_party\imgui-node-editor\imgui_node_editor_internal.inl">
+      <Filter>Source Files\third_party\imgui-node-editor</Filter>
     </None>
   </ItemGroup>
 </Project>

@@ -6,6 +6,7 @@
 
 #include "Grid.h"
 #include "CameraController.h"
+#include "MaterialEditor.h"
 
 struct SDL_Window;
 
@@ -28,6 +29,7 @@ private:
 	void DrawSettings();
 	void DrawGridList();
 	void DrawGridUI();
+	void DrawNodeEditor();
 
 	SDL_Window* window;
 
@@ -37,6 +39,7 @@ private:
 	int32_t selectedGridIndex = 0;
 
 	CameraController camera;
+	MaterialEditor materialEditor;
 
 	bool isImguiDemoEnabled = false;
 };
