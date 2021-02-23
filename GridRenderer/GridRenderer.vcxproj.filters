@@ -197,6 +197,9 @@
     <ClInclude Include="src\third_party\imgui-node-editor\utilities\widgets.h">
       <Filter>Source Files\third_party\imgui-node-editor\utilities</Filter>
     </ClInclude>
+    <ClInclude Include="src\NodeGraph.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\default.frag">

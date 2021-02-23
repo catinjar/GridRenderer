@@ -16,6 +16,7 @@
 # include "../imgui/imgui.h"
 # include <cstdint> // std::uintXX_t
 # include <utility> // std::move
+#include <functional>
 
 
 //------------------------------------------------------------------------------
@@ -46,8 +47,8 @@ inline SaveReasonFlags operator &(SaveReasonFlags lhs, SaveReasonFlags rhs) { re
 using ConfigSaveSettings     = bool   (*)(const char* data, size_t size, SaveReasonFlags reason, void* userPointer);
 using ConfigLoadSettings     = size_t (*)(char* data, void* userPointer);
 
-using ConfigSaveNodeSettings = bool   (*)(NodeId nodeId, const char* data, size_t size, SaveReasonFlags reason, void* userPointer);
-using ConfigLoadNodeSettings = size_t (*)(NodeId nodeId, char* data, void* userPointer);
+using ConfigSaveNodeSettings = std::function<bool(NodeId nodeId, const char* data, size_t size, SaveReasonFlags reason, void* userPointer)>;
+using ConfigLoadNodeSettings = std::function<size_t(NodeId nodeId, char* data, void* userPointer)>;
 
 using ConfigSession          = void   (*)(void* userPointer);
 

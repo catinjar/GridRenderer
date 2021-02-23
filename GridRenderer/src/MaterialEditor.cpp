@@ -1,5 +1,12 @@
 #include "MaterialEditor.h"
 
+#include <string>
+#include <vector>
+#include <map>
+#include <algorithm>
+#include <utility>
+#include <iostream>
+
 #include "third_party/imgui-node-editor/utilities/builders.h"
 #include "third_party/imgui-node-editor/utilities/widgets.h"
 #include "third_party/imgui-node-editor/imgui_node_editor.h"
@@ -7,12 +14,6 @@
 #define IMGUI_DEFINE_MATH_OPERATORS
 #include "third_party/imgui/imgui.h"
 #include "third_party/imgui/imgui_internal.h"
-
-#include <string>
-#include <vector>
-#include <map>
-#include <algorithm>
-#include <utility>
 
 static inline ImRect ImGui_GetItemRect()
 {
@@ -38,87 +39,7 @@ using ax::Widgets::IconType;
 
 static ed::EditorContext* m_Editor = nullptr;
 
-enum class PinType
-{
-    Bool,
-    Int,
-    Float,
-    Color,
-    Vec4
-};
-
-enum class PinKind
-{
-    Output,
-    Input
-};
-
-enum class NodeType
-{
-    VertexOutput,
-    FragmentOutput,
-    Uniform,
-    Attribute,
-    Operation,
-    Comment
-};
-
-struct Node;
-
-struct Pin
-{
-    ed::PinId ID;
-    ::Node* Node;
-    std::string Name;
-    PinType Type;
-    PinKind Kind;
-
-    ImColor Color;
-
-    Pin(int id, const char* name, PinType type) :
-        ID(id), Node(nullptr), Name(name), Type(type), Kind(PinKind::Input)
-    {
-    }
-};
-
-struct Node
-{
-    ed::NodeId ID;
-    std::string Name;
-    std::vector<Pin> Inputs;
-    std::vector<Pin> Outputs;
-    ImColor Color;
-    NodeType Type;
-    ImVec2 Size;
-
-    std::string State;
-    std::string SavedState;
-
-    Node(int id, const char* name, ImColor color = ImColor(255, 255, 255)) :
-        ID(id), Name(name), Color(color), Type(NodeType::Operation), Size(0, 0)
-    {
-    }
-};
-
-struct Link
-{
-    ed::LinkId ID;
-
-    ed::PinId StartPinID;
-    ed::PinId EndPinID;
-
-    ImColor Color;
-
-    Link(ed::LinkId id, ed::PinId startPinId, ed::PinId endPinId) :
-        ID(id), StartPinID(startPinId), EndPinID(endPinId), Color(255, 255, 255)
-    {
-    }
-};
-
-
 static const int s_PinIconSize = 24;
-static std::vector<Node> s_Nodes;
-static std::vector<Link> s_Links;
 static ImTextureID s_HeaderBackground = nullptr;
 static ImTextureID s_SaveIcon = nullptr;
 static ImTextureID s_RestoreIcon = nullptr;
@@ -135,7 +56,7 @@ struct NodeIdLess
     }
 };
 
-static const float          s_TouchTime = 1.0f;
+static const float s_TouchTime = 1.0f;
 static std::map<ed::NodeId, float, NodeIdLess> s_NodeTouchTime;
 
 static int s_NextId = 1;
@@ -173,69 +94,6 @@ static void UpdateTouch()
     }
 }
 
-static Node* FindNode(ed::NodeId id)
-{
-    for (auto& node : s_Nodes)
-        if (node.ID == id)
-            return &node;
-
-    return nullptr;
-}
-
-static Link* FindLink(ed::LinkId id)
-{
-    for (auto& link : s_Links)
-        if (link.ID == id)
-            return &link;
-
-    return nullptr;
-}
-
-static Pin* FindPin(ed::PinId id)
-{
-    if (!id)
-        return nullptr;
-
-    for (auto& node : s_Nodes)
-    {
-        for (auto& pin : node.Inputs)
-            if (pin.ID == id)
-                return &pin;
-
-        for (auto& pin : node.Outputs)
-            if (pin.ID == id)
-                return &pin;
-    }
-
-    return nullptr;
-}
-
-static Link* FindLinkByPin(ed::PinId id)
-{
-    if (!id)
-        return nullptr;
-
-    for (auto& link : s_Links)
-    {
-        if (link.StartPinID == id || link.EndPinID == id)
-            return &link;
-    }
-
-    return nullptr;
-}
-
-static bool IsPinLinked(ed::PinId id)
-{
-    if (!id)
-        return false;
-
-    for (auto& link : s_Links)
-        if (link.StartPinID == id || link.EndPinID == id)
-            return true;
-
-    return false;
-}
-
 static bool CanCreateLink(Pin* a, Pin* b)
 {
     if (!a || !b || a == b || a->Kind == b->Kind || a->Type != b->Type || a->Node == b->Node)
@@ -259,18 +117,18 @@ static void BuildNode(Node* node)
     }
 }
 
-static Node* SpawnFragmentShaderOutputNode()
+Node* MaterialEditor::SpawnFragmentShaderOutputNode()
 {
     s_Nodes.emplace_back(GetNextId(), "Fragment Shader Output", ImColor(255, 128, 128));
     s_Nodes.back().Type = NodeType::FragmentOutput;
-    s_Nodes.back().Inputs.emplace_back(GetNextId(), "Color", PinType::Color);
+    s_Nodes.back().Inputs.emplace_back(GetNextId(), "Vec4", PinType::Vec4);
 
     BuildNode(&s_Nodes.back());
 
     return &s_Nodes.back();
 }
 
-static Node* SpawnColorNode()
+Node* MaterialEditor::SpawnColorNode()
 {
     s_Nodes.emplace_back(GetNextId(), "Color", ImColor(255, 128, 128));
     s_Nodes.back().Type = NodeType::Uniform;
@@ -281,10 +139,11 @@ static Node* SpawnColorNode()
     return &s_Nodes.back();
 }
 
-static Node* SpawnMultiplyVec4()
+Node* MaterialEditor::SpawnMultiplyVec4()
 {
     s_Nodes.emplace_back(GetNextId(), "Multiply Vec4", ImColor(255, 128, 128));
     s_Nodes.back().Type = NodeType::Operation;
+    s_Nodes.back().OpType = OperationType::MultiplyVec4;
     s_Nodes.back().Inputs.emplace_back(GetNextId(), "Vec4", PinType::Vec4);
     s_Nodes.back().Inputs.emplace_back(GetNextId(), "Value", PinType::Float);
     s_Nodes.back().Outputs.emplace_back(GetNextId(), "Vec4", PinType::Vec4);
@@ -294,7 +153,20 @@ static Node* SpawnMultiplyVec4()
     return &s_Nodes.back();
 }
 
-static Node* SpawnComment()
+Node* MaterialEditor::SpawnColorToVec4()
+{
+    s_Nodes.emplace_back(GetNextId(), "Color to Vec4", ImColor(255, 128, 128));
+    s_Nodes.back().Type = NodeType::Operation;
+    s_Nodes.back().OpType = OperationType::ColorToVec4;
+    s_Nodes.back().Inputs.emplace_back(GetNextId(), "Color", PinType::Color);
+    s_Nodes.back().Outputs.emplace_back(GetNextId(), "Vec4", PinType::Vec4);
+
+    BuildNode(&s_Nodes.back());
+
+    return &s_Nodes.back();
+}
+
+Node* MaterialEditor::SpawnComment()
 {
     s_Nodes.emplace_back(GetNextId(), "Test Comment");
     s_Nodes.back().Type = NodeType::Comment;
@@ -303,15 +175,13 @@ static Node* SpawnComment()
     return &s_Nodes.back();
 }
 
-void BuildNodes()
+void MaterialEditor::BuildNodes()
 {
     for (auto& node : s_Nodes)
         BuildNode(&node);
 }
 
-#include <iostream>
-
-Node* GetNodeByInput(const Pin* input)
+Node* MaterialEditor::GetNodeByInput(const Pin* input)
 {
     const auto link = FindLinkByPin(input->ID);
 
@@ -324,12 +194,16 @@ Node* GetNodeByInput(const Pin* input)
     return nullptr;
 }
 
-std::string GetNodeVariableName(const Node* node)
+std::string MaterialEditor::GetPinVariableName(const Pin* pin)
 {
-    return node->Name + std::to_string(node->ID.Get());
+    const auto link = FindLinkByPin(pin->ID);
+    if (link != nullptr)
+        return "var_" + std::to_string(link->ID.Get());
+    else
+        return "MISSED_LINK";
 }
 
-void ResolveNode(const Node* node)
+void MaterialEditor::ResolveNode(const Node* node)
 {
     for (const auto& input : node->Inputs)
     {
@@ -344,8 +218,7 @@ void ResolveNode(const Node* node)
 
     if (node->Type == NodeType::FragmentOutput)
     {
-        const auto colorNode = GetNodeByInput(&node->Inputs[0]);
-        s_MainCode += "\toutColor = " + GetNodeVariableName(colorNode) + ";\r\n";
+        s_MainCode += "\toutColor = " + GetPinVariableName(&node->Inputs[0]) + ";\r\n";
     }
 
     if (node->Type == NodeType::Uniform)
@@ -355,17 +228,28 @@ void ResolveNode(const Node* node)
         if (node->Outputs[0].Type == PinType::Color)
             s_UniformsCode += "vec4 ";
         
-        s_UniformsCode += GetNodeVariableName(node);
+        s_UniformsCode += GetPinVariableName(&node->Outputs[0]);
         s_UniformsCode += ";\r\n";
     }
 
     if (node->Type == NodeType::Operation)
     {
-
+        if (node->OpType == OperationType::MultiplyVec4)
+        {
+            s_MainCode += "\t" + GetPinVariableName(&node->Outputs[0]);
+            s_MainCode += " = " + GetPinVariableName(&node->Inputs[0]) + " * " + GetPinVariableName(&node->Inputs[1]);
+            s_MainCode += ";\r\n";
+        }
+        else if (node->OpType == OperationType::ColorToVec4)
+        {
+            s_MainCode += "\t" + GetPinVariableName(&node->Outputs[0]);
+            s_MainCode += " = " + GetPinVariableName(&node->Inputs[0]);
+            s_MainCode += ";\r\n";
+        }
     }
 }
 
-void GenerateMaterialCode()
+void MaterialEditor::GenerateMaterialCode()
 {
     s_UniformsCode = "";
     s_MainCode = "";
@@ -388,60 +272,6 @@ void GenerateMaterialCode()
     s_MaterialCode += "{\r\n";
     s_MaterialCode += s_MainCode;
     s_MaterialCode += "}\r\n";
-}
-
-void MaterialEditor::Init()
-{
-    ed::Config config;
-
-    config.SettingsFile = "Blueprints.json";
-
-    config.LoadNodeSettings = [](ed::NodeId nodeId, char* data, void* userPointer) -> size_t
-    {
-        auto node = FindNode(nodeId);
-        if (!node)
-            return 0;
-
-        if (data != nullptr)
-            memcpy(data, node->State.data(), node->State.size());
-        return node->State.size();
-    };
-
-    config.SaveNodeSettings = [](ed::NodeId nodeId, const char* data, size_t size, ed::SaveReasonFlags reason, void* userPointer) -> bool
-    {
-        auto node = FindNode(nodeId);
-        if (!node)
-            return false;
-
-        node->State.assign(data, size);
-
-        TouchNode(nodeId);
-
-        return true;
-    };
-
-    m_Editor = ed::CreateEditor(&config);
-    ed::SetCurrentEditor(m_Editor);
-
-    Node* node;
-    node = SpawnFragmentShaderOutputNode(); ed::SetNodePosition(node->ID, ImVec2(-252, 220));
-    node = SpawnColorNode();                ed::SetNodePosition(node->ID, ImVec2(-500, 351));
-
-    BuildNodes();
-
-    s_Links.push_back(Link(GetNextLinkId(), s_Nodes[1].Outputs[0].ID, s_Nodes[0].Inputs[0].ID));
-
-    ed::NavigateToContent();
-    GenerateMaterialCode();
-}
-
-void MaterialEditor::Shutdown()
-{
-    if (m_Editor)
-    {
-        ed::DestroyEditor(m_Editor);
-        m_Editor = nullptr;
-    }
 }
 
 static bool Splitter(bool split_vertically, float thickness, float* size1, float* size2, float min_size1, float min_size2, float splitter_long_axis_size = -1.0f)
@@ -505,6 +335,7 @@ void ShowStyleEditor(bool* show = nullptr)
         editorStyle = ed::Style();
     ImGui::EndHorizontal();
     ImGui::Spacing();
+
     ImGui::DragFloat4("Node Padding", &editorStyle.NodePadding.x, 0.1f, 0.0f, 40.0f);
     ImGui::DragFloat("Node Rounding", &editorStyle.NodeRounding, 0.1f, 0.0f, 40.0f);
     ImGui::DragFloat("Node Border Width", &editorStyle.NodeBorderWidth, 0.1f, 0.0f, 15.0f);
@@ -513,19 +344,10 @@ void ShowStyleEditor(bool* show = nullptr)
     ImGui::DragFloat("Pin Rounding", &editorStyle.PinRounding, 0.1f, 0.0f, 40.0f);
     ImGui::DragFloat("Pin Border Width", &editorStyle.PinBorderWidth, 0.1f, 0.0f, 15.0f);
     ImGui::DragFloat("Link Strength", &editorStyle.LinkStrength, 1.0f, 0.0f, 500.0f);
-    //ImVec2  SourceDirection;
-    //ImVec2  TargetDirection;
     ImGui::DragFloat("Scroll Duration", &editorStyle.ScrollDuration, 0.001f, 0.0f, 2.0f);
     ImGui::DragFloat("Flow Marker Distance", &editorStyle.FlowMarkerDistance, 1.0f, 1.0f, 200.0f);
     ImGui::DragFloat("Flow Speed", &editorStyle.FlowSpeed, 1.0f, 1.0f, 2000.0f);
     ImGui::DragFloat("Flow Duration", &editorStyle.FlowDuration, 0.001f, 0.0f, 5.0f);
-    //ImVec2  PivotAlignment;
-    //ImVec2  PivotSize;
-    //ImVec2  PivotScale;
-    //float   PinCorners;
-    //float   PinRadius;
-    //float   PinArrowSize;
-    //float   PinArrowWidth;
     ImGui::DragFloat("Group Rounding", &editorStyle.GroupRounding, 0.1f, 0.0f, 40.0f);
     ImGui::DragFloat("Group Border Width", &editorStyle.GroupBorderWidth, 0.1f, 0.0f, 15.0f);
 
@@ -561,49 +383,58 @@ void ShowStyleEditor(bool* show = nullptr)
     ImGui::End();
 }
 
-void ShowLeftPane(float paneWidth)
+void MaterialEditor::Init()
 {
-    ImGui::BeginChild("Selection", ImVec2(paneWidth, 0));
+    ed::Config config;
 
-    paneWidth = ImGui::GetContentRegionAvailWidth();
+    config.SettingsFile = "Blueprints.json";
 
-    ImGui::BeginHorizontal("Style Editor", ImVec2(paneWidth, 0));
-    ImGui::Spring(0.0f, 0.0f);
-    
-    if (ImGui::Button("Zoom to Content"))
-        ed::NavigateToContent();
-    
-    ImGui::Spring(0.0f);
-    
-    if (ImGui::Button("Show Flow"))
+    config.LoadNodeSettings = [&](ed::NodeId nodeId, char* data, void* userPointer) -> size_t
     {
-        for (auto& link : s_Links)
-            ed::Flow(link.ID);
-    }
-    
-    ImGui::Spring();
+        auto node = FindNode(nodeId);
+        if (!node)
+            return 0;
 
-    static bool showStyleEditor = false;
-    if (ImGui::Button("Edit Style"))
-        showStyleEditor = true;
-    
-    ImGui::EndHorizontal();
+        if (data != nullptr)
+            memcpy(data, node->State.data(), node->State.size());
+        return node->State.size();
+    };
 
-    if (showStyleEditor)
-        ShowStyleEditor(&showStyleEditor);
-
-    ImGui::BeginHorizontal("Material Compile");
-
-    if (ImGui::Button("Compile"))
+    config.SaveNodeSettings = [&](ed::NodeId nodeId, const char* data, size_t size, ed::SaveReasonFlags reason, void* userPointer) -> bool
     {
-        GenerateMaterialCode();
+        auto node = FindNode(nodeId);
+        if (!node)
+            return false;
+
+        node->State.assign(data, size);
+
+        TouchNode(nodeId);
+
+        return true;
+    };
+
+    m_Editor = ed::CreateEditor(&config);
+    ed::SetCurrentEditor(m_Editor);
+
+    Node* node;
+    node = SpawnFragmentShaderOutputNode(); ed::SetNodePosition(node->ID, ImVec2(-252, 220));
+    node = SpawnColorNode();                ed::SetNodePosition(node->ID, ImVec2(-500, 351));
+
+    BuildNodes();
+
+    s_Links.push_back(Link(GetNextLinkId(), s_Nodes[1].Outputs[0].ID, s_Nodes[0].Inputs[0].ID));
+
+    ed::NavigateToContent();
+    GenerateMaterialCode();
+}
+
+void MaterialEditor::Shutdown()
+{
+    if (m_Editor)
+    {
+        ed::DestroyEditor(m_Editor);
+        m_Editor = nullptr;
     }
-
-    ImGui::EndHorizontal();
-
-    ImGui::Text(s_MaterialCode.c_str());
-
-    ImGui::EndChild();
 }
 
 void MaterialEditor::Draw()
@@ -733,13 +564,8 @@ void MaterialEditor::Draw()
 
             if (ed::BeginGroupHint(node.ID))
             {
-                //auto alpha   = static_cast<int>(commentAlpha * ImGui::GetStyle().Alpha * 255);
                 auto bgAlpha = static_cast<int>(ImGui::GetStyle().Alpha * 255);
-
-                //ImGui::PushStyleVar(ImGuiStyleVar_Alpha, commentAlpha * ImGui::GetStyle().Alpha);
-
                 auto min = ed::GetGroupMin();
-                //auto max = ed::GetGroupMax();
 
                 ImGui::SetCursorScreenPos(min - ImVec2(-8, ImGui::GetTextLineHeightWithSpacing() + 4));
                 ImGui::BeginGroup();
@@ -760,8 +586,6 @@ void MaterialEditor::Draw()
                     hintFrameBounds.GetTL(),
                     hintFrameBounds.GetBR(),
                     IM_COL32(255, 255, 255, 128 * bgAlpha / 255), 4.0f);
-
-                //ImGui::PopStyleVar();
             }
             ed::EndGroupHint();
         }
@@ -816,11 +640,11 @@ void MaterialEditor::Draw()
                             showLabel("x Incompatible Pin Kind", ImColor(45, 32, 32, 180));
                             ed::RejectNewItem(ImColor(255, 0, 0), 2.0f);
                         }
-                        //else if (endPin->Node == startPin->Node)
-                        //{
-                        //    showLabel("x Cannot connect to self", ImColor(45, 32, 32, 180));
-                        //    ed::RejectNewItem(ImColor(255, 0, 0), 1.0f);
-                        //}
+                        else if (endPin->Node == startPin->Node)
+                        {
+                            showLabel("x Cannot connect to self", ImColor(45, 32, 32, 180));
+                            ed::RejectNewItem(ImColor(255, 0, 0), 1.0f);
+                        }
                         else if (endPin->Type != startPin->Type)
                         {
                             showLabel("x Incompatible Pin Type", ImColor(45, 32, 32, 180));
@@ -978,7 +802,9 @@ void MaterialEditor::Draw()
             node = SpawnColorNode();
         if (ImGui::MenuItem("Multiply Vec4"))
             node = SpawnMultiplyVec4();
-        
+        if (ImGui::MenuItem("Color to Vec4"))
+            node = SpawnColorToVec4();
+
         ImGui::Separator();
         
         if (ImGui::MenuItem("Comment"))
@@ -1027,4 +853,112 @@ void MaterialEditor::Draw()
     ed::Resume();
 
     ed::End();
+}
+
+void MaterialEditor::ShowLeftPane(float paneWidth)
+{
+    ImGui::BeginChild("Selection", ImVec2(paneWidth, 0));
+
+    paneWidth = ImGui::GetContentRegionAvailWidth();
+
+    ImGui::BeginHorizontal("Style Editor", ImVec2(paneWidth, 0));
+    ImGui::Spring(0.0f, 0.0f);
+
+    if (ImGui::Button("Zoom to Content"))
+        ed::NavigateToContent();
+
+    ImGui::Spring(0.0f);
+
+    if (ImGui::Button("Show Flow"))
+    {
+        for (auto& link : s_Links)
+            ed::Flow(link.ID);
+    }
+
+    ImGui::Spring();
+
+    static bool showStyleEditor = false;
+    if (ImGui::Button("Edit Style"))
+        showStyleEditor = true;
+
+    ImGui::EndHorizontal();
+
+    if (showStyleEditor)
+        ShowStyleEditor(&showStyleEditor);
+
+    ImGui::BeginHorizontal("Material Compile");
+
+    if (ImGui::Button("Compile"))
+    {
+        GenerateMaterialCode();
+    }
+
+    ImGui::EndHorizontal();
+
+    ImGui::Text(s_MaterialCode.c_str());
+
+    ImGui::EndChild();
+}
+
+Node* MaterialEditor::FindNode(ed::NodeId id)
+{
+    for (auto& node : s_Nodes)
+        if (node.ID == id)
+            return &node;
+
+    return nullptr;
+}
+
+Link* MaterialEditor::FindLink(ed::LinkId id)
+{
+    for (auto& link : s_Links)
+        if (link.ID == id)
+            return &link;
+
+    return nullptr;
+}
+
+Pin* MaterialEditor::FindPin(ed::PinId id)
+{
+    if (!id)
+        return nullptr;
+
+    for (auto& node : s_Nodes)
+    {
+        for (auto& pin : node.Inputs)
+            if (pin.ID == id)
+                return &pin;
+
+        for (auto& pin : node.Outputs)
+            if (pin.ID == id)
+                return &pin;
+    }
+
+    return nullptr;
+}
+
+Link* MaterialEditor::FindLinkByPin(ed::PinId id)
+{
+    if (!id)
+        return nullptr;
+
+    for (auto& link : s_Links)
+    {
+        if (link.StartPinID == id || link.EndPinID == id)
+            return &link;
+    }
+
+    return nullptr;
+}
+
+bool MaterialEditor::IsPinLinked(ed::PinId id)
+{
+    if (!id)
+        return false;
+
+    for (auto& link : s_Links)
+        if (link.StartPinID == id || link.EndPinID == id)
+            return true;
+
+    return false;
 }
