@@ -6,15 +6,6 @@
 #include "Misc.h"
 #include "Grid.h"
 
-void Material::Update()
-{
-	if (isHotloadEnabled)
-	{
-		if (shaderProgram.HotloadChanges())
-			shaderMetaData.HotloadChanges();
-	}
-}
-
 void Material::Render(const CameraController& camera, const Grid& grid) const
 {
 	shaderProgram.Use();
@@ -35,37 +26,18 @@ void Material::DrawUI()
 {
 	ImGui::Begin("Material");
 
-	ImGui::Checkbox("Shader Hotloading", &isHotloadEnabled);
-
-	ImGui::Text(vertexShaderFilename.c_str());
-	ImGui::SameLine();
-
-	// TODO: Check file extension
-	if (ImGui::Button("Select##Vertex"))
-	{
-		if (NFD_ChooseFile(vertexShaderFilename))
-			RecompileShaderProgram();
-	}
-
-	ImGui::Text(fragmentShaderFilename.c_str());
-	ImGui::SameLine();
-
-	if (ImGui::Button("Select##Fragment"))
-	{
-		if (NFD_ChooseFile(fragmentShaderFilename))
-			RecompileShaderProgram();
-	}
-
 	shaderMetaData.DrawUI();
 
 	ImGui::End();
 }
 
-// TODO: Move shader selection inside ShaderProgram
-void Material::RecompileShaderProgram()
+void Material::SetSourceCode(const std::string& vertexSourceCode, const std::string& fragmentSourceCode)
 {
-	shaderProgram.SetShaders(vertexShaderFilename, fragmentShaderFilename);
-	shaderMetaData = ShaderMetaData(vertexShaderFilename, fragmentShaderFilename);
+	this->vertexSourceCode = vertexSourceCode;
+	this->fragmentSourceCode = fragmentSourceCode;
+
+	shaderProgram.SetShaders(vertexSourceCode, fragmentSourceCode);
+	shaderMetaData = ShaderMetaData(vertexSourceCode, fragmentSourceCode);
 }
 
 void Material::ApplyDefaultUniforms() const

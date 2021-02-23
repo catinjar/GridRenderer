@@ -15,20 +15,7 @@
 #include "third_party/imgui/imgui.h"
 #include "third_party/imgui/imgui_internal.h"
 
-static inline ImRect ImGui_GetItemRect()
-{
-    return ImRect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax());
-}
-
-static inline ImRect ImRect_Expanded(const ImRect& rect, float x, float y)
-{
-    auto result = rect;
-    result.Min.x -= x;
-    result.Min.y -= y;
-    result.Max.x += x;
-    result.Max.y += y;
-    return result;
-}
+#include "MaterialCompiler.h"
 
 namespace ed = ax::NodeEditor;
 namespace util = ax::NodeEditor::Utilities;
@@ -44,10 +31,6 @@ static ImTextureID s_HeaderBackground = nullptr;
 static ImTextureID s_SaveIcon = nullptr;
 static ImTextureID s_RestoreIcon = nullptr;
 
-static std::string s_UniformsCode;
-static std::string s_MainCode;
-static std::string s_MaterialCode;
-
 struct NodeIdLess
 {
     bool operator()(const ed::NodeId& lhs, const ed::NodeId& rhs) const
@@ -58,6 +41,21 @@ struct NodeIdLess
 
 static const float s_TouchTime = 1.0f;
 static std::map<ed::NodeId, float, NodeIdLess> s_NodeTouchTime;
+
+static inline ImRect ImGui_GetItemRect()
+{
+    return ImRect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax());
+}
+
+static inline ImRect ImRect_Expanded(const ImRect& rect, float x, float y)
+{
+    auto result = rect;
+    result.Min.x -= x;
+    result.Min.y -= y;
+    result.Max.x += x;
+    result.Max.y += y;
+    return result;
+}
 
 static int s_NextId = 1;
 static int GetNextId()
@@ -181,99 +179,6 @@ void MaterialEditor::BuildNodes()
         BuildNode(&node);
 }
 
-Node* MaterialEditor::GetNodeByInput(const Pin* input)
-{
-    const auto link = FindLinkByPin(input->ID);
-
-    if (link != nullptr)
-    {
-        const auto output = FindPin(link->StartPinID);
-        return output->Node;
-    }
-
-    return nullptr;
-}
-
-std::string MaterialEditor::GetPinVariableName(const Pin* pin)
-{
-    const auto link = FindLinkByPin(pin->ID);
-    if (link != nullptr)
-        return "var_" + std::to_string(link->ID.Get());
-    else
-        return "MISSED_LINK";
-}
-
-void MaterialEditor::ResolveNode(const Node* node)
-{
-    for (const auto& input : node->Inputs)
-    {
-        const auto link = FindLinkByPin(input.ID);
-
-        if (link != nullptr)
-        {
-            const auto output = FindPin(link->StartPinID);
-            ResolveNode(output->Node);
-        }
-    }
-
-    if (node->Type == NodeType::FragmentOutput)
-    {
-        s_MainCode += "\toutColor = " + GetPinVariableName(&node->Inputs[0]) + ";\r\n";
-    }
-
-    if (node->Type == NodeType::Uniform)
-    {
-        s_UniformsCode += "uniform ";
-        
-        if (node->Outputs[0].Type == PinType::Color)
-            s_UniformsCode += "vec4 ";
-        
-        s_UniformsCode += GetPinVariableName(&node->Outputs[0]);
-        s_UniformsCode += ";\r\n";
-    }
-
-    if (node->Type == NodeType::Operation)
-    {
-        if (node->OpType == OperationType::MultiplyVec4)
-        {
-            s_MainCode += "\t" + GetPinVariableName(&node->Outputs[0]);
-            s_MainCode += " = " + GetPinVariableName(&node->Inputs[0]) + " * " + GetPinVariableName(&node->Inputs[1]);
-            s_MainCode += ";\r\n";
-        }
-        else if (node->OpType == OperationType::ColorToVec4)
-        {
-            s_MainCode += "\t" + GetPinVariableName(&node->Outputs[0]);
-            s_MainCode += " = " + GetPinVariableName(&node->Inputs[0]);
-            s_MainCode += ";\r\n";
-        }
-    }
-}
-
-void MaterialEditor::GenerateMaterialCode()
-{
-    s_UniformsCode = "";
-    s_MainCode = "";
-    s_MaterialCode = "";
-
-    auto it = std::find_if(graph->nodes.begin(), graph->nodes.end(), [](const Node& node) { return node.Type == NodeType::FragmentOutput; });
-    if (it != graph->nodes.end())
-    {
-        const auto& fragmentOutputNode = *it;
-        ResolveNode(&fragmentOutputNode);
-    }
-
-    s_MaterialCode += "#version 450 core\r\n";
-    s_MaterialCode += "\r\n";
-    s_MaterialCode += s_UniformsCode;
-    s_MaterialCode += "\r\n";
-    s_MaterialCode += "out vec4 outColor;\r\n";
-    s_MaterialCode += "\r\n";
-    s_MaterialCode += "void main(void)\r\n";
-    s_MaterialCode += "{\r\n";
-    s_MaterialCode += s_MainCode;
-    s_MaterialCode += "}\r\n";
-}
-
 static bool Splitter(bool split_vertically, float thickness, float* size1, float* size2, float min_size1, float min_size2, float splitter_long_axis_size = -1.0f)
 {
     using namespace ImGui;
@@ -383,16 +288,16 @@ void ShowStyleEditor(bool* show = nullptr)
     ImGui::End();
 }
 
-void MaterialEditor::Init(NodeGraph* graph)
+void MaterialEditor::Init(Material* material, NodeGraph* graph)
 {
-    SetMaterial(graph);
+    SetMaterial(material, graph);
 
     ed::Config config;
     config.SettingsFile = "Blueprints.json";
 
-    config.LoadNodeSettings = [&](ed::NodeId nodeId, char* data, void* userPointer) -> size_t
+    config.LoadNodeSettings = [this](ed::NodeId nodeId, char* data, void* userPointer) -> size_t
     {
-        auto node = FindNode(nodeId);
+        auto node = this->graph->FindNode(nodeId);
         if (!node)
             return 0;
 
@@ -401,9 +306,9 @@ void MaterialEditor::Init(NodeGraph* graph)
         return node->State.size();
     };
 
-    config.SaveNodeSettings = [&](ed::NodeId nodeId, const char* data, size_t size, ed::SaveReasonFlags reason, void* userPointer) -> bool
+    config.SaveNodeSettings = [this](ed::NodeId nodeId, const char* data, size_t size, ed::SaveReasonFlags reason, void* userPointer) -> bool
     {
-        auto node = FindNode(nodeId);
+        auto node = this->graph->FindNode(nodeId);
         if (!node)
             return false;
 
@@ -426,11 +331,13 @@ void MaterialEditor::Init(NodeGraph* graph)
     this->graph->links.push_back(Link(GetNextLinkId(), graph->nodes[1].Outputs[0].ID, graph->nodes[0].Inputs[0].ID));
 
     ed::NavigateToContent();
-    GenerateMaterialCode();
+
+    CompileMaterial(material, graph);
 }
 
-void MaterialEditor::SetMaterial(NodeGraph* graph)
+void MaterialEditor::SetMaterial(Material* material, NodeGraph* graph)
 {
+    this->material = material;
     this->graph = graph;
 }
 
@@ -492,7 +399,7 @@ void MaterialEditor::Draw()
 
                 builder.Input(input.ID);
                 ImGui::PushStyleVar(ImGuiStyleVar_Alpha, alpha);
-                DrawPinIcon(input, IsPinLinked(input.ID), (int)(alpha * 255));
+                DrawPinIcon(input, graph->IsPinLinked(input.ID), (int)(alpha * 255));
                 ImGui::Spring(0);
                 if (!input.Name.empty())
                 {
@@ -535,7 +442,7 @@ void MaterialEditor::Draw()
                 }
 
                 ImGui::Spring(0);
-                DrawPinIcon(output, IsPinLinked(output.ID), (int)(alpha * 255));
+                DrawPinIcon(output, graph->IsPinLinked(output.ID), (int)(alpha * 255));
                 ImGui::PopStyleVar();
                 builder.EndOutput();
             }
@@ -624,8 +531,8 @@ void MaterialEditor::Draw()
                 ed::PinId startPinId = 0, endPinId = 0;
                 if (ed::QueryNewLink(&startPinId, &endPinId))
                 {
-                    auto startPin = FindPin(startPinId);
-                    auto endPin = FindPin(endPinId);
+                    auto startPin = graph->FindPin(startPinId);
+                    auto endPin = graph->FindPin(endPinId);
 
                     newLinkPin = startPin ? startPin : endPin;
 
@@ -671,14 +578,14 @@ void MaterialEditor::Draw()
                 ed::PinId pinId = 0;
                 if (ed::QueryNewNode(&pinId))
                 {
-                    newLinkPin = FindPin(pinId);
+                    newLinkPin = graph->FindPin(pinId);
                     if (newLinkPin)
                         showLabel("+ Create Node", ImColor(32, 45, 32, 180));
 
                     if (ed::AcceptNewItem())
                     {
                         createNewNode = true;
-                        newNodeLinkPin = FindPin(pinId);
+                        newNodeLinkPin = graph->FindPin(pinId);
                         newLinkPin = nullptr;
                         ed::Suspend();
                         ImGui::OpenPopup("Create New Node");
@@ -740,7 +647,7 @@ void MaterialEditor::Draw()
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(8, 8));
     if (ImGui::BeginPopup("Node Context Menu"))
     {
-        auto node = FindNode(contextNodeId);
+        auto node = graph->FindNode(contextNodeId);
 
         ImGui::TextUnformatted("Node Context Menu");
         ImGui::Separator();
@@ -760,7 +667,7 @@ void MaterialEditor::Draw()
 
     if (ImGui::BeginPopup("Pin Context Menu"))
     {
-        auto pin = FindPin(contextPinId);
+        auto pin = graph->FindPin(contextPinId);
 
         ImGui::TextUnformatted("Pin Context Menu");
         ImGui::Separator();
@@ -780,7 +687,7 @@ void MaterialEditor::Draw()
 
     if (ImGui::BeginPopup("Link Context Menu"))
     {
-        auto link = FindLink(contextLinkId);
+        auto link = graph->FindLink(contextLinkId);
 
         ImGui::TextUnformatted("Link Context Menu");
         ImGui::Separator();
@@ -896,75 +803,14 @@ void MaterialEditor::ShowLeftPane(float paneWidth)
 
     if (ImGui::Button("Compile"))
     {
-        GenerateMaterialCode();
+        CompileMaterial(material, graph);
     }
 
     ImGui::EndHorizontal();
 
-    ImGui::Text(s_MaterialCode.c_str());
+    ImGui::Text(material->GetVertexSourceCode().c_str());
+    ImGui::NewLine();
+    ImGui::Text(material->GetFragmentSourceCode().c_str());
 
     ImGui::EndChild();
-}
-
-Node* MaterialEditor::FindNode(ed::NodeId id)
-{
-    for (auto& node : graph->nodes)
-        if (node.ID == id)
-            return &node;
-
-    return nullptr;
-}
-
-Link* MaterialEditor::FindLink(ed::LinkId id)
-{
-    for (auto& link : graph->links)
-        if (link.ID == id)
-            return &link;
-
-    return nullptr;
-}
-
-Pin* MaterialEditor::FindPin(ed::PinId id)
-{
-    if (!id)
-        return nullptr;
-
-    for (auto& node : graph->nodes)
-    {
-        for (auto& pin : node.Inputs)
-            if (pin.ID == id)
-                return &pin;
-
-        for (auto& pin : node.Outputs)
-            if (pin.ID == id)
-                return &pin;
-    }
-
-    return nullptr;
-}
-
-Link* MaterialEditor::FindLinkByPin(ed::PinId id)
-{
-    if (!id)
-        return nullptr;
-
-    for (auto& link : graph->links)
-    {
-        if (link.StartPinID == id || link.EndPinID == id)
-            return &link;
-    }
-
-    return nullptr;
-}
-
-bool MaterialEditor::IsPinLinked(ed::PinId id)
-{
-    if (!id)
-        return false;
-
-    for (auto& link : graph->links)
-        if (link.StartPinID == id || link.EndPinID == id)
-            return true;
-
-    return false;
 }

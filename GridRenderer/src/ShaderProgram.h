@@ -10,13 +10,14 @@ namespace fs = std::filesystem;
 class ShaderProgram
 {
 public:
-	ShaderProgram(const std::string& vertexShaderFilename, const std::string& fragmentShaderFilename);
+	ShaderProgram() {}
+	ShaderProgram(const std::string& vertexSourceCode, const std::string& fragmentSourceCode);
 	~ShaderProgram();
 
 	void Use() const;
 	void Compile();
 	bool HotloadChanges();
-	void SetShaders(const std::string& vertexShaderFilename, const std::string& fragmentShaderFilename);
+	void SetShaders(const std::string& vertexSourceCode, const std::string& fragmentSourceCode);
 
 	GLuint operator[](const char* name) const;
 	GLuint operator[](const std::string name) const;
@@ -24,8 +25,8 @@ public:
 private:
 	GLuint programId = 0;
 
-	std::string vertexShaderFilename;
-	std::string fragmentShaderFilename;
+	std::string vertexSourceCode;
+	std::string fragmentSourceCode;
 
 	std::uint64_t lastCompileTs = 0;
 

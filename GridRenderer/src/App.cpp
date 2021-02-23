@@ -15,7 +15,7 @@ App::App(SDL_Window* window)
 {
 	grids.push_back(std::make_unique<Grid>());
 
-	materialEditor.Init(grids.back()->GetMaterial()->GetNodeGraph());
+	materialEditor.Init(grids.back()->GetMaterial(), grids.back()->GetNodeGraph());
 
 	Input();
 }
@@ -120,7 +120,7 @@ void App::DrawGridList()
 
 	if (ImGui::ListBox("Grids", &selectedGridIndex, &gridNames[0], gridNames.size(), 5))
 	{
-		materialEditor.SetMaterial(grids[selectedGridIndex]->GetMaterial()->GetNodeGraph());
+		materialEditor.SetMaterial(grids[selectedGridIndex]->GetMaterial(), grids[selectedGridIndex]->GetNodeGraph());
 	}
 }
 

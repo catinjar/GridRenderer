@@ -74,17 +74,17 @@ struct UniformParam
 class ShaderMetaData
 {
 public:
-	ShaderMetaData(const std::string& vertexShaderFilename, const std::string& fragmentShaderFilename);
+	ShaderMetaData() {}
+	ShaderMetaData(const std::string& vertexShaderSource, const std::string& fragmentShaderSource);
 
 	void ApplyUniforms(const ShaderProgram& shaderProgram) const;
-	void HotloadChanges();
 	void DrawUI();
 
 private:
-	std::string vertexShaderFilename;
-	std::string fragmentShaderFilename;
+	std::string vertexShaderSource;
+	std::string fragmentShaderSource;
 
-	void ProcessShader(const std::string& shaderFilename);
+	void ProcessShader(const std::string& shaderSource);
 	ShaderDataType GetDataType(const std::string& typeStr);
 
 	std::vector<UniformParam> uniforms;

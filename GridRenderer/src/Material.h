@@ -12,23 +12,28 @@ class Grid;
 class Material
 {
 public:
-	void Update();
+	Material() {}
+
+	Material(const std::string& vertexSourceCode, const std::string& fragmentSourceCode) :
+		vertexSourceCode(vertexSourceCode), fragmentSourceCode(fragmentSourceCode),
+		shaderProgram(vertexSourceCode, fragmentSourceCode), shaderMetaData(vertexSourceCode, fragmentSourceCode)
+	{}
+
 	void Render(const CameraController& camera, const Grid& grid) const;
 	void DrawUI();
+	void SetSourceCode(const std::string& vertexSourceCode, const std::string& fragmentSourceCode);
 
-	NodeGraph* GetNodeGraph() { return &nodeGraph; }
+	const std::string& GetVertexSourceCode() const { return vertexSourceCode; }
+	const std::string& GetFragmentSourceCode() const { return fragmentSourceCode; }
 
 private:
-	void RecompileShaderProgram();
 	void ApplyDefaultUniforms() const;
 
-	bool isHotloadEnabled = true;
+	std::string vertexSourceCode;
+	std::string fragmentSourceCode;
 
-	std::string vertexShaderFilename = "shaders\\default.vert";
-	std::string fragmentShaderFilename = "shaders\\default.frag";
+	ShaderProgram shaderProgram;
+	ShaderMetaData shaderMetaData;
 
-	ShaderProgram shaderProgram = ShaderProgram(vertexShaderFilename, fragmentShaderFilename);
-	ShaderMetaData shaderMetaData = ShaderMetaData(vertexShaderFilename, fragmentShaderFilename);
-
-	NodeGraph nodeGraph;
+	bool isInit = false;
 };

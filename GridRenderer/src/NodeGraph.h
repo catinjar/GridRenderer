@@ -97,6 +97,12 @@ struct Link
 
 struct NodeGraph
 {
+    Node* FindNode(ed::NodeId id);
+    Link* FindLink(ed::LinkId id);
+    Pin* FindPin(ed::PinId id);
+    Link* FindLinkByPin(ed::PinId id);
+    bool IsPinLinked(ed::PinId id);
+
     std::vector<Node> nodes;
     std::vector<Link> links;
 };

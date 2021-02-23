@@ -10,19 +10,15 @@
 
 #include "Misc.h"
 
-ShaderMetaData::ShaderMetaData(const std::string& vertexShaderFilename, const std::string& fragmentShaderFilename)
+ShaderMetaData::ShaderMetaData(const std::string& vertexShaderSource, const std::string& fragmentShaderSource)
 {
-	this->vertexShaderFilename = vertexShaderFilename;
-	this->fragmentShaderFilename = fragmentShaderFilename;
-
-	HotloadChanges();
+	this->vertexShaderSource = vertexShaderSource;
+	this->fragmentShaderSource = fragmentShaderSource;
 }
 
-void ShaderMetaData::ProcessShader(const std::string& shaderFilename)
+void ShaderMetaData::ProcessShader(const std::string& shaderSource)
 {
-	const auto text = misc::ReadAllText(shaderFilename);
-
-	std::istringstream stream(text);
+	std::istringstream stream(shaderSource);
 	std::string line;
 
 	while (std::getline(stream, line))
@@ -43,14 +39,6 @@ void ShaderMetaData::ProcessShader(const std::string& shaderFilename)
 			});
 		}
 	}
-}
-
-void ShaderMetaData::HotloadChanges()
-{
-	uniforms.clear();
-
-	ProcessShader(vertexShaderFilename);
-	ProcessShader(fragmentShaderFilename);
 }
 
 ShaderDataType ShaderMetaData::GetDataType(const std::string& typeStr)

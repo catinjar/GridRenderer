@@ -34,7 +34,9 @@ public:
 	const char* GetName() const { return filePath.c_str(); }
 	glm::vec3 GetCenter() const { return center; }
 	glm::mat4 GetTransform() const;
+
 	Material* GetMaterial() { return &material; }
+	NodeGraph* GetNodeGraph() { return &nodeGraph; }
 
 private:
 	void CalculateCenter();
@@ -50,6 +52,7 @@ private:
 	RenderMode renderMode = RenderMode::Lines;
 
 	Material material;
+	NodeGraph nodeGraph;
 
 	glm::vec3 center = glm::vec3();
 };

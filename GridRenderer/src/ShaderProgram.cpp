@@ -5,7 +5,7 @@
 
 #include "Misc.h"
 
-void CheckShaderErrors(const std::string& filename, const GLuint shader)
+void CheckShaderErrors(const GLuint shader)
 {
 	int compileResult = 0;
 	glGetShaderiv(shader, GL_COMPILE_STATUS, &compileResult);
@@ -18,22 +18,21 @@ void CheckShaderErrors(const std::string& filename, const GLuint shader)
 		std::vector<char> shaderLog(infoLength);
 		glGetShaderInfoLog(shader, infoLength, nullptr, &shaderLog[0]);
 
-		std::cout << "ShaderProgram: Shader compile error: " << filename << &shaderLog[0] << std::endl;
+		std::cout << "ShaderProgram: Shader compile error: " << &shaderLog[0] << std::endl;
 	}
 }
 
-GLuint CreateShader(const GLuint shaderType, const std::string& filename)
+GLuint CreateShader(const GLuint shaderType, const std::string& sourceCode)
 {
 	const GLuint shader = glCreateShader(shaderType);
 
-	const std::string shaderSource = misc::ReadAllText(filename);
-	const GLchar* shaderSourcePtr = shaderSource.c_str();
-	const int shaderSourceSize = shaderSource.size();
+	const GLchar* shaderSourcePtr = sourceCode.c_str();
+	const int shaderSourceSize = sourceCode.size();
 
 	glShaderSource(shader, 1, &shaderSourcePtr, &shaderSourceSize);
 	glCompileShader(shader);
 
-	CheckShaderErrors(filename, shader);
+	CheckShaderErrors(shader);
 
 	return shader;
 }
@@ -55,13 +54,13 @@ void CheckProgramErrors(GLuint program)
 	}
 }
 
-ShaderProgram::ShaderProgram(const std::string& vertexShaderFilename, const std::string& fragmentShaderFilename)
+ShaderProgram::ShaderProgram(const std::string& vertexSourceCode, const std::string& fragmentSourceCode)
 {
-	this->vertexShaderFilename = vertexShaderFilename;
-	this->fragmentShaderFilename = fragmentShaderFilename;
+	this->vertexSourceCode = vertexSourceCode;
+	this->fragmentSourceCode = fragmentSourceCode;
 
-	vertexShaderTs = fs::last_write_time(vertexShaderFilename);
-	fragmentShaderTs = fs::last_write_time(fragmentShaderFilename);
+	//vertexShaderTs = fs::last_write_time(vertexSourceCode);
+	//fragmentShaderTs = fs::last_write_time(fragmentSourceCode);
 
 	Compile();
 }
@@ -86,11 +85,11 @@ void ShaderProgram::Compile()
 
 	programId = glCreateProgram();
 
-	const GLuint vertexShaderId = CreateShader(GL_VERTEX_SHADER, vertexShaderFilename);
+	const GLuint vertexShaderId = CreateShader(GL_VERTEX_SHADER, vertexSourceCode);
 	glAttachShader(programId, vertexShaderId);
 	glDeleteShader(vertexShaderId);
 	
-	const GLuint fragmentShaderId = CreateShader(GL_FRAGMENT_SHADER, fragmentShaderFilename);
+	const GLuint fragmentShaderId = CreateShader(GL_FRAGMENT_SHADER, fragmentSourceCode);
 	glAttachShader(programId, fragmentShaderId);
 	glDeleteShader(fragmentShaderId);
 
@@ -113,7 +112,7 @@ GLuint ShaderProgram::operator[](const std::string name) const
 
 bool ShaderProgram::HotloadChanges()
 {
-	const uint32_t HOTLOAD_MIN_DELAY_MILLIS = 1000;
+	/*const uint32_t HOTLOAD_MIN_DELAY_MILLIS = 1000;
 
 	const auto now = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 
@@ -123,7 +122,7 @@ bool ShaderProgram::HotloadChanges()
 	bool changed = false;
 
 	{
-		const auto ts = fs::last_write_time(vertexShaderFilename);
+		const auto ts = fs::last_write_time(vertexSourceCode);
 		if (ts > vertexShaderTs)
 		{
 			vertexShaderTs = ts;
@@ -132,7 +131,7 @@ bool ShaderProgram::HotloadChanges()
 	}
 
 	{
-		const auto ts = fs::last_write_time(fragmentShaderFilename);
+		const auto ts = fs::last_write_time(fragmentSourceCode);
 		if (ts > fragmentShaderTs)
 		{
 			fragmentShaderTs = ts;
@@ -143,13 +142,15 @@ bool ShaderProgram::HotloadChanges()
 	if (changed)
 		Compile();
 
-	return changed;
+	return changed;*/
+
+	return false;
 }
 
-void ShaderProgram::SetShaders(const std::string& vertexShaderFilename, const std::string& fragmentShaderFilename)
+void ShaderProgram::SetShaders(const std::string& vertexSourceCode, const std::string& fragmentSourceCode)
 {
-	this->vertexShaderFilename = vertexShaderFilename;
-	this->fragmentShaderFilename = fragmentShaderFilename;
+	this->vertexSourceCode = vertexSourceCode;
+	this->fragmentSourceCode = fragmentSourceCode;
 
 	Compile();
 }

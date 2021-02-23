@@ -111,6 +111,12 @@
     <ClCompile Include="src\third_party\imgui-node-editor\utilities\widgets.cpp">
       <Filter>Source Files\third_party\imgui-node-editor\utilities</Filter>
     </ClCompile>
+    <ClCompile Include="src\MaterialCompiler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\NodeGraph.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Grid.h">
@@ -198,6 +204,9 @@
       <Filter>Source Files\third_party\imgui-node-editor\utilities</Filter>
     </ClInclude>
     <ClInclude Include="src\NodeGraph.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MaterialCompiler.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

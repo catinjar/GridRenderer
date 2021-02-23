@@ -22,7 +22,6 @@ Grid::~Grid()
 
 void Grid::Update()
 {
-	material.Update();
 }
 
 void Grid::Draw(const CameraController& camera) const

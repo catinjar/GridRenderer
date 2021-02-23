@@ -24,9 +24,11 @@
     <ClCompile Include="src\Grid.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Material.cpp" />
+    <ClCompile Include="src\MaterialCompiler.cpp" />
     <ClCompile Include="src\MaterialEditor.cpp" />
     <ClCompile Include="src\Misc.cpp" />
     <ClCompile Include="src\NFDHelper.cpp" />
+    <ClCompile Include="src\NodeGraph.cpp" />
     <ClCompile Include="src\ShaderMetaData.cpp" />
     <ClCompile Include="src\ShaderProgram.cpp" />
     <ClCompile Include="src\Tecplot.cpp" />
@@ -51,6 +53,7 @@
     <ClInclude Include="src\CameraController.h" />
     <ClInclude Include="src\Grid.h" />
     <ClInclude Include="src\Material.h" />
+    <ClInclude Include="src\MaterialCompiler.h" />
     <ClInclude Include="src\MaterialEditor.h" />
     <ClInclude Include="src\Misc.h" />
     <ClInclude Include="src\NFDHelper.h" />
