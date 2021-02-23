@@ -34,6 +34,7 @@ public:
 	const char* GetName() const { return filePath.c_str(); }
 	glm::vec3 GetCenter() const { return center; }
 	glm::mat4 GetTransform() const;
+	Material* GetMaterial() { return &material; }
 
 private:
 	void CalculateCenter();

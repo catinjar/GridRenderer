@@ -5,6 +5,7 @@
 #include "ShaderProgram.h"
 #include "ShaderMetaData.h"
 #include "CameraController.h"
+#include "NodeGraph.h"
 
 class Grid;
 
@@ -14,6 +15,8 @@ public:
 	void Update();
 	void Render(const CameraController& camera, const Grid& grid) const;
 	void DrawUI();
+
+	NodeGraph* GetNodeGraph() { return &nodeGraph; }
 
 private:
 	void RecompileShaderProgram();
@@ -26,4 +29,6 @@ private:
 
 	ShaderProgram shaderProgram = ShaderProgram(vertexShaderFilename, fragmentShaderFilename);
 	ShaderMetaData shaderMetaData = ShaderMetaData(vertexShaderFilename, fragmentShaderFilename);
+
+	NodeGraph nodeGraph;
 };

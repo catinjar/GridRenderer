@@ -119,65 +119,65 @@ static void BuildNode(Node* node)
 
 Node* MaterialEditor::SpawnFragmentShaderOutputNode()
 {
-    s_Nodes.emplace_back(GetNextId(), "Fragment Shader Output", ImColor(255, 128, 128));
-    s_Nodes.back().Type = NodeType::FragmentOutput;
-    s_Nodes.back().Inputs.emplace_back(GetNextId(), "Vec4", PinType::Vec4);
+    graph->nodes.emplace_back(GetNextId(), "Fragment Shader Output", ImColor(255, 128, 128));
+    graph->nodes.back().Type = NodeType::FragmentOutput;
+    graph->nodes.back().Inputs.emplace_back(GetNextId(), "Vec4", PinType::Vec4);
 
-    BuildNode(&s_Nodes.back());
+    BuildNode(&graph->nodes.back());
 
-    return &s_Nodes.back();
+    return &graph->nodes.back();
 }
 
 Node* MaterialEditor::SpawnColorNode()
 {
-    s_Nodes.emplace_back(GetNextId(), "Color", ImColor(255, 128, 128));
-    s_Nodes.back().Type = NodeType::Uniform;
-    s_Nodes.back().Outputs.emplace_back(GetNextId(), "", PinType::Color);
+    graph->nodes.emplace_back(GetNextId(), "Color", ImColor(255, 128, 128));
+    graph->nodes.back().Type = NodeType::Uniform;
+    graph->nodes.back().Outputs.emplace_back(GetNextId(), "", PinType::Color);
 
-    BuildNode(&s_Nodes.back());
+    BuildNode(&graph->nodes.back());
 
-    return &s_Nodes.back();
+    return &graph->nodes.back();
 }
 
 Node* MaterialEditor::SpawnMultiplyVec4()
 {
-    s_Nodes.emplace_back(GetNextId(), "Multiply Vec4", ImColor(255, 128, 128));
-    s_Nodes.back().Type = NodeType::Operation;
-    s_Nodes.back().OpType = OperationType::MultiplyVec4;
-    s_Nodes.back().Inputs.emplace_back(GetNextId(), "Vec4", PinType::Vec4);
-    s_Nodes.back().Inputs.emplace_back(GetNextId(), "Value", PinType::Float);
-    s_Nodes.back().Outputs.emplace_back(GetNextId(), "Vec4", PinType::Vec4);
+    graph->nodes.emplace_back(GetNextId(), "Multiply Vec4", ImColor(255, 128, 128));
+    graph->nodes.back().Type = NodeType::Operation;
+    graph->nodes.back().OpType = OperationType::MultiplyVec4;
+    graph->nodes.back().Inputs.emplace_back(GetNextId(), "Vec4", PinType::Vec4);
+    graph->nodes.back().Inputs.emplace_back(GetNextId(), "Value", PinType::Float);
+    graph->nodes.back().Outputs.emplace_back(GetNextId(), "Vec4", PinType::Vec4);
 
-    BuildNode(&s_Nodes.back());
+    BuildNode(&graph->nodes.back());
 
-    return &s_Nodes.back();
+    return &graph->nodes.back();
 }
 
 Node* MaterialEditor::SpawnColorToVec4()
 {
-    s_Nodes.emplace_back(GetNextId(), "Color to Vec4", ImColor(255, 128, 128));
-    s_Nodes.back().Type = NodeType::Operation;
-    s_Nodes.back().OpType = OperationType::ColorToVec4;
-    s_Nodes.back().Inputs.emplace_back(GetNextId(), "Color", PinType::Color);
-    s_Nodes.back().Outputs.emplace_back(GetNextId(), "Vec4", PinType::Vec4);
+    graph->nodes.emplace_back(GetNextId(), "Color to Vec4", ImColor(255, 128, 128));
+    graph->nodes.back().Type = NodeType::Operation;
+    graph->nodes.back().OpType = OperationType::ColorToVec4;
+    graph->nodes.back().Inputs.emplace_back(GetNextId(), "Color", PinType::Color);
+    graph->nodes.back().Outputs.emplace_back(GetNextId(), "Vec4", PinType::Vec4);
 
-    BuildNode(&s_Nodes.back());
+    BuildNode(&graph->nodes.back());
 
-    return &s_Nodes.back();
+    return &graph->nodes.back();
 }
 
 Node* MaterialEditor::SpawnComment()
 {
-    s_Nodes.emplace_back(GetNextId(), "Test Comment");
-    s_Nodes.back().Type = NodeType::Comment;
-    s_Nodes.back().Size = ImVec2(300, 200);
+    graph->nodes.emplace_back(GetNextId(), "Test Comment");
+    graph->nodes.back().Type = NodeType::Comment;
+    graph->nodes.back().Size = ImVec2(300, 200);
 
-    return &s_Nodes.back();
+    return &graph->nodes.back();
 }
 
 void MaterialEditor::BuildNodes()
 {
-    for (auto& node : s_Nodes)
+    for (auto& node : graph->nodes)
         BuildNode(&node);
 }
 
@@ -255,8 +255,8 @@ void MaterialEditor::GenerateMaterialCode()
     s_MainCode = "";
     s_MaterialCode = "";
 
-    auto it = std::find_if(s_Nodes.begin(), s_Nodes.end(), [](const Node& node) { return node.Type == NodeType::FragmentOutput; });
-    if (it != s_Nodes.end())
+    auto it = std::find_if(graph->nodes.begin(), graph->nodes.end(), [](const Node& node) { return node.Type == NodeType::FragmentOutput; });
+    if (it != graph->nodes.end())
     {
         const auto& fragmentOutputNode = *it;
         ResolveNode(&fragmentOutputNode);
@@ -383,10 +383,11 @@ void ShowStyleEditor(bool* show = nullptr)
     ImGui::End();
 }
 
-void MaterialEditor::Init()
+void MaterialEditor::Init(NodeGraph* graph)
 {
-    ed::Config config;
+    SetMaterial(graph);
 
+    ed::Config config;
     config.SettingsFile = "Blueprints.json";
 
     config.LoadNodeSettings = [&](ed::NodeId nodeId, char* data, void* userPointer) -> size_t
@@ -422,10 +423,15 @@ void MaterialEditor::Init()
 
     BuildNodes();
 
-    s_Links.push_back(Link(GetNextLinkId(), s_Nodes[1].Outputs[0].ID, s_Nodes[0].Inputs[0].ID));
+    this->graph->links.push_back(Link(GetNextLinkId(), graph->nodes[1].Outputs[0].ID, graph->nodes[0].Inputs[0].ID));
 
     ed::NavigateToContent();
     GenerateMaterialCode();
+}
+
+void MaterialEditor::SetMaterial(NodeGraph* graph)
+{
+    this->graph = graph;
 }
 
 void MaterialEditor::Shutdown()
@@ -466,7 +472,7 @@ void MaterialEditor::Draw()
 
         util::BlueprintNodeBuilder builder(s_HeaderBackground, 64, 64);
 
-        for (auto& node : s_Nodes)
+        for (auto& node : graph->nodes)
         {
             builder.Begin(node.ID);
             
@@ -537,7 +543,7 @@ void MaterialEditor::Draw()
             builder.End();
         }
 
-        for (auto& node : s_Nodes)
+        for (auto& node : graph->nodes)
         {
             if (node.Type != NodeType::Comment)
                 continue;
@@ -590,7 +596,7 @@ void MaterialEditor::Draw()
             ed::EndGroupHint();
         }
 
-        for (auto& link : s_Links)
+        for (auto& link : graph->links)
             ed::Link(link.ID, link.StartPinID, link.EndPinID, link.Color, 2.0f);
 
         if (!createNewNode)
@@ -655,8 +661,8 @@ void MaterialEditor::Draw()
                             showLabel("+ Create Link", ImColor(32, 45, 32, 180));
                             if (ed::AcceptNewItem(ImColor(128, 255, 128), 4.0f))
                             {
-                                s_Links.emplace_back(Link(GetNextId(), startPinId, endPinId));
-                                s_Links.back().Color = GetIconColor(startPin->Type);
+                                graph->links.emplace_back(Link(GetNextId(), startPinId, endPinId));
+                                graph->links.back().Color = GetIconColor(startPin->Type);
                             }
                         }
                     }
@@ -692,9 +698,9 @@ void MaterialEditor::Draw()
                 {
                     if (ed::AcceptDeletedItem())
                     {
-                        auto id = std::find_if(s_Links.begin(), s_Links.end(), [linkId](auto& link) { return link.ID == linkId; });
-                        if (id != s_Links.end())
-                            s_Links.erase(id);
+                        auto id = std::find_if(graph->links.begin(), graph->links.end(), [linkId](auto& link) { return link.ID == linkId; });
+                        if (id != graph->links.end())
+                            graph->links.erase(id);
                     }
                 }
 
@@ -703,9 +709,9 @@ void MaterialEditor::Draw()
                 {
                     if (ed::AcceptDeletedItem())
                     {
-                        auto id = std::find_if(s_Nodes.begin(), s_Nodes.end(), [nodeId](auto& node) { return node.ID == nodeId; });
-                        if (id != s_Nodes.end())
-                            s_Nodes.erase(id);
+                        auto id = std::find_if(graph->nodes.begin(), graph->nodes.end(), [nodeId](auto& node) { return node.ID == nodeId; });
+                        if (id != graph->nodes.end())
+                            graph->nodes.erase(id);
                     }
                 }
             }
@@ -833,8 +839,8 @@ void MaterialEditor::Draw()
                         if (startPin->Kind == PinKind::Input)
                             std::swap(startPin, endPin);
 
-                        s_Links.emplace_back(Link(GetNextId(), startPin->ID, endPin->ID));
-                        s_Links.back().Color = GetIconColor(startPin->Type);
+                        graph->links.emplace_back(Link(GetNextId(), startPin->ID, endPin->ID));
+                        graph->links.back().Color = GetIconColor(startPin->Type);
 
                         break;
                     }
@@ -871,7 +877,7 @@ void MaterialEditor::ShowLeftPane(float paneWidth)
 
     if (ImGui::Button("Show Flow"))
     {
-        for (auto& link : s_Links)
+        for (auto& link : graph->links)
             ed::Flow(link.ID);
     }
 
@@ -902,7 +908,7 @@ void MaterialEditor::ShowLeftPane(float paneWidth)
 
 Node* MaterialEditor::FindNode(ed::NodeId id)
 {
-    for (auto& node : s_Nodes)
+    for (auto& node : graph->nodes)
         if (node.ID == id)
             return &node;
 
@@ -911,7 +917,7 @@ Node* MaterialEditor::FindNode(ed::NodeId id)
 
 Link* MaterialEditor::FindLink(ed::LinkId id)
 {
-    for (auto& link : s_Links)
+    for (auto& link : graph->links)
         if (link.ID == id)
             return &link;
 
@@ -923,7 +929,7 @@ Pin* MaterialEditor::FindPin(ed::PinId id)
     if (!id)
         return nullptr;
 
-    for (auto& node : s_Nodes)
+    for (auto& node : graph->nodes)
     {
         for (auto& pin : node.Inputs)
             if (pin.ID == id)
@@ -942,7 +948,7 @@ Link* MaterialEditor::FindLinkByPin(ed::PinId id)
     if (!id)
         return nullptr;
 
-    for (auto& link : s_Links)
+    for (auto& link : graph->links)
     {
         if (link.StartPinID == id || link.EndPinID == id)
             return &link;
@@ -956,7 +962,7 @@ bool MaterialEditor::IsPinLinked(ed::PinId id)
     if (!id)
         return false;
 
-    for (auto& link : s_Links)
+    for (auto& link : graph->links)
         if (link.StartPinID == id || link.EndPinID == id)
             return true;
 

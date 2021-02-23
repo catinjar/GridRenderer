@@ -94,3 +94,9 @@ struct Link
     {
     }
 };
+
+struct NodeGraph
+{
+    std::vector<Node> nodes;
+    std::vector<Link> links;
+};

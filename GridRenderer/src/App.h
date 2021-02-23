@@ -29,7 +29,6 @@ private:
 	void DrawSettings();
 	void DrawGridList();
 	void DrawGridUI();
-	void DrawNodeEditor();
 
 	SDL_Window* window;
 

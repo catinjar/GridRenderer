@@ -5,7 +5,8 @@
 class MaterialEditor
 {
 public:
-	void Init();
+	void Init(NodeGraph* graph);
+	void SetMaterial(NodeGraph* graph);
 	void Shutdown();
 	void Draw();
 
@@ -31,6 +32,5 @@ private:
 	void ResolveNode(const Node* node);
 	void GenerateMaterialCode();
 
-	std::vector<Node> s_Nodes;
-	std::vector<Link> s_Links;
+	NodeGraph* graph;
 };
