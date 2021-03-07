@@ -14,6 +14,7 @@ public:
 private:
 	void ShowLeftPane(float paneWidth);
 
+	Node* SpawnVertexShaderOutputNode();
 	Node* SpawnFragmentShaderOutputNode();
 	Node* SpawnColorNode();
 	Node* SpawnMultiplyVec4();
