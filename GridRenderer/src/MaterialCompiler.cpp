@@ -29,13 +29,17 @@ void ResolveNode(const Node* node, NodeGraph* graph)
         }
     }
 
-    if (node->Type == NodeType::FragmentOutput)
+    switch (node->Type)
     {
-        mainSource += "\toutColor = " + GetPinVariableName(&node->Inputs[0], graph) + ";\r\n";
-    }
+    case NodeType::VertexOutput:
+        mainSource += "\tgl_Position = projection * view * model * inPosition;\r\n";
+        break;
 
-    if (node->Type == NodeType::Uniform)
-    {
+    case NodeType::FragmentOutput:
+        mainSource += "\toutColor = " + GetPinVariableName(&node->Inputs[0], graph) + ";\r\n";
+        break;
+
+    case NodeType::Uniform:
         uniformsSource += "uniform ";
 
         if (node->Outputs[0].Type == PinType::Color)
@@ -43,10 +47,9 @@ void ResolveNode(const Node* node, NodeGraph* graph)
 
         uniformsSource += GetPinVariableName(&node->Outputs[0], graph);
         uniformsSource += ";\r\n";
-    }
+        break;
 
-    if (node->Type == NodeType::Operation)
-    {
+    case NodeType::Operation:
         if (node->OpType == OperationType::MultiplyVec4)
         {
             mainSource += "\t" + GetPinVariableName(&node->Outputs[0], graph);
@@ -59,10 +62,40 @@ void ResolveNode(const Node* node, NodeGraph* graph)
             mainSource += " = " + GetPinVariableName(&node->Inputs[0], graph);
             mainSource += ";\r\n";
         }
+        break;
     }
 }
 
-void CompileMaterial(Material* material, NodeGraph* graph)
+void CompileVertexShader(Material* material, NodeGraph* graph)
+{
+    uniformsSource = "";
+    mainSource = "";
+    vertexShaderSource = "";
+
+    auto it = std::find_if(graph->nodes.begin(), graph->nodes.end(), [](const Node& node) { return node.Type == NodeType::VertexOutput; });
+    if (it != graph->nodes.end())
+    {
+        const auto& vertexOutputNode = *it;
+        ResolveNode(&vertexOutputNode, graph);
+    }
+
+    vertexShaderSource += "#version 450 core\r\n";
+    vertexShaderSource += "\r\n";
+    vertexShaderSource += "layout(location = 0) in vec4 inPosition;\r\n";
+    vertexShaderSource += "\r\n";
+    vertexShaderSource += "uniform mat4 view;\r\n";
+    vertexShaderSource += "uniform mat4 projection;\r\n";
+    vertexShaderSource += "uniform mat4 model;\r\n";
+    vertexShaderSource += uniformsSource;
+    vertexShaderSource += "\r\n";
+    vertexShaderSource += "void main(void)\r\n";
+    vertexShaderSource += "{\r\n";
+    vertexShaderSource += mainSource;
+    vertexShaderSource += "\tgl_PointSize = 2.0f;\r\n";
+    vertexShaderSource += "}\r\n";
+}
+
+void CompileFragmentShader(Material* material, NodeGraph* graph)
 {
     uniformsSource = "";
     mainSource = "";
@@ -85,6 +118,12 @@ void CompileMaterial(Material* material, NodeGraph* graph)
     fragmentShaderSource += "{\r\n";
     fragmentShaderSource += mainSource;
     fragmentShaderSource += "}\r\n";
+}
+
+void CompileMaterial(Material* material, NodeGraph* graph)
+{
+    CompileVertexShader(material, graph);
+    CompileFragmentShader(material, graph);
 
     material->SetSourceCode(vertexShaderSource, fragmentShaderSource);
 }

@@ -115,6 +115,17 @@ static void BuildNode(Node* node)
     }
 }
 
+Node* MaterialEditor::SpawnVertexShaderOutputNode()
+{
+    graph->nodes.emplace_back(GetNextId(), "Vertex Shader Output", ImColor(128, 255, 128));
+    graph->nodes.back().Type = NodeType::VertexOutput;
+    graph->nodes.back().Inputs.emplace_back(GetNextId(), "Vec4", PinType::Vec4);
+
+    BuildNode(&graph->nodes.back());
+
+    return &graph->nodes.back();
+}
+
 Node* MaterialEditor::SpawnFragmentShaderOutputNode()
 {
     graph->nodes.emplace_back(GetNextId(), "Fragment Shader Output", ImColor(255, 128, 128));
@@ -323,12 +334,13 @@ void MaterialEditor::Init(Material* material, NodeGraph* graph)
     ed::SetCurrentEditor(m_Editor);
 
     Node* node;
+    node = SpawnVertexShaderOutputNode();   ed::SetNodePosition(node->ID, ImVec2(-252, 100));
     node = SpawnFragmentShaderOutputNode(); ed::SetNodePosition(node->ID, ImVec2(-252, 220));
-    node = SpawnColorNode();                ed::SetNodePosition(node->ID, ImVec2(-500, 351));
+    node = SpawnColorNode();                ed::SetNodePosition(node->ID, ImVec2(-600, 351));
 
     BuildNodes();
 
-    this->graph->links.push_back(Link(GetNextLinkId(), graph->nodes[1].Outputs[0].ID, graph->nodes[0].Inputs[0].ID));
+    this->graph->links.push_back(Link(GetNextLinkId(), graph->nodes[2].Outputs[0].ID, graph->nodes[1].Inputs[0].ID));
 
     ed::NavigateToContent();
 
@@ -709,6 +721,8 @@ void MaterialEditor::Draw()
     {
         Node* node = nullptr;
         
+        if (ImGui::MenuItem("Vertex Shader Output"))
+            node = SpawnVertexShaderOutputNode();
         if (ImGui::MenuItem("Fragment Shader Output"))
             node = SpawnFragmentShaderOutputNode();
         if (ImGui::MenuItem("Color"))
