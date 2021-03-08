@@ -13,6 +13,7 @@ public:
 
 private:
 	void ShowLeftPane(float paneWidth);
+	Node* DrawInputNodesMenu();
 
 	Node* SpawnVertexShaderOutputNode();
 	Node* SpawnFragmentShaderOutputNode();

@@ -710,19 +710,33 @@ void MaterialEditor::Draw()
     {
         Node* node = nullptr;
         
-        if (ImGui::MenuItem("Vertex Shader Output"))
-            node = SpawnVertexShaderOutputNode();
-        if (ImGui::MenuItem("Fragment Shader Output"))
-            node = SpawnFragmentShaderOutputNode();
-        if (ImGui::MenuItem("Color"))
-            node = SpawnColorNode();
-        if (ImGui::MenuItem("Multiply Vec4"))
-            node = SpawnMultiplyVec4();
-        if (ImGui::MenuItem("Color to Vec4"))
-            node = SpawnColorToVec4();
+        if (ImGui::BeginMenu("Input"))
+        {
+            node = DrawInputNodesMenu();
 
-        ImGui::Separator();
+            ImGui::EndMenu();
+        }
+
+        if (ImGui::BeginMenu("Output"))
+        {
+            if (ImGui::MenuItem("Vertex Shader Output"))
+                node = SpawnVertexShaderOutputNode();
+            if (ImGui::MenuItem("Fragment Shader Output"))
+                node = SpawnFragmentShaderOutputNode();
+
+            ImGui::EndMenu();
+        }
         
+        if (ImGui::BeginMenu("Operation"))
+        {
+            if (ImGui::MenuItem("Multiply Vec4"))
+                node = SpawnMultiplyVec4();
+            if (ImGui::MenuItem("Color to Vec4"))
+                node = SpawnColorToVec4();
+
+            ImGui::EndMenu();
+        }
+
         if (ImGui::MenuItem("Comment"))
             node = SpawnComment();
 
@@ -816,4 +830,14 @@ void MaterialEditor::ShowLeftPane(float paneWidth)
     ImGui::Text(material->GetFragmentSourceCode().c_str());
 
     ImGui::EndChild();
+}
+
+Node* MaterialEditor::DrawInputNodesMenu()
+{
+    Node* node = nullptr;
+
+    if (ImGui::MenuItem("Color"))
+        node = SpawnColorNode();
+
+    return node;
 }
