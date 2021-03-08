@@ -1,10 +1,12 @@
 #pragma once
 
-
 #include <string>
 #include <vector>
 
 #include "third_party/imgui-node-editor/imgui_node_editor.h"
+
+#include "ShaderProgram.h"
+#include "ShaderMetaData.h"
 
 namespace ed = ax::NodeEditor;
 
@@ -49,7 +51,7 @@ struct Pin
     PinType Type;
     PinKind Kind;
 
-    ImColor Color;
+    UniformParam Uniform;
 
     Pin(int id, const char* name, PinType type) :
         ID(id), Node(nullptr), Name(name), Type(type), Kind(PinKind::Input)
@@ -97,11 +99,15 @@ struct Link
 
 struct NodeGraph
 {
+    void ApplyUniforms(const ShaderProgram& shaderProgram);
+    
     Node* FindNode(ed::NodeId id);
     Link* FindLink(ed::LinkId id);
     Pin* FindPin(ed::PinId id);
     Link* FindLinkByPin(ed::PinId id);
-    bool IsPinLinked(ed::PinId id);
+    bool IsPinLinked(ed::PinId id) const;
+
+    std::string GetPinVariableName(ed::PinId id);
 
     std::vector<Node> nodes;
     std::vector<Link> links;

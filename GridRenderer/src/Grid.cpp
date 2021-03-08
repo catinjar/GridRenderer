@@ -24,9 +24,10 @@ void Grid::Update()
 {
 }
 
-void Grid::Draw(const CameraController& camera) const
+void Grid::Draw(const CameraController& camera)
 {
 	material.Render(camera, *this);
+	nodeGraph.ApplyUniforms(material.GetShaderProgram());
 
 	for (const auto& zone : zones)
 	{

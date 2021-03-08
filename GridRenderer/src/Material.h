@@ -23,11 +23,12 @@ public:
 	void DrawUI();
 	void SetSourceCode(const std::string& vertexSourceCode, const std::string& fragmentSourceCode);
 
+	const ShaderProgram& GetShaderProgram() const { return shaderProgram; }
 	const std::string& GetVertexSourceCode() const { return vertexSourceCode; }
 	const std::string& GetFragmentSourceCode() const { return fragmentSourceCode; }
 
 private:
-	void ApplyDefaultUniforms() const;
+	void ApplyDefaultUniforms(const CameraController& camera, const Grid& grid) const;
 
 	std::string vertexSourceCode;
 	std::string fragmentSourceCode;

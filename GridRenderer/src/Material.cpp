@@ -9,17 +9,8 @@
 void Material::Render(const CameraController& camera, const Grid& grid) const
 {
 	shaderProgram.Use();
-
-	const auto view = camera.GetView();
-	const auto projection = camera.GetProjection();
-	const auto model = grid.GetTransform();
-
-	glUniformMatrix4fv(shaderProgram["view"], 1, false, &view[0][0]);
-	glUniformMatrix4fv(shaderProgram["projection"], 1, false, &projection[0][0]);
-	glUniformMatrix4fv(shaderProgram["model"], 1, false, &model[0][0]);
-
 	shaderMetaData.ApplyUniforms(shaderProgram);
-	ApplyDefaultUniforms();
+	ApplyDefaultUniforms(camera, grid);
 }
 
 void Material::DrawUI()
@@ -40,8 +31,16 @@ void Material::SetSourceCode(const std::string& vertexSourceCode, const std::str
 	shaderMetaData = ShaderMetaData(vertexSourceCode, fragmentSourceCode);
 }
 
-void Material::ApplyDefaultUniforms() const
+void Material::ApplyDefaultUniforms(const CameraController& camera, const Grid& grid) const
 {
+	const auto view = camera.GetView();
+	const auto projection = camera.GetProjection();
+	const auto model = grid.GetTransform();
+
+	glUniformMatrix4fv(shaderProgram["view"], 1, false, &view[0][0]);
+	glUniformMatrix4fv(shaderProgram["projection"], 1, false, &projection[0][0]);
+	glUniformMatrix4fv(shaderProgram["model"], 1, false, &model[0][0]);
+
 	float seconds = misc::GetCurrentTimeInSeconds();
 
 	glUniform4f(shaderProgram["time"], seconds, seconds / 2.0, seconds * 2, seconds * 3);

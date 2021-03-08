@@ -142,6 +142,7 @@ Node* MaterialEditor::SpawnColorNode()
     graph->nodes.emplace_back(GetNextId(), "Color", ImColor(255, 128, 128));
     graph->nodes.back().Type = NodeType::Uniform;
     graph->nodes.back().Outputs.emplace_back(GetNextId(), "", PinType::Color);
+    graph->nodes.back().Outputs[0].Uniform.dataType = ShaderDataType::Color;
 
     BuildNode(&graph->nodes.back());
 
@@ -441,7 +442,7 @@ void MaterialEditor::Draw()
                 {
                     ImGui::BeginVertical(output.ID.AsPointer());
                     ImGui::PushItemWidth(100.0f);
-                    ImGui::ColorPicker3("##color", &output.Color.Value.x);
+                    output.Uniform.DrawUI();
                     ImGui::PopItemWidth();
                     ImGui::EndVertical();
                     ImGui::Spring(0);

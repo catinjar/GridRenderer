@@ -25,7 +25,7 @@ public:
 	virtual ~Grid();
 
 	void Update();
-	void Draw(const CameraController& camera) const;
+	void Draw(const CameraController& camera);
 	void Load(const std::string& filename);
 	void DrawUI();
 	void DrawGridWindow();

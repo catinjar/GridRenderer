@@ -1,5 +1,22 @@
 #include "NodeGraph.h"
 
+#include <GL/glew.h>
+#include <glm/glm.hpp>
+
+void NodeGraph::ApplyUniforms(const ShaderProgram& shaderProgram)
+{
+    for (const auto& node : nodes)
+    {
+        if (node.Type == NodeType::Uniform)
+        {
+            const auto& pin = node.Outputs[0];
+            const auto uniformName = GetPinVariableName(node.Outputs[0].ID);
+            const auto location = shaderProgram[uniformName];
+            node.Outputs[0].Uniform.ApplyUniforms(location);
+        }
+    }
+}
+
 Node* NodeGraph::FindNode(ed::NodeId id)
 {
     for (auto& node : nodes)
@@ -51,7 +68,7 @@ Link* NodeGraph::FindLinkByPin(ed::PinId id)
     return nullptr;
 }
 
-bool NodeGraph::IsPinLinked(ed::PinId id)
+bool NodeGraph::IsPinLinked(ed::PinId id) const
 {
     if (!id)
         return false;
@@ -61,4 +78,15 @@ bool NodeGraph::IsPinLinked(ed::PinId id)
             return true;
 
     return false;
+}
+
+std::string NodeGraph::GetPinVariableName(ed::PinId id)
+{
+    const auto pin = FindPin(id);
+    const auto link = FindLinkByPin(pin->ID);
+
+    if (link != nullptr)
+        return "var_" + std::to_string(link->ID.Get());
+    else
+        return "MISSED_LINK";
 }

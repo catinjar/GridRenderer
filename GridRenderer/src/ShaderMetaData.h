@@ -39,6 +39,7 @@ enum class ShaderDataType
 	Mat2,
 	Mat3,
 	Mat4,
+	Color,
 	Invalid
 };
 
@@ -69,6 +70,9 @@ struct UniformParam
 	float_t mat4x2[4][2];
 	float_t mat4x3[4][3];
 	float_t mat4x4[4][4];
+
+	void ApplyUniforms(GLuint location) const;
+	void DrawUI();
 };
 
 class ShaderMetaData
