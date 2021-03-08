@@ -42,7 +42,7 @@ void ResolveNode(const Node* node, NodeGraph* graph)
     case NodeType::Uniform:
         uniformsSource += "uniform ";
 
-        if (node->Outputs[0].Type == PinType::Color)
+        if (node->Outputs[0].Uniform.dataType == ShaderDataType::Color)
             uniformsSource += "vec4 ";
 
         uniformsSource += GetPinVariableName(&node->Outputs[0], graph);

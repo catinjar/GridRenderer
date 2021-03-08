@@ -94,7 +94,7 @@ static void UpdateTouch()
 
 static bool CanCreateLink(Pin* a, Pin* b)
 {
-    if (!a || !b || a == b || a->Kind == b->Kind || a->Type != b->Type || a->Node == b->Node)
+    if (!a || !b || a == b || a->Kind == b->Kind || a->Uniform.dataType != b->Uniform.dataType || a->Node == b->Node)
         return false;
 
     return true;
@@ -119,7 +119,7 @@ Node* MaterialEditor::SpawnVertexShaderOutputNode()
 {
     graph->nodes.emplace_back(GetNextId(), "Vertex Shader Output", ImColor(128, 255, 128));
     graph->nodes.back().Type = NodeType::VertexOutput;
-    graph->nodes.back().Inputs.emplace_back(GetNextId(), "Vec4", PinType::Vec4);
+    graph->nodes.back().Inputs.emplace_back(GetNextId(), "Vec4", ShaderDataType::Vec4);
 
     BuildNode(&graph->nodes.back());
 
@@ -130,7 +130,7 @@ Node* MaterialEditor::SpawnFragmentShaderOutputNode()
 {
     graph->nodes.emplace_back(GetNextId(), "Fragment Shader Output", ImColor(255, 128, 128));
     graph->nodes.back().Type = NodeType::FragmentOutput;
-    graph->nodes.back().Inputs.emplace_back(GetNextId(), "Vec4", PinType::Vec4);
+    graph->nodes.back().Inputs.emplace_back(GetNextId(), "Vec4", ShaderDataType::Vec4);
 
     BuildNode(&graph->nodes.back());
 
@@ -141,8 +141,7 @@ Node* MaterialEditor::SpawnColorNode()
 {
     graph->nodes.emplace_back(GetNextId(), "Color", ImColor(255, 128, 128));
     graph->nodes.back().Type = NodeType::Uniform;
-    graph->nodes.back().Outputs.emplace_back(GetNextId(), "", PinType::Color);
-    graph->nodes.back().Outputs[0].Uniform.dataType = ShaderDataType::Color;
+    graph->nodes.back().Outputs.emplace_back(GetNextId(), "", ShaderDataType::Color);
 
     BuildNode(&graph->nodes.back());
 
@@ -154,9 +153,9 @@ Node* MaterialEditor::SpawnMultiplyVec4()
     graph->nodes.emplace_back(GetNextId(), "Multiply Vec4", ImColor(255, 128, 128));
     graph->nodes.back().Type = NodeType::Operation;
     graph->nodes.back().OpType = OperationType::MultiplyVec4;
-    graph->nodes.back().Inputs.emplace_back(GetNextId(), "Vec4", PinType::Vec4);
-    graph->nodes.back().Inputs.emplace_back(GetNextId(), "Value", PinType::Float);
-    graph->nodes.back().Outputs.emplace_back(GetNextId(), "Vec4", PinType::Vec4);
+    graph->nodes.back().Inputs.emplace_back(GetNextId(), "Vec4", ShaderDataType::Vec4);
+    graph->nodes.back().Inputs.emplace_back(GetNextId(), "Value", ShaderDataType::Float);
+    graph->nodes.back().Outputs.emplace_back(GetNextId(), "Vec4", ShaderDataType::Vec4);
 
     BuildNode(&graph->nodes.back());
 
@@ -168,8 +167,8 @@ Node* MaterialEditor::SpawnColorToVec4()
     graph->nodes.emplace_back(GetNextId(), "Color to Vec4", ImColor(255, 128, 128));
     graph->nodes.back().Type = NodeType::Operation;
     graph->nodes.back().OpType = OperationType::ColorToVec4;
-    graph->nodes.back().Inputs.emplace_back(GetNextId(), "Color", PinType::Color);
-    graph->nodes.back().Outputs.emplace_back(GetNextId(), "Vec4", PinType::Vec4);
+    graph->nodes.back().Inputs.emplace_back(GetNextId(), "Color", ShaderDataType::Color);
+    graph->nodes.back().Outputs.emplace_back(GetNextId(), "Vec4", ShaderDataType::Vec4);
 
     BuildNode(&graph->nodes.back());
 
@@ -203,33 +202,19 @@ static bool Splitter(bool split_vertically, float thickness, float* size1, float
     return SplitterBehavior(bb, id, split_vertically ? ImGuiAxis_X : ImGuiAxis_Y, size1, size2, min_size1, min_size2, 0.0f);
 }
 
-ImColor GetIconColor(PinType type)
+ImColor GetIconColor(ShaderDataType type)
 {
     switch (type)
     {
-        default:
-        case PinType::Bool:     return ImColor(220, 48, 48);
-        case PinType::Int:      return ImColor(68, 201, 156);
-        case PinType::Float:    return ImColor(147, 226, 74);
-        case PinType::Color:    return ImColor(220, 48, 48);
+        default: return ImColor(220, 48, 48);
     }
 };
 
 void DrawPinIcon(const Pin& pin, bool connected, int alpha)
 {
-    IconType iconType;
-    ImColor  color = GetIconColor(pin.Type);
+    ImColor color = GetIconColor(pin.Uniform.dataType);
     color.Value.w = alpha / 255.0f;
-    switch (pin.Type)
-    {
-        case PinType::Bool:     iconType = IconType::Circle; break;
-        case PinType::Int:      iconType = IconType::Circle; break;
-        case PinType::Float:    iconType = IconType::Circle; break;
-        case PinType::Color:    iconType = IconType::Circle; break;
-        case PinType::Vec4:    iconType = IconType::Circle; break;
-        default:
-            return;
-    }
+    IconType iconType = IconType::Circle;
 
     ax::Widgets::Icon(ImVec2(s_PinIconSize, s_PinIconSize), iconType, connected, color, ImColor(32, 32, 32, alpha));
 };
@@ -413,15 +398,12 @@ void MaterialEditor::Draw()
                 builder.Input(input.ID);
                 ImGui::PushStyleVar(ImGuiStyleVar_Alpha, alpha);
                 DrawPinIcon(input, graph->IsPinLinked(input.ID), (int)(alpha * 255));
+                
                 ImGui::Spring(0);
+                
                 if (!input.Name.empty())
                 {
                     ImGui::TextUnformatted(input.Name.c_str());
-                    ImGui::Spring(0);
-                }
-                if (input.Type == PinType::Bool)
-                {
-                    ImGui::Button("Hello");
                     ImGui::Spring(0);
                 }
 
@@ -438,11 +420,13 @@ void MaterialEditor::Draw()
                 ImGui::PushStyleVar(ImGuiStyleVar_Alpha, alpha);
                 builder.Output(output.ID);
 
-                if (node.Type == NodeType::Uniform && output.Type == PinType::Color)
+                if (node.Type == NodeType::Uniform)
                 {
                     ImGui::BeginVertical(output.ID.AsPointer());
                     ImGui::PushItemWidth(100.0f);
+
                     output.Uniform.DrawUI();
+                    
                     ImGui::PopItemWidth();
                     ImGui::EndVertical();
                     ImGui::Spring(0);
@@ -455,7 +439,9 @@ void MaterialEditor::Draw()
                 }
 
                 ImGui::Spring(0);
+                
                 DrawPinIcon(output, graph->IsPinLinked(output.ID), (int)(alpha * 255));
+                
                 ImGui::PopStyleVar();
                 builder.EndOutput();
             }
@@ -571,7 +557,7 @@ void MaterialEditor::Draw()
                             showLabel("x Cannot connect to self", ImColor(45, 32, 32, 180));
                             ed::RejectNewItem(ImColor(255, 0, 0), 1.0f);
                         }
-                        else if (endPin->Type != startPin->Type)
+                        else if (endPin->Uniform.dataType != startPin->Uniform.dataType)
                         {
                             showLabel("x Incompatible Pin Type", ImColor(45, 32, 32, 180));
                             ed::RejectNewItem(ImColor(255, 128, 128), 1.0f);
@@ -582,7 +568,7 @@ void MaterialEditor::Draw()
                             if (ed::AcceptNewItem(ImColor(128, 255, 128), 4.0f))
                             {
                                 graph->links.emplace_back(Link(GetNextId(), startPinId, endPinId));
-                                graph->links.back().Color = GetIconColor(startPin->Type);
+                                graph->links.back().Color = GetIconColor(startPin->Uniform.dataType);
                             }
                         }
                     }
@@ -607,7 +593,9 @@ void MaterialEditor::Draw()
                 }
             }
             else
+            {
                 newLinkPin = nullptr;
+            }
 
             ed::EndCreate();
 
@@ -762,7 +750,7 @@ void MaterialEditor::Draw()
                             std::swap(startPin, endPin);
 
                         graph->links.emplace_back(Link(GetNextId(), startPin->ID, endPin->ID));
-                        graph->links.back().Color = GetIconColor(startPin->Type);
+                        graph->links.back().Color = GetIconColor(startPin->Uniform.dataType);
 
                         break;
                     }

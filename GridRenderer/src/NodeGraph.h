@@ -10,15 +10,6 @@
 
 namespace ed = ax::NodeEditor;
 
-enum class PinType
-{
-    Bool,
-    Int,
-    Float,
-    Color,
-    Vec4
-};
-
 enum class PinKind
 {
     Output,
@@ -48,14 +39,14 @@ struct Pin
     ed::PinId ID;
     Node* Node;
     std::string Name;
-    PinType Type;
     PinKind Kind;
 
     UniformParam Uniform;
 
-    Pin(int id, const char* name, PinType type) :
-        ID(id), Node(nullptr), Name(name), Type(type), Kind(PinKind::Input)
+    Pin(int id, const char* name, ShaderDataType dataType) :
+        ID(id), Node(nullptr), Name(name), Kind(PinKind::Input)
     {
+        Uniform.dataType = dataType;
     }
 };
 
