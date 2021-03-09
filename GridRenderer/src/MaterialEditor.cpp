@@ -808,6 +808,8 @@ Node* MaterialEditor::DrawInputNodeMenuItem(const char* name, ShaderDataType typ
 {
     if (ImGui::MenuItem(name))
         return SpawnInputNode(name, type);
+
+    return nullptr;
 }
 
 Node* MaterialEditor::SpawnVertexShaderOutputNode()

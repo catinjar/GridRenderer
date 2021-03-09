@@ -16,7 +16,6 @@ public:
 
 	void Use() const;
 	void Compile();
-	bool HotloadChanges();
 	void SetShaders(const std::string& vertexSourceCode, const std::string& fragmentSourceCode);
 
 	GLuint operator[](const char* name) const;

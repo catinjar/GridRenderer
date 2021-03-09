@@ -59,9 +59,6 @@ ShaderProgram::ShaderProgram(const std::string& vertexSourceCode, const std::str
 	this->vertexSourceCode = vertexSourceCode;
 	this->fragmentSourceCode = fragmentSourceCode;
 
-	//vertexShaderTs = fs::last_write_time(vertexSourceCode);
-	//fragmentShaderTs = fs::last_write_time(fragmentSourceCode);
-
 	Compile();
 }
 
@@ -108,43 +105,6 @@ GLuint ShaderProgram::operator[](const char* name) const
 GLuint ShaderProgram::operator[](const std::string name) const
 {
 	return glGetUniformLocation(programId, name.c_str());
-}
-
-bool ShaderProgram::HotloadChanges()
-{
-	/*const uint32_t HOTLOAD_MIN_DELAY_MILLIS = 1000;
-
-	const auto now = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
-
-	if (now - lastCompileTs < HOTLOAD_MIN_DELAY_MILLIS)
-		return false;
-
-	bool changed = false;
-
-	{
-		const auto ts = fs::last_write_time(vertexSourceCode);
-		if (ts > vertexShaderTs)
-		{
-			vertexShaderTs = ts;
-			changed = true;
-		}
-	}
-
-	{
-		const auto ts = fs::last_write_time(fragmentSourceCode);
-		if (ts > fragmentShaderTs)
-		{
-			fragmentShaderTs = ts;
-			changed = true;
-		}
-	}
-
-	if (changed)
-		Compile();
-
-	return changed;*/
-
-	return false;
 }
 
 void ShaderProgram::SetShaders(const std::string& vertexSourceCode, const std::string& fragmentSourceCode)

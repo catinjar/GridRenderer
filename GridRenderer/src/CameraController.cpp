@@ -35,19 +35,6 @@ CameraController::CameraController()
 
 void CameraController::Update(const Grid& grid)
 {
-	/*const glm::vec3 pitchAxis = glm::cross(look, up);
-	const glm::quat pitchQuat = glm::angleAxis(pitchDelta, pitchAxis);
-	const glm::quat yawQuat = glm::angleAxis(yawDelta, glm::vec3(0.0f, 1.0f, 0.0f));
-	const glm::quat temp = glm::normalize(pitchQuat * yawQuat);
-
-	look = glm::rotate(temp, look);
-	up = glm::rotate(temp, up);
-
-	view = glm::lookAt(position, position + look, glm::vec3(0.0f, 1.0f, 0.0f));
-
-	pitchDelta *= 0.75f;
-	yawDelta *= 0.75f;*/
-
 	phi -= phiDelta;
 	theta += thetaDelta;
 
@@ -67,32 +54,12 @@ void CameraController::Update(const Grid& grid)
 
 void CameraController::Input()
 {
-	KeyboardInput();
 	MouseInput();
 }
 
 void CameraController::Scroll(float amount)
 {
 	distanceFromOrigin -= amount * scrollSensitivity;
-}
-
-void CameraController::KeyboardInput()
-{
-	/*const Uint8* keyboardState = SDL_GetKeyboardState(nullptr);
-
-	const glm::vec3 right = glm::normalize(glm::cross(up, look));
-
-	if (keyboardState[SDL_SCANCODE_W])
-		position += look * cameraSpeed;
-
-	if (keyboardState[SDL_SCANCODE_S])
-		position -= look * cameraSpeed;
-
-	if (keyboardState[SDL_SCANCODE_A])
-		position += right * cameraSpeed;
-
-	if (keyboardState[SDL_SCANCODE_D])
-		position -= right * cameraSpeed;*/
 }
 
 void CameraController::MouseInput()
@@ -108,8 +75,6 @@ void CameraController::MouseInput()
 
 	if (mouseState & SDL_BUTTON(SDL_BUTTON_RIGHT))
 	{
-		//yawDelta = -deltaX * mouseSensitivity;
-		//pitchDelta = -deltaY * mouseSensitivity;
 		phiDelta = deltaY * mouseSensitivity;
 		thetaDelta = deltaX * mouseSensitivity;
 	}

@@ -20,7 +20,6 @@ public:
 	glm::mat4 GetView() const { return view; }
 
 private:
-	void KeyboardInput();
 	void MouseInput();
 
 	float phi;
