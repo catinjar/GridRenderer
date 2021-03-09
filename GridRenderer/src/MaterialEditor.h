@@ -12,17 +12,19 @@ public:
 	void Draw();
 
 private:
+	void BuildNodes();
+
 	void ShowLeftPane(float paneWidth);
+
 	Node* DrawInputNodesMenu();
+	Node* DrawInputNodeMenuItem(const char* name, ShaderDataType type);
 
 	Node* SpawnVertexShaderOutputNode();
 	Node* SpawnFragmentShaderOutputNode();
-	Node* SpawnColorNode();
+	Node* SpawnInputNode(const char* name, ShaderDataType type);
 	Node* SpawnMultiplyVec4();
 	Node* SpawnColorToVec4();
 	Node* SpawnComment();
-
-	void BuildNodes();
 
 	Material* material;
 	NodeGraph* graph;

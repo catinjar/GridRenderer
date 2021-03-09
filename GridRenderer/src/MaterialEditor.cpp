@@ -115,75 +115,6 @@ static void BuildNode(Node* node)
     }
 }
 
-Node* MaterialEditor::SpawnVertexShaderOutputNode()
-{
-    graph->nodes.emplace_back(GetNextId(), "Vertex Shader Output", ImColor(128, 255, 128));
-    graph->nodes.back().Type = NodeType::VertexOutput;
-    graph->nodes.back().Inputs.emplace_back(GetNextId(), "Vec4", ShaderDataType::Vec4);
-
-    BuildNode(&graph->nodes.back());
-
-    return &graph->nodes.back();
-}
-
-Node* MaterialEditor::SpawnFragmentShaderOutputNode()
-{
-    graph->nodes.emplace_back(GetNextId(), "Fragment Shader Output", ImColor(255, 128, 128));
-    graph->nodes.back().Type = NodeType::FragmentOutput;
-    graph->nodes.back().Inputs.emplace_back(GetNextId(), "Vec4", ShaderDataType::Vec4);
-
-    BuildNode(&graph->nodes.back());
-
-    return &graph->nodes.back();
-}
-
-Node* MaterialEditor::SpawnColorNode()
-{
-    graph->nodes.emplace_back(GetNextId(), "Color", ImColor(255, 128, 128));
-    graph->nodes.back().Type = NodeType::Uniform;
-    graph->nodes.back().Outputs.emplace_back(GetNextId(), "", ShaderDataType::Color);
-
-    BuildNode(&graph->nodes.back());
-
-    return &graph->nodes.back();
-}
-
-Node* MaterialEditor::SpawnMultiplyVec4()
-{
-    graph->nodes.emplace_back(GetNextId(), "Multiply Vec4", ImColor(255, 128, 128));
-    graph->nodes.back().Type = NodeType::Operation;
-    graph->nodes.back().OpType = OperationType::MultiplyVec4;
-    graph->nodes.back().Inputs.emplace_back(GetNextId(), "Vec4", ShaderDataType::Vec4);
-    graph->nodes.back().Inputs.emplace_back(GetNextId(), "Value", ShaderDataType::Float);
-    graph->nodes.back().Outputs.emplace_back(GetNextId(), "Vec4", ShaderDataType::Vec4);
-
-    BuildNode(&graph->nodes.back());
-
-    return &graph->nodes.back();
-}
-
-Node* MaterialEditor::SpawnColorToVec4()
-{
-    graph->nodes.emplace_back(GetNextId(), "Color to Vec4", ImColor(255, 128, 128));
-    graph->nodes.back().Type = NodeType::Operation;
-    graph->nodes.back().OpType = OperationType::ColorToVec4;
-    graph->nodes.back().Inputs.emplace_back(GetNextId(), "Color", ShaderDataType::Color);
-    graph->nodes.back().Outputs.emplace_back(GetNextId(), "Vec4", ShaderDataType::Vec4);
-
-    BuildNode(&graph->nodes.back());
-
-    return &graph->nodes.back();
-}
-
-Node* MaterialEditor::SpawnComment()
-{
-    graph->nodes.emplace_back(GetNextId(), "Test Comment");
-    graph->nodes.back().Type = NodeType::Comment;
-    graph->nodes.back().Size = ImVec2(300, 200);
-
-    return &graph->nodes.back();
-}
-
 void MaterialEditor::BuildNodes()
 {
     for (auto& node : graph->nodes)
@@ -320,9 +251,9 @@ void MaterialEditor::Init(Material* material, NodeGraph* graph)
     ed::SetCurrentEditor(m_Editor);
 
     Node* node;
-    node = SpawnVertexShaderOutputNode();   ed::SetNodePosition(node->ID, ImVec2(-252, 100));
-    node = SpawnFragmentShaderOutputNode(); ed::SetNodePosition(node->ID, ImVec2(-252, 220));
-    node = SpawnColorNode();                ed::SetNodePosition(node->ID, ImVec2(-600, 351));
+    node = SpawnVertexShaderOutputNode();                   ed::SetNodePosition(node->ID, ImVec2(-252, 100));
+    node = SpawnFragmentShaderOutputNode();                 ed::SetNodePosition(node->ID, ImVec2(-252, 220));
+    node = SpawnInputNode("Color", ShaderDataType::Color);  ed::SetNodePosition(node->ID, ImVec2(-600, 351));
 
     BuildNodes();
 
@@ -836,8 +767,114 @@ Node* MaterialEditor::DrawInputNodesMenu()
 {
     Node* node = nullptr;
 
-    if (ImGui::MenuItem("Color"))
-        node = SpawnColorNode();
+    node = DrawInputNodeMenuItem("Bool", ShaderDataType::Bool);
+    node = DrawInputNodeMenuItem("Int", ShaderDataType::Int);
+    node = DrawInputNodeMenuItem("Uint", ShaderDataType::Uint);
+    node = DrawInputNodeMenuItem("Float", ShaderDataType::Float);
+    node = DrawInputNodeMenuItem("Double", ShaderDataType::Double);
+    node = DrawInputNodeMenuItem("bVec2", ShaderDataType::bVec2);
+    node = DrawInputNodeMenuItem("bVec3", ShaderDataType::bVec3);
+    node = DrawInputNodeMenuItem("bVec4", ShaderDataType::bVec4);
+    node = DrawInputNodeMenuItem("iVec2", ShaderDataType::iVec2);
+    node = DrawInputNodeMenuItem("iVec3", ShaderDataType::iVec3);
+    node = DrawInputNodeMenuItem("iVec4", ShaderDataType::iVec4);
+    node = DrawInputNodeMenuItem("uVec2", ShaderDataType::uVec2);
+    node = DrawInputNodeMenuItem("uVec3", ShaderDataType::uVec3);
+    node = DrawInputNodeMenuItem("uVec4", ShaderDataType::uVec4);
+    node = DrawInputNodeMenuItem("Vec2", ShaderDataType::Vec2);
+    node = DrawInputNodeMenuItem("Vec3", ShaderDataType::Vec3);
+    node = DrawInputNodeMenuItem("Vec4", ShaderDataType::Vec4);
+    node = DrawInputNodeMenuItem("dVec2", ShaderDataType::dVec2);
+    node = DrawInputNodeMenuItem("dVec3", ShaderDataType::dVec3);
+    node = DrawInputNodeMenuItem("dVec4", ShaderDataType::dVec4);
+    node = DrawInputNodeMenuItem("Mat2x2", ShaderDataType::Mat2x2);
+    node = DrawInputNodeMenuItem("Mat2x3", ShaderDataType::Mat2x3);
+    node = DrawInputNodeMenuItem("Mat2x4", ShaderDataType::Mat2x4);
+    node = DrawInputNodeMenuItem("Mat3x2", ShaderDataType::Mat3x2);
+    node = DrawInputNodeMenuItem("Mat3x3", ShaderDataType::Mat3x3);
+    node = DrawInputNodeMenuItem("Mat3x4", ShaderDataType::Mat3x4);
+    node = DrawInputNodeMenuItem("Mat4x2", ShaderDataType::Mat4x2);
+    node = DrawInputNodeMenuItem("Mat4x3", ShaderDataType::Mat4x3);
+    node = DrawInputNodeMenuItem("Mat4x4", ShaderDataType::Mat4x4);
+    node = DrawInputNodeMenuItem("Mat2", ShaderDataType::Mat2);
+    node = DrawInputNodeMenuItem("Mat3", ShaderDataType::Mat3);
+    node = DrawInputNodeMenuItem("Mat4", ShaderDataType::Mat4);
+    node = DrawInputNodeMenuItem("Color", ShaderDataType::Color);
 
     return node;
+}
+
+Node* MaterialEditor::DrawInputNodeMenuItem(const char* name, ShaderDataType type)
+{
+    if (ImGui::MenuItem(name))
+        return SpawnInputNode(name, type);
+}
+
+Node* MaterialEditor::SpawnVertexShaderOutputNode()
+{
+    graph->nodes.emplace_back(GetNextId(), "Vertex Shader Output", ImColor(128, 255, 128));
+    graph->nodes.back().Type = NodeType::VertexOutput;
+    graph->nodes.back().Inputs.emplace_back(GetNextId(), "Vec4", ShaderDataType::Vec4);
+
+    BuildNode(&graph->nodes.back());
+
+    return &graph->nodes.back();
+}
+
+Node* MaterialEditor::SpawnFragmentShaderOutputNode()
+{
+    graph->nodes.emplace_back(GetNextId(), "Fragment Shader Output", ImColor(255, 128, 128));
+    graph->nodes.back().Type = NodeType::FragmentOutput;
+    graph->nodes.back().Inputs.emplace_back(GetNextId(), "Vec4", ShaderDataType::Vec4);
+
+    BuildNode(&graph->nodes.back());
+
+    return &graph->nodes.back();
+}
+
+Node* MaterialEditor::SpawnInputNode(const char* name, ShaderDataType type)
+{
+    graph->nodes.emplace_back(GetNextId(), name, ImColor(255, 128, 128));
+    graph->nodes.back().Type = NodeType::Uniform;
+    graph->nodes.back().Outputs.emplace_back(GetNextId(), "", type);
+
+    BuildNode(&graph->nodes.back());
+
+    return &graph->nodes.back();
+}
+
+Node* MaterialEditor::SpawnMultiplyVec4()
+{
+    graph->nodes.emplace_back(GetNextId(), "Multiply Vec4", ImColor(255, 128, 128));
+    graph->nodes.back().Type = NodeType::Operation;
+    graph->nodes.back().OpType = OperationType::MultiplyVec4;
+    graph->nodes.back().Inputs.emplace_back(GetNextId(), "Vec4", ShaderDataType::Vec4);
+    graph->nodes.back().Inputs.emplace_back(GetNextId(), "Value", ShaderDataType::Float);
+    graph->nodes.back().Outputs.emplace_back(GetNextId(), "Vec4", ShaderDataType::Vec4);
+
+    BuildNode(&graph->nodes.back());
+
+    return &graph->nodes.back();
+}
+
+Node* MaterialEditor::SpawnColorToVec4()
+{
+    graph->nodes.emplace_back(GetNextId(), "Color to Vec4", ImColor(255, 128, 128));
+    graph->nodes.back().Type = NodeType::Operation;
+    graph->nodes.back().OpType = OperationType::ColorToVec4;
+    graph->nodes.back().Inputs.emplace_back(GetNextId(), "Color", ShaderDataType::Color);
+    graph->nodes.back().Outputs.emplace_back(GetNextId(), "Vec4", ShaderDataType::Vec4);
+
+    BuildNode(&graph->nodes.back());
+
+    return &graph->nodes.back();
+}
+
+Node* MaterialEditor::SpawnComment()
+{
+    graph->nodes.emplace_back(GetNextId(), "Test Comment");
+    graph->nodes.back().Type = NodeType::Comment;
+    graph->nodes.back().Size = ImVec2(300, 200);
+
+    return &graph->nodes.back();
 }
