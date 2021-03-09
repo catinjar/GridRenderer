@@ -46,6 +46,7 @@
     <ClCompile Include="src\third_party\imgui\imgui_impl_sdl.cpp" />
     <ClCompile Include="src\third_party\imgui\imgui_tables.cpp" />
     <ClCompile Include="src\third_party\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="src\UniformParam.cpp" />
     <ClCompile Include="src\Zone.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -78,6 +79,7 @@
     <ClInclude Include="src\third_party\imgui\imstb_rectpack.h" />
     <ClInclude Include="src\third_party\imgui\imstb_textedit.h" />
     <ClInclude Include="src\third_party\imgui\imstb_truetype.h" />
+    <ClInclude Include="src\UniformParam.h" />
     <ClInclude Include="src\Zone.h" />
   </ItemGroup>
   <ItemGroup>
