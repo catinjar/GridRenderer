@@ -4,7 +4,41 @@
 
 std::string UniformParam::GetTypeName() const
 {
-
+	switch (dataType)
+	{
+		case ShaderDataType::Bool:		return "bool";
+		case ShaderDataType::Int:		return "int";
+		case ShaderDataType::Uint:		return "uint";
+		case ShaderDataType::Float:		return "float";
+		case ShaderDataType::Double:	return "double";
+		case ShaderDataType::bVec2:		return "bvec2";
+		case ShaderDataType::bVec3:		return "bvec3";
+		case ShaderDataType::bVec4:		return "bvec4";
+		case ShaderDataType::iVec2:		return "ivec2";
+		case ShaderDataType::iVec3:		return "ivec3";
+		case ShaderDataType::iVec4:		return "ivec4";
+		case ShaderDataType::uVec2:		return "uvec2";
+		case ShaderDataType::uVec3:		return "uvec3";
+		case ShaderDataType::uVec4:		return "uvec4";
+		case ShaderDataType::Vec2:		return "vec2";
+		case ShaderDataType::Vec3:		return "vec3";
+		case ShaderDataType::Vec4:		return "vec4";
+		case ShaderDataType::Color:		return "vec4";
+		case ShaderDataType::dVec2:		return "dvec2";
+		case ShaderDataType::dVec3:		return "dvec3";
+		case ShaderDataType::dVec4:		return "dvec4";
+		case ShaderDataType::Mat2x2:	return "mat2x2";
+		case ShaderDataType::Mat2:		return "mat2";
+		case ShaderDataType::Mat2x3:	return "mat2x3";
+		case ShaderDataType::Mat2x4:	return "mat2x4";
+		case ShaderDataType::Mat3x2:	return "mat3x2";
+		case ShaderDataType::Mat3x3:	return "mat3x3";
+		case ShaderDataType::Mat3:		return "mat3";
+		case ShaderDataType::Mat4x2:	return "mat4x2";
+		case ShaderDataType::Mat4x3:	return "mat4x3";
+		case ShaderDataType::Mat4x4:	return "mat4x4";
+		case ShaderDataType::Mat4:		return "mat4";
+	}
 }
 
 void UniformParam::ApplyUniforms(GLuint location) const

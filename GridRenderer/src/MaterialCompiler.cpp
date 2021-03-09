@@ -41,10 +41,8 @@ void ResolveNode(const Node* node, NodeGraph* graph)
 
     case NodeType::Uniform:
         uniformsSource += "uniform ";
-
-        if (node->Outputs[0].Uniform.dataType == ShaderDataType::Color)
-            uniformsSource += "vec4 ";
-
+        uniformsSource += node->Outputs[0].Uniform.GetTypeName();
+        uniformsSource += " ";
         uniformsSource += GetPinVariableName(&node->Outputs[0], graph);
         uniformsSource += ";\r\n";
         break;
@@ -52,13 +50,15 @@ void ResolveNode(const Node* node, NodeGraph* graph)
     case NodeType::Operation:
         if (node->OpType == OperationType::MultiplyVec4)
         {
-            mainSource += "\t" + GetPinVariableName(&node->Outputs[0], graph);
+            mainSource += "\t" + node->Outputs[0].Uniform.GetTypeName();
+            mainSource += " " + GetPinVariableName(&node->Outputs[0], graph);
             mainSource += " = " + GetPinVariableName(&node->Inputs[0], graph) + " * " + GetPinVariableName(&node->Inputs[1], graph);
             mainSource += ";\r\n";
         }
         else if (node->OpType == OperationType::ColorToVec4)
         {
-            mainSource += "\t" + GetPinVariableName(&node->Outputs[0], graph);
+            mainSource += "\t" + node->Outputs[0].Uniform.GetTypeName();
+            mainSource += " " + GetPinVariableName(&node->Outputs[0], graph);
             mainSource += " = " + GetPinVariableName(&node->Inputs[0], graph);
             mainSource += ";\r\n";
         }
