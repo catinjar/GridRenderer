@@ -2,13 +2,17 @@
 
 #include "Misc.h"
 
+#include <fstream>
+#include <sstream>
+#include <iostream>
+
 namespace tecplot
 {
 	TecplotGrid Parse(const std::string& filename)
 	{
 		TecplotGrid grid;
 
-		std::istringstream in(std::move(misc::ReadAllText(filename.c_str())));
+		std::istringstream in(std::move(misc::ReadAllText(filename)));
 		std::string line;
 
 		int lineNumber = 0;

@@ -20,7 +20,6 @@ private:
 	std::string fragmentShaderSource;
 
 	void ProcessShader(const std::string& shaderSource);
-	ShaderDataType GetDataType(const std::string& typeStr);
 
 	std::vector<UniformParam> uniforms;
 };

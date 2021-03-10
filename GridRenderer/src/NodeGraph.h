@@ -5,8 +5,7 @@
 
 #include "third_party/imgui-node-editor/imgui_node_editor.h"
 
-#include "ShaderProgram.h"
-#include "ShaderMetaData.h"
+#include "UniformParam.h"
 
 namespace ed = ax::NodeEditor;
 

@@ -42,6 +42,9 @@ enum class ShaderDataType
 	Invalid
 };
 
+std::string GetShaderTypeName(ShaderDataType type);
+ShaderDataType GetShaderType(const std::string& typeStr);
+
 struct UniformParam
 {
 	std::string name;
@@ -70,7 +73,6 @@ struct UniformParam
 	float_t mat4x3[4][3] { { 0.0f } };
 	float_t mat4x4[4][4] { { 0.0f } };
 
-	std::string GetTypeName() const;
 	void ApplyUniforms(GLuint location) const;
 	void DrawUI();
 };

@@ -29,6 +29,7 @@
     <ClCompile Include="src\Misc.cpp" />
     <ClCompile Include="src\NFDHelper.cpp" />
     <ClCompile Include="src\NodeGraph.cpp" />
+    <ClCompile Include="src\NodeLibrary.cpp" />
     <ClCompile Include="src\ShaderMetaData.cpp" />
     <ClCompile Include="src\ShaderProgram.cpp" />
     <ClCompile Include="src\Tecplot.cpp" />
@@ -59,6 +60,7 @@
     <ClInclude Include="src\Misc.h" />
     <ClInclude Include="src\NFDHelper.h" />
     <ClInclude Include="src\NodeGraph.h" />
+    <ClInclude Include="src\NodeLibrary.h" />
     <ClInclude Include="src\ShaderMetaData.h" />
     <ClInclude Include="src\ShaderProgram.h" />
     <ClInclude Include="src\Tecplot.h" />

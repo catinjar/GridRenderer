@@ -1,0 +1,5 @@
+Multiply Vec4
+in vec4 vector
+in vec4 value
+out vec4 result
+{2} = {0} * {1};

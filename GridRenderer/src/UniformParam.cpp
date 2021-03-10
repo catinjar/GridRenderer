@@ -2,9 +2,9 @@
 
 #include "third_party/imgui/imgui.h"
 
-std::string UniformParam::GetTypeName() const
+std::string GetShaderTypeName(ShaderDataType type)
 {
-	switch (dataType)
+	switch (type)
 	{
 		case ShaderDataType::Bool:		return "bool";
 		case ShaderDataType::Int:		return "int";
@@ -39,6 +39,76 @@ std::string UniformParam::GetTypeName() const
 		case ShaderDataType::Mat4x4:	return "mat4x4";
 		case ShaderDataType::Mat4:		return "mat4";
 	}
+}
+
+ShaderDataType GetShaderType(const std::string& typeStr)
+{
+	if (typeStr == "bool")
+		return ShaderDataType::Bool;
+	else if (typeStr == "int")
+		return ShaderDataType::Int;
+	else if (typeStr == "uint")
+		return ShaderDataType::Uint;
+	else if (typeStr == "float")
+		return ShaderDataType::Float;
+	else if (typeStr == "double")
+		return ShaderDataType::Double;
+	else if (typeStr == "bvec2")
+		return ShaderDataType::bVec2;
+	else if (typeStr == "bvec3")
+		return ShaderDataType::bVec3;
+	else if (typeStr == "bvec4")
+		return ShaderDataType::bVec4;
+	else if (typeStr == "ivec2")
+		return ShaderDataType::iVec2;
+	else if (typeStr == "ivec3")
+		return ShaderDataType::iVec3;
+	else if (typeStr == "ivec4")
+		return ShaderDataType::iVec4;
+	else if (typeStr == "uvec2")
+		return ShaderDataType::uVec2;
+	else if (typeStr == "uvec3")
+		return ShaderDataType::uVec3;
+	else if (typeStr == "uvec4")
+		return ShaderDataType::uVec4;
+	else if (typeStr == "vec2")
+		return ShaderDataType::Vec2;
+	else if (typeStr == "vec3")
+		return ShaderDataType::Vec3;
+	else if (typeStr == "vec4")
+		return ShaderDataType::Vec4;
+	else if (typeStr == "dvec2")
+		return ShaderDataType::dVec2;
+	else if (typeStr == "dvec3")
+		return ShaderDataType::dVec3;
+	else if (typeStr == "dvec4")
+		return ShaderDataType::dVec4;
+	else if (typeStr == "mat2x2")
+		return ShaderDataType::Mat2x2;
+	else if (typeStr == "mat2")
+		return ShaderDataType::Mat2;
+	else if (typeStr == "mat2x3")
+		return ShaderDataType::Mat2x3;
+	else if (typeStr == "mat2x4")
+		return ShaderDataType::Mat2x4;
+	else if (typeStr == "mat3x2")
+		return ShaderDataType::Mat3x2;
+	else if (typeStr == "mat3x3")
+		return ShaderDataType::Mat3x3;
+	else if (typeStr == "mat3")
+		return ShaderDataType::Mat3;
+	else if (typeStr == "mat3x4")
+		return ShaderDataType::Mat3x4;
+	else if (typeStr == "mat4x2")
+		return ShaderDataType::Mat4x2;
+	else if (typeStr == "mat4x3")
+		return ShaderDataType::Mat4x3;
+	else if (typeStr == "mat4x4")
+		return ShaderDataType::Mat4x4;
+	else if (typeStr == "mat4")
+		return ShaderDataType::Mat4;
+
+	return ShaderDataType::Invalid;
 }
 
 void UniformParam::ApplyUniforms(GLuint location) const
