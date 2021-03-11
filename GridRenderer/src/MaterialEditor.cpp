@@ -646,7 +646,6 @@ void MaterialEditor::Draw()
         if (ImGui::BeginMenu("Input"))
         {
             node = DrawInputNodesMenu();
-
             ImGui::EndMenu();
         }
 
@@ -662,11 +661,7 @@ void MaterialEditor::Draw()
         
         if (ImGui::BeginMenu("Operation"))
         {
-            if (ImGui::MenuItem("Multiply Vec4"))
-                node = SpawnMultiplyVec4();
-            if (ImGui::MenuItem("Color to Vec4"))
-                node = SpawnColorToVec4();
-
+            DrawOperationNodesMenu();
             ImGui::EndMenu();
         }
 
@@ -806,6 +801,19 @@ Node* MaterialEditor::DrawInputNodesMenu()
     return node;
 }
 
+Node* MaterialEditor::DrawOperationNodesMenu()
+{
+    Node* node = nullptr;
+
+    for (auto& nodeData : nodeLibrary.nodes)
+    {
+        if (ImGui::MenuItem(nodeData.name.c_str()))
+            return SpawnOperationNode(&nodeData);
+    }
+
+    return node;
+}
+
 Node* MaterialEditor::DrawInputNodeMenuItem(const char* name, ShaderDataType type)
 {
     if (ImGui::MenuItem(name))
@@ -847,27 +855,17 @@ Node* MaterialEditor::SpawnInputNode(const char* name, ShaderDataType type)
     return &graph->nodes.back();
 }
 
-Node* MaterialEditor::SpawnMultiplyVec4()
+Node* MaterialEditor::SpawnOperationNode(NodeData* nodeData)
 {
-    graph->nodes.emplace_back(GetNextId(), "Multiply Vec4", ImColor(255, 128, 128));
+    graph->nodes.emplace_back(GetNextId(), nodeData->name.c_str(), ImColor(255, 128, 128));
     graph->nodes.back().Type = NodeType::Operation;
-    graph->nodes.back().OpType = OperationType::MultiplyVec4;
-    graph->nodes.back().Inputs.emplace_back(GetNextId(), "Vec4", ShaderDataType::Vec4);
-    graph->nodes.back().Inputs.emplace_back(GetNextId(), "Value", ShaderDataType::Float);
-    graph->nodes.back().Outputs.emplace_back(GetNextId(), "Vec4", ShaderDataType::Vec4);
+    graph->nodes.back().Data = nodeData;
 
-    BuildNode(&graph->nodes.back());
+    for (const auto& input : nodeData->inputs)
+        graph->nodes.back().Inputs.emplace_back(GetNextId(), input.name.c_str(), input.type);
 
-    return &graph->nodes.back();
-}
-
-Node* MaterialEditor::SpawnColorToVec4()
-{
-    graph->nodes.emplace_back(GetNextId(), "Color to Vec4", ImColor(255, 128, 128));
-    graph->nodes.back().Type = NodeType::Operation;
-    graph->nodes.back().OpType = OperationType::ColorToVec4;
-    graph->nodes.back().Inputs.emplace_back(GetNextId(), "Color", ShaderDataType::Color);
-    graph->nodes.back().Outputs.emplace_back(GetNextId(), "Vec4", ShaderDataType::Vec4);
+    for (const auto& output : nodeData->outputs)
+        graph->nodes.back().Outputs.emplace_back(GetNextId(), output.name.c_str(), output.type);
 
     BuildNode(&graph->nodes.back());
 

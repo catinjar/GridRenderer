@@ -23,9 +23,7 @@ void NodeLibrary::Load()
 
 void NodeLibrary::LoadNode(const std::string& path)
 {
-	const char* nodeLibraryPath = "nodes\\MultiplyVec4.node";
-
-	std::istringstream in(std::move(misc::ReadAllText(nodeLibraryPath)));
+	std::istringstream in(std::move(misc::ReadAllText(path)));
 	std::string line;
 
 	NodeData nodeData;

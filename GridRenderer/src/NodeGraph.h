@@ -33,6 +33,7 @@ enum class OperationType
 };
 
 struct Node;
+struct NodeData;
 
 struct Pin
 {
@@ -58,6 +59,8 @@ struct Node
 
     std::vector<Pin> Inputs;
     std::vector<Pin> Outputs;
+
+    NodeData* Data;
 
     ImColor Color;
     ImVec2 Size;

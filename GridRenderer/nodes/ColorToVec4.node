@@ -1,0 +1,4 @@
+Color To Vec4
+in vec4 color
+out vec4 result
+{1} = {0};

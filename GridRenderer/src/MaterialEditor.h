@@ -18,13 +18,13 @@ private:
 	void ShowLeftPane(float paneWidth);
 
 	Node* DrawInputNodesMenu();
+	Node* DrawOperationNodesMenu();
 	Node* DrawInputNodeMenuItem(const char* name, ShaderDataType type);
 
 	Node* SpawnVertexShaderOutputNode();
 	Node* SpawnFragmentShaderOutputNode();
 	Node* SpawnInputNode(const char* name, ShaderDataType type);
-	Node* SpawnMultiplyVec4();
-	Node* SpawnColorToVec4();
+	Node* SpawnOperationNode(NodeData* nodeData);
 	Node* SpawnComment();
 
 	Material* material;

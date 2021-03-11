@@ -6,6 +6,8 @@
 #include "UniformParam.h"
 #include "NodeGraph.h"
 
+enum class PinKind;
+
 struct PinData
 {
 	std::string name;
