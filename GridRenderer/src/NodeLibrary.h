@@ -24,6 +24,7 @@ struct NodeData
 struct NodeLibrary
 {
 	void Load();
+	void LoadNode(const std::string& path);
 
 	std::vector<NodeData> nodes;
 };

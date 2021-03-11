@@ -220,6 +220,8 @@ void MaterialEditor::Init(Material* material, NodeGraph* graph)
 {
     SetMaterial(material, graph);
 
+    nodeLibrary.Load();
+
     ed::Config config;
     config.SettingsFile = "Blueprints.json";
 

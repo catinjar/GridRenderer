@@ -1,13 +1,28 @@
 #include "NodeLibrary.h"
 
 #include <sstream>
+#include <filesystem>
 
 #include "Misc.h"
+
+namespace fs = std::filesystem;
 
 void NodeLibrary::Load()
 {
 	nodes.clear();
 
+	const char* libraryPath = "nodes\\";
+	const char* nodeFileExtension = ".node";
+
+	for (auto& directoryEntry : fs::recursive_directory_iterator(libraryPath))
+	{
+		if (directoryEntry.path().extension() == nodeFileExtension)
+			LoadNode(directoryEntry.path().string());
+	}
+}
+
+void NodeLibrary::LoadNode(const std::string& path)
+{
 	const char* nodeLibraryPath = "nodes\\MultiplyVec4.node";
 
 	std::istringstream in(std::move(misc::ReadAllText(nodeLibraryPath)));
@@ -18,12 +33,10 @@ void NodeLibrary::Load()
 	std::getline(in, line);
 	nodeData.name = line;
 
-	std::getline(in, line);
-	const auto tokens = misc::Split(line, ' ');
-
 	while (in.peek() != EOF)
 	{
 		std::getline(in, line);
+		const auto tokens = misc::Split(line, ' ');
 
 		if (tokens[0] == "in")
 		{
@@ -43,6 +56,8 @@ void NodeLibrary::Load()
 		}
 		else
 		{
+			nodeData.expression += line;
+
 			while (in.peek() != EOF)
 			{
 				std::getline(in, line);
@@ -51,5 +66,8 @@ void NodeLibrary::Load()
 
 			break;
 		}
+
 	}
+
+	nodes.push_back(nodeData);
 }

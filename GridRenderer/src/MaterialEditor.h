@@ -2,6 +2,7 @@
 
 #include "Material.h"
 #include "NodeGraph.h"
+#include "NodeLibrary.h"
 
 class MaterialEditor
 {
@@ -28,4 +29,6 @@ private:
 
 	Material* material;
 	NodeGraph* graph;
+
+	NodeLibrary nodeLibrary;
 };

@@ -9,6 +9,7 @@
 #include "third_party/imgui/imgui.h"
 
 #include "Misc.h"
+#include "UniformParam.h"
 
 ShaderMetaData::ShaderMetaData(const std::string& vertexShaderSource, const std::string& fragmentShaderSource)
 {
@@ -35,7 +36,7 @@ void ShaderMetaData::ProcessShader(const std::string& shaderSource)
 			uniforms.push_back(
 			{
 				.name = name,
-				.dataType = GetDataType(tokens[1])
+				.dataType = GetShaderType(tokens[1])
 			});
 		}
 	}
