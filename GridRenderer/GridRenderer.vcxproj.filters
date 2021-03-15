@@ -31,6 +31,9 @@
     <Filter Include="Source Files\third_party\imgui-node-editor\utilities">
       <UniqueIdentifier>{1c7bdd5e-1b3a-4b8c-98e3-14c90d558b86}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\third_party\fmt">
+      <UniqueIdentifier>{f5ced4bf-8d35-4f40-8b31-d0db9532924c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -122,6 +125,9 @@
     </ClCompile>
     <ClCompile Include="src\NodeLibrary.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\third_party\fmt\format.cc">
+      <Filter>Source Files\third_party\fmt</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -220,6 +226,15 @@
     </ClInclude>
     <ClInclude Include="src\NodeLibrary.h">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\third_party\fmt\core.h">
+      <Filter>Source Files\third_party\fmt</Filter>
+    </ClInclude>
+    <ClInclude Include="src\third_party\fmt\format.h">
+      <Filter>Source Files\third_party\fmt</Filter>
+    </ClInclude>
+    <ClInclude Include="src\third_party\fmt\format-inl.h">
+      <Filter>Source Files\third_party\fmt</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -33,6 +33,7 @@
     <ClCompile Include="src\ShaderMetaData.cpp" />
     <ClCompile Include="src\ShaderProgram.cpp" />
     <ClCompile Include="src\Tecplot.cpp" />
+    <ClCompile Include="src\third_party\fmt\format.cc" />
     <ClCompile Include="src\third_party\imgui-node-editor\crude_json.cpp" />
     <ClCompile Include="src\third_party\imgui-node-editor\imgui_canvas.cpp" />
     <ClCompile Include="src\third_party\imgui-node-editor\imgui_node_editor.cpp" />
@@ -64,6 +65,9 @@
     <ClInclude Include="src\ShaderMetaData.h" />
     <ClInclude Include="src\ShaderProgram.h" />
     <ClInclude Include="src\Tecplot.h" />
+    <ClInclude Include="src\third_party\fmt\core.h" />
+    <ClInclude Include="src\third_party\fmt\format-inl.h" />
+    <ClInclude Include="src\third_party\fmt\format.h" />
     <ClInclude Include="src\third_party\imgui-node-editor\crude_json.h" />
     <ClInclude Include="src\third_party\imgui-node-editor\imgui_bezier_math.h" />
     <ClInclude Include="src\third_party\imgui-node-editor\imgui_canvas.h" />

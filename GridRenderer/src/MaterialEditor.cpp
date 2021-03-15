@@ -748,6 +748,7 @@ void MaterialEditor::ShowLeftPane(float paneWidth)
 
     if (ImGui::Button("Compile"))
     {
+        BuildNodes();
         CompileMaterial(material, graph);
     }
 

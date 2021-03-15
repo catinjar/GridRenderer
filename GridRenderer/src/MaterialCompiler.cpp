@@ -2,6 +2,10 @@
 
 #include <string>
 
+#include "third_party/fmt/format.h"
+
+#include "NodeLibrary.h"
+
 static std::string uniformsSource;
 static std::string mainSource;
 static std::string vertexShaderSource;
@@ -48,20 +52,19 @@ void ResolveNode(const Node* node, NodeGraph* graph)
         break;
 
     case NodeType::Operation:
-        if (node->OpType == OperationType::MultiplyVec4)
-        {
-            mainSource += "\t" + GetShaderTypeName(node->Outputs[0].Uniform.dataType);
-            mainSource += " " + GetPinVariableName(&node->Outputs[0], graph);
-            mainSource += " = " + GetPinVariableName(&node->Inputs[0], graph) + " * " + GetPinVariableName(&node->Inputs[1], graph);
-            mainSource += ";\r\n";
-        }
-        else if (node->OpType == OperationType::ColorToVec4)
-        {
-            mainSource += "\t" + GetShaderTypeName(node->Outputs[0].Uniform.dataType);
-            mainSource += " " + GetPinVariableName(&node->Outputs[0], graph);
-            mainSource += " = " + GetPinVariableName(&node->Inputs[0], graph);
-            mainSource += ";\r\n";
-        }
+        fmt::dynamic_format_arg_store<fmt::format_context> expressionParams;
+
+        for (const auto& input : node->Inputs)
+            expressionParams.push_back(GetPinVariableName(&input, graph));
+
+        for (const auto& output : node->Outputs)
+            expressionParams.push_back(GetPinVariableName(&output, graph));
+
+        std::string result = fmt::vformat(node->Data->expression, expressionParams);
+        mainSource += "\t";
+        mainSource += result;
+        mainSource += "\r\n";
+
         break;
     }
 }

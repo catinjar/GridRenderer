@@ -107,6 +107,8 @@ ShaderDataType GetShaderType(const std::string& typeStr)
 		return ShaderDataType::Mat4x4;
 	else if (typeStr == "mat4")
 		return ShaderDataType::Mat4;
+	else if (typeStr == "color")
+		return ShaderDataType::Color;
 
 	return ShaderDataType::Invalid;
 }

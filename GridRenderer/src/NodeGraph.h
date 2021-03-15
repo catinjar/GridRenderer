@@ -26,12 +26,6 @@ enum class NodeType
     Comment
 };
 
-enum class OperationType
-{
-    MultiplyVec4,
-    ColorToVec4
-};
-
 struct Node;
 struct NodeData;
 
@@ -60,7 +54,7 @@ struct Node
     std::vector<Pin> Inputs;
     std::vector<Pin> Outputs;
 
-    NodeData* Data;
+    NodeData* Data = nullptr;
 
     ImColor Color;
     ImVec2 Size;
@@ -68,10 +62,8 @@ struct Node
     std::string State;
     std::string SavedState;
 
-    OperationType OpType;
-
     Node(int id, const char* name, ImColor color = ImColor(255, 255, 255)) :
-        ID(id), Name(name), Color(color), Type(NodeType::Operation), Size(0, 0), OpType(OperationType::ColorToVec4)
+        ID(id), Name(name), Color(color), Type(NodeType::Operation), Size(0, 0)
     {
     }
 };

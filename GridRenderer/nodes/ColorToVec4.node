@@ -1,4 +1,4 @@
 Color To Vec4
-in vec4 color
+in color color
 out vec4 result
-{1} = {0};
+vec4 {1} = {0};
