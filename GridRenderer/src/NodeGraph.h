@@ -26,6 +26,11 @@ enum class NodeType
     Comment
 };
 
+enum class AttributeType
+{
+    TecplotParam
+};
+
 struct Node;
 struct NodeData;
 
@@ -55,6 +60,9 @@ struct Node
     std::vector<Pin> Outputs;
 
     NodeData* Data = nullptr;
+
+    AttributeType AttributeType = AttributeType::TecplotParam;
+    uint32_t AttributeParamIndex = 0;
 
     ImColor Color;
     ImVec2 Size;

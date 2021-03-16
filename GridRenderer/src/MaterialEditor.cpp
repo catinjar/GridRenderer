@@ -651,17 +651,19 @@ void MaterialEditor::Draw()
 
         if (ImGui::BeginMenu("Output"))
         {
-            if (ImGui::MenuItem("Vertex Shader Output"))
-                node = SpawnVertexShaderOutputNode();
-            if (ImGui::MenuItem("Fragment Shader Output"))
-                node = SpawnFragmentShaderOutputNode();
-
+            DrawOuputNodesMenu();
             ImGui::EndMenu();
         }
         
-        if (ImGui::BeginMenu("Operation"))
+        if (ImGui::BeginMenu("Operations"))
         {
             DrawOperationNodesMenu();
+            ImGui::EndMenu();
+        }
+
+        if (ImGui::BeginMenu("Attributes"))
+        {
+            DrawAttributeNodesMenu();
             ImGui::EndMenu();
         }
 
@@ -802,6 +804,25 @@ Node* MaterialEditor::DrawInputNodesMenu()
     return node;
 }
 
+Node* MaterialEditor::DrawInputNodeMenuItem(const char* name, ShaderDataType type)
+{
+    if (ImGui::MenuItem(name))
+        return SpawnInputNode(name, type);
+
+    return nullptr;
+}
+
+Node* MaterialEditor::DrawOuputNodesMenu()
+{
+    if (ImGui::MenuItem("Vertex Shader Output"))
+        return SpawnVertexShaderOutputNode();
+
+    if (ImGui::MenuItem("Fragment Shader Output"))
+        return SpawnFragmentShaderOutputNode();
+
+    return nullptr;
+}
+
 Node* MaterialEditor::DrawOperationNodesMenu()
 {
     Node* node = nullptr;
@@ -815,10 +836,10 @@ Node* MaterialEditor::DrawOperationNodesMenu()
     return node;
 }
 
-Node* MaterialEditor::DrawInputNodeMenuItem(const char* name, ShaderDataType type)
+Node* MaterialEditor::DrawAttributeNodesMenu()
 {
-    if (ImGui::MenuItem(name))
-        return SpawnInputNode(name, type);
+    if (ImGui::MenuItem("Param"))
+        return SpawnTecplotParamNode();
 
     return nullptr;
 }
@@ -867,6 +888,18 @@ Node* MaterialEditor::SpawnOperationNode(NodeData* nodeData)
 
     for (const auto& output : nodeData->outputs)
         graph->nodes.back().Outputs.emplace_back(GetNextId(), output.name.c_str(), output.type);
+
+    BuildNode(&graph->nodes.back());
+
+    return &graph->nodes.back();
+}
+
+Node* MaterialEditor::SpawnTecplotParamNode()
+{
+    graph->nodes.emplace_back(GetNextId(), "Param", ImColor(128, 255, 128));
+    graph->nodes.back().Type = NodeType::Attribute;
+    graph->nodes.back().AttributeType = AttributeType::TecplotParam;
+    graph->nodes.back().Outputs.emplace_back(GetNextId(), "Value", ShaderDataType::Float);
 
     BuildNode(&graph->nodes.back());
 

@@ -51,6 +51,10 @@ void ResolveNode(const Node* node, NodeGraph* graph)
         uniformsSource += ";\r\n";
         break;
 
+    case NodeType::Attribute:
+
+        break;
+
     case NodeType::Operation:
         fmt::dynamic_format_arg_store<fmt::format_context> expressionParams;
 
