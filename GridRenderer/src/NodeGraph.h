@@ -28,6 +28,7 @@ enum class NodeType
 
 enum class AttributeType
 {
+    Vertex,
     TecplotParam
 };
 
@@ -62,7 +63,7 @@ struct Node
     NodeData* Data = nullptr;
 
     AttributeType AttributeType = AttributeType::TecplotParam;
-    uint32_t AttributeParamIndex = 0;
+    int32_t AttributeParamIndex = 0;
 
     ImColor Color;
     ImVec2 Size;

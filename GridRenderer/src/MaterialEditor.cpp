@@ -364,6 +364,18 @@ void MaterialEditor::Draw()
                     ImGui::EndVertical();
                     ImGui::Spring(0);
                 }
+                
+                if (node.Type == NodeType::Attribute)
+                {
+                    ImGui::BeginVertical(output.ID.AsPointer());
+                    ImGui::PushItemWidth(100.0f);
+
+                    ImGui::DragInt("Index", &node.AttributeParamIndex, 1, 0, 8);
+
+                    ImGui::PopItemWidth();
+                    ImGui::EndVertical();
+                    ImGui::Spring(0);
+                }
 
                 if (!output.Name.empty())
                 {
