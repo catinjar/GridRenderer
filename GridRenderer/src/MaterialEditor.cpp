@@ -367,14 +367,17 @@ void MaterialEditor::Draw()
                 
                 if (node.Type == NodeType::Attribute)
                 {
-                    ImGui::BeginVertical(output.ID.AsPointer());
-                    ImGui::PushItemWidth(100.0f);
+                    if (node.AttributeType == AttributeType::TecplotParam)
+                    {
+                        ImGui::BeginVertical(output.ID.AsPointer());
+                        ImGui::PushItemWidth(100.0f);
 
-                    ImGui::DragInt("Index", &node.AttributeParamIndex, 1, 0, 8);
+                        ImGui::DragInt("Index", &node.AttributeParamIndex, 1, 0, 8);
 
-                    ImGui::PopItemWidth();
-                    ImGui::EndVertical();
-                    ImGui::Spring(0);
+                        ImGui::PopItemWidth();
+                        ImGui::EndVertical();
+                        ImGui::Spring(0);
+                    }
                 }
 
                 if (!output.Name.empty())
@@ -850,8 +853,18 @@ Node* MaterialEditor::DrawOperationNodesMenu()
 
 Node* MaterialEditor::DrawAttributeNodesMenu()
 {
-    if (ImGui::MenuItem("Param"))
-        return SpawnTecplotParamNode();
+    Node* node = nullptr;
+
+    node = DrawAttributeNodeMenuItem("Param", AttributeType::TecplotParam, ShaderDataType::Float);
+    node = DrawAttributeNodeMenuItem("Vertex", AttributeType::Vertex, ShaderDataType::Vec4);
+
+    return node;
+}
+
+Node* MaterialEditor::DrawAttributeNodeMenuItem(const char* name, AttributeType type, ShaderDataType dataType)
+{
+    if (ImGui::MenuItem(name))
+        return SpawnAttributeParamNode(name, type, dataType);
 
     return nullptr;
 }
@@ -906,12 +919,12 @@ Node* MaterialEditor::SpawnOperationNode(NodeData* nodeData)
     return &graph->nodes.back();
 }
 
-Node* MaterialEditor::SpawnTecplotParamNode()
+Node* MaterialEditor::SpawnAttributeParamNode(const char* name, AttributeType type, ShaderDataType dataType)
 {
-    graph->nodes.emplace_back(GetNextId(), "Param", ImColor(128, 255, 128));
+    graph->nodes.emplace_back(GetNextId(), name, ImColor(128, 255, 128));
     graph->nodes.back().Type = NodeType::Attribute;
-    graph->nodes.back().AttributeType = AttributeType::TecplotParam;
-    graph->nodes.back().Outputs.emplace_back(GetNextId(), "Value", ShaderDataType::Float);
+    graph->nodes.back().AttributeType = type;
+    graph->nodes.back().Outputs.emplace_back(GetNextId(), "Value", dataType);
 
     BuildNode(&graph->nodes.back());
 

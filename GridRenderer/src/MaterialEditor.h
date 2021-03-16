@@ -18,16 +18,17 @@ private:
 	void ShowLeftPane(float paneWidth);
 
 	Node* DrawInputNodesMenu();
+	Node* DrawInputNodeMenuItem(const char* name, ShaderDataType type);
 	Node* DrawOuputNodesMenu();
 	Node* DrawOperationNodesMenu();
 	Node* DrawAttributeNodesMenu();
-	Node* DrawInputNodeMenuItem(const char* name, ShaderDataType type);
+	Node* DrawAttributeNodeMenuItem(const char* name, AttributeType type, ShaderDataType dataType);
 
 	Node* SpawnVertexShaderOutputNode();
 	Node* SpawnFragmentShaderOutputNode();
 	Node* SpawnInputNode(const char* name, ShaderDataType type);
 	Node* SpawnOperationNode(NodeData* nodeData);
-	Node* SpawnTecplotParamNode();
+	Node* SpawnAttributeParamNode(const char* name, AttributeType type, ShaderDataType dataType);
 	Node* SpawnComment();
 
 	Material* material;
