@@ -651,19 +651,19 @@ void MaterialEditor::Draw()
 
         if (ImGui::BeginMenu("Output"))
         {
-            DrawOuputNodesMenu();
+            node = DrawOuputNodesMenu();
             ImGui::EndMenu();
         }
         
         if (ImGui::BeginMenu("Operations"))
         {
-            DrawOperationNodesMenu();
+            node = DrawOperationNodesMenu();
             ImGui::EndMenu();
         }
 
         if (ImGui::BeginMenu("Attributes"))
         {
-            DrawAttributeNodesMenu();
+            node = DrawAttributeNodesMenu();
             ImGui::EndMenu();
         }
 
