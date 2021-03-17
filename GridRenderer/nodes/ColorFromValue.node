@@ -1,0 +1,4 @@
+Color From Value
+in float value
+out vec4 result
+vec4 {1} = vec4({0}, {0}, {0}, 1);

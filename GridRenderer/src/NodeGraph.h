@@ -63,7 +63,7 @@ struct Node
     NodeData* Data = nullptr;
 
     AttributeType AttributeType = AttributeType::TecplotParam;
-    int32_t AttributeParamIndex = 0;
+    int32_t AttributeParamIndex = 1;
 
     ImColor Color;
     ImVec2 Size;
