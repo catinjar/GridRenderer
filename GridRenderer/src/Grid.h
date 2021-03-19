@@ -28,8 +28,6 @@ public:
 	void Draw(const CameraController& camera);
 	void Load(const std::string& filename);
 	void DrawUI();
-	void DrawGridWindow();
-	void DrawMaterialWindow();
 
 	const char* GetName() const { return filePath.c_str(); }
 	glm::vec3 GetCenter() const { return center; }

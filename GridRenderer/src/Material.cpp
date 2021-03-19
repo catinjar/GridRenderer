@@ -9,17 +9,7 @@
 void Material::Render(const CameraController& camera, const Grid& grid) const
 {
 	shaderProgram.Use();
-	shaderMetaData.ApplyUniforms(shaderProgram);
 	ApplyDefaultUniforms(camera, grid);
-}
-
-void Material::DrawUI()
-{
-	ImGui::Begin("Material");
-
-	shaderMetaData.DrawUI();
-
-	ImGui::End();
 }
 
 void Material::SetSourceCode(const std::string& vertexSourceCode, const std::string& fragmentSourceCode)
@@ -28,7 +18,6 @@ void Material::SetSourceCode(const std::string& vertexSourceCode, const std::str
 	this->fragmentSourceCode = fragmentSourceCode;
 
 	shaderProgram.SetShaders(vertexSourceCode, fragmentSourceCode);
-	shaderMetaData = ShaderMetaData(vertexSourceCode, fragmentSourceCode);
 }
 
 void Material::ApplyDefaultUniforms(const CameraController& camera, const Grid& grid) const

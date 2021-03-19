@@ -69,12 +69,6 @@ void Grid::CalculateCenter()
 
 void Grid::DrawUI()
 {
-	DrawGridWindow();
-	DrawMaterialWindow();
-}
-
-void Grid::DrawGridWindow()
-{
 	ImGui::Begin("Grid");
 
 	if (ImGui::Button("Load Grid"))
@@ -115,11 +109,6 @@ void Grid::DrawGridWindow()
 	}
 
 	ImGui::End();
-}
-
-void Grid::DrawMaterialWindow()
-{
-	material.DrawUI();
 }
 
 glm::mat4 Grid::GetTransform() const

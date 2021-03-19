@@ -57,12 +57,6 @@ void App::Input()
 		}
 	}
 
-	/*if (ImGui::GetIO().WantCaptureMouse ||
-		ImGui::GetIO().WantCaptureKeyboard)
-	{
-		return;
-	}*/
-
 	camera.Input();
 }
 
