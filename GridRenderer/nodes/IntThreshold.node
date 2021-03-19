@@ -1,0 +1,5 @@
+Int Threshold
+in int value
+in int threshold
+out bool result
+bool {2} = {0} < {1};

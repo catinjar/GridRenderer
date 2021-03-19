@@ -1,0 +1,5 @@
+Discard If
+in bool flag
+in vec4 value
+out vec4 result
+if (!{0}) discard; vec4 {2} = {1};

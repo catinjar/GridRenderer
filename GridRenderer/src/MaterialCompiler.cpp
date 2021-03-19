@@ -61,19 +61,19 @@ void ResolveNode(const Node* node, NodeGraph* graph)
         switch (node->AttributeType)
         {
         case AttributeType::Vertex:
-            mainSource += "inPosition";
+            mainSource += "position";
             break;
 
         case AttributeType::IndexI:
-            mainSource += "inIndexI";
+            mainSource += "indexI";
             break;
 
         case AttributeType::IndexJ:
-            mainSource += "inIndexJ";
+            mainSource += "indexJ";
             break;
 
         case AttributeType::IndexK:
-            mainSource += "inIndexK";
+            mainSource += "indexK";
             break;
 
         case AttributeType::TecplotParam:
@@ -130,9 +130,9 @@ void CompileVertexShader(Material* material, NodeGraph* graph)
     vertexShaderSource += "out float param1;\r\n";
     vertexShaderSource += "out float param2;\r\n";
     vertexShaderSource += "out float param3;\r\n";
-    vertexShaderSource += "out int indexI;\r\n";
-    vertexShaderSource += "out int indexJ;\r\n";
-    vertexShaderSource += "out int indexK;\r\n";
+    vertexShaderSource += "flat out int indexI;\r\n";
+    vertexShaderSource += "flat out int indexJ;\r\n";
+    vertexShaderSource += "flat out int indexK;\r\n";
     vertexShaderSource += "\r\n";
     vertexShaderSource += "uniform mat4 view;\r\n";
     vertexShaderSource += "uniform mat4 projection;\r\n";
@@ -168,13 +168,13 @@ void CompileFragmentShader(Material* material, NodeGraph* graph)
 
     fragmentShaderSource += "#version 450 core\r\n";
     fragmentShaderSource += "\r\n";
-    fragmentShaderSource += "in vec4 inPosition;\r\n";
+    fragmentShaderSource += "in vec4 position;\r\n";
     fragmentShaderSource += "in float param1;\r\n";
     fragmentShaderSource += "in float param2;\r\n";
     fragmentShaderSource += "in float param3;\r\n";
-    fragmentShaderSource += "in int indexI;\r\n";
-    fragmentShaderSource += "in int indexJ;\r\n";
-    fragmentShaderSource += "in int indexK;\r\n";
+    fragmentShaderSource += "flat in int indexI;\r\n";
+    fragmentShaderSource += "flat in int indexJ;\r\n";
+    fragmentShaderSource += "flat in int indexK;\r\n";
     fragmentShaderSource += "\r\n";
     fragmentShaderSource += uniformsSource;
     fragmentShaderSource += "\r\n";
