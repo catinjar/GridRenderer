@@ -29,6 +29,9 @@ enum class NodeType
 enum class AttributeType
 {
     Vertex,
+    IndexI,
+    IndexJ,
+    IndexK,
     TecplotParam
 };
 

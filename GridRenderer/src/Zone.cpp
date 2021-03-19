@@ -84,18 +84,34 @@ void Zone::SetData(const tecplot::TecplotZone& tecplotZone)
 	param3 = tecplotZone.param3;
 
 	uint32_t vertexCount = vertices.size();
+
+	iIndices.clear();
+	jIndices.clear();
+	kIndices.clear();
+
+	for (int i = 0; i < indices.size() - 2; i += 3)
+	{
+		iIndices.push_back(indices[i]);
+		jIndices.push_back(indices[i + 1]);
+		kIndices.push_back(indices[i + 2]);
+	}
+
 	uint32_t coordsSize = vertexCount * sizeof(GLfloat) * 3;
 	uint32_t paramSize = vertexCount * sizeof(GLfloat);
+	uint32_t indexSize = vertexCount * sizeof(GLint);
 
 	glBindVertexArray(vao);
 
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glBufferData(GL_ARRAY_BUFFER, vertexCount * sizeof(GLfloat) * 6, nullptr, GL_STATIC_DRAW);
 
-	glBufferSubData(GL_ARRAY_BUFFER, 0,								coordsSize,							(GLfloat*)vertices.data());
-	glBufferSubData(GL_ARRAY_BUFFER, coordsSize,					param1.size() * sizeof(GLfloat),	(GLfloat*)param1.data());
-	glBufferSubData(GL_ARRAY_BUFFER, coordsSize + paramSize,		param2.size() * sizeof(GLfloat),	(GLfloat*)param2.data());
-	glBufferSubData(GL_ARRAY_BUFFER, coordsSize + paramSize * 2,	param3.size() * sizeof(GLfloat),	(GLfloat*)param3.data());
+	glBufferSubData(GL_ARRAY_BUFFER, 0,												coordsSize,							(GLfloat*)vertices.data());
+	glBufferSubData(GL_ARRAY_BUFFER, coordsSize,									param1.size() * sizeof(GLfloat),	(GLfloat*)param1.data());
+	glBufferSubData(GL_ARRAY_BUFFER, coordsSize + paramSize,						param2.size() * sizeof(GLfloat),	(GLfloat*)param2.data());
+	glBufferSubData(GL_ARRAY_BUFFER, coordsSize + paramSize * 2,					param3.size() * sizeof(GLfloat),	(GLfloat*)param3.data());
+	glBufferSubData(GL_ARRAY_BUFFER, coordsSize + paramSize * 3,					iIndices.size() * sizeof(GLint),	(GLint*)iIndices.data());
+	glBufferSubData(GL_ARRAY_BUFFER, coordsSize + paramSize * 3 + indexSize,		jIndices.size() * sizeof(GLint),	(GLint*)jIndices.data());
+	glBufferSubData(GL_ARRAY_BUFFER, coordsSize + paramSize * 3 + indexSize * 2,	kIndices.size() * sizeof(GLint),	(GLint*)kIndices.data());
 
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (void*)0);
@@ -108,6 +124,15 @@ void Zone::SetData(const tecplot::TecplotZone& tecplotZone)
 
 	glEnableVertexAttribArray(3);
 	glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, sizeof(GLfloat), (void*)(vertexCount * sizeof(GLfloat) * 5));
+
+	glEnableVertexAttribArray(4);
+	glVertexAttribPointer(4, 1, GL_INT, GL_FALSE, sizeof(GLint), (void*)(vertexCount * sizeof(GLfloat) * 6));
+
+	glEnableVertexAttribArray(5);
+	glVertexAttribPointer(5, 1, GL_INT, GL_FALSE, sizeof(GLint), (void*)(vertexCount * sizeof(GLfloat) * 6 + vertexCount * sizeof(GLint)));
+
+	glEnableVertexAttribArray(6);
+	glVertexAttribPointer(6, 1, GL_INT, GL_FALSE, sizeof(GLint), (void*)(vertexCount * sizeof(GLfloat) * 6 + vertexCount * sizeof(GLint) * 2));
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLuint), indices.data(), GL_STATIC_DRAW);

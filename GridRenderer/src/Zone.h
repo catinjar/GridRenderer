@@ -30,6 +30,10 @@ private:
 	std::vector<GLfloat> param2;
 	std::vector<GLfloat> param3;
 
+	std::vector<GLint> iIndices;
+	std::vector<GLint> jIndices;
+	std::vector<GLint> kIndices;
+
 	GLuint vao = 0;
 	GLuint vbo = 0;
 	GLuint ibo = 0;

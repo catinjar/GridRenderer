@@ -64,6 +64,18 @@ void ResolveNode(const Node* node, NodeGraph* graph)
             mainSource += "inPosition";
             break;
 
+        case AttributeType::IndexI:
+            mainSource += "inIndexI";
+            break;
+
+        case AttributeType::IndexJ:
+            mainSource += "inIndexJ";
+            break;
+
+        case AttributeType::IndexK:
+            mainSource += "inIndexK";
+            break;
+
         case AttributeType::TecplotParam:
             mainSource += "param" + std::to_string(node->AttributeParamIndex);
             break;
@@ -110,11 +122,17 @@ void CompileVertexShader(Material* material, NodeGraph* graph)
     vertexShaderSource += "layout(location = 1) in float inParam1;\r\n";
     vertexShaderSource += "layout(location = 2) in float inParam2;\r\n";
     vertexShaderSource += "layout(location = 3) in float inParam3;\r\n";
+    vertexShaderSource += "layout(location = 4) in int inIndexI;\r\n";
+    vertexShaderSource += "layout(location = 5) in int inIndexJ;\r\n";
+    vertexShaderSource += "layout(location = 6) in int inIndexK;\r\n";
     vertexShaderSource += "\r\n";
     vertexShaderSource += "out vec4 outPosition;\r\n";
     vertexShaderSource += "out float param1;\r\n";
     vertexShaderSource += "out float param2;\r\n";
     vertexShaderSource += "out float param3;\r\n";
+    vertexShaderSource += "out int indexI;\r\n";
+    vertexShaderSource += "out int indexJ;\r\n";
+    vertexShaderSource += "out int indexK;\r\n";
     vertexShaderSource += "\r\n";
     vertexShaderSource += "uniform mat4 view;\r\n";
     vertexShaderSource += "uniform mat4 projection;\r\n";
@@ -127,6 +145,9 @@ void CompileVertexShader(Material* material, NodeGraph* graph)
     vertexShaderSource += "\tparam1 = inParam1;\r\n";
     vertexShaderSource += "\tparam2 = inParam2;\r\n";
     vertexShaderSource += "\tparam3 = inParam3;\r\n";
+    vertexShaderSource += "\tindexI = inIndexI;\r\n";
+    vertexShaderSource += "\tindexJ = inIndexJ;\r\n";
+    vertexShaderSource += "\tindexK = inIndexK;\r\n";
     vertexShaderSource += mainSource;
     vertexShaderSource += "\tgl_PointSize = 2.0f;\r\n";
     vertexShaderSource += "}\r\n";
@@ -151,6 +172,9 @@ void CompileFragmentShader(Material* material, NodeGraph* graph)
     fragmentShaderSource += "in float param1;\r\n";
     fragmentShaderSource += "in float param2;\r\n";
     fragmentShaderSource += "in float param3;\r\n";
+    fragmentShaderSource += "in int indexI;\r\n";
+    fragmentShaderSource += "in int indexJ;\r\n";
+    fragmentShaderSource += "in int indexK;\r\n";
     fragmentShaderSource += "\r\n";
     fragmentShaderSource += uniformsSource;
     fragmentShaderSource += "\r\n";

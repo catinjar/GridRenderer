@@ -857,6 +857,9 @@ Node* MaterialEditor::DrawAttributeNodesMenu()
 
     node = DrawAttributeNodeMenuItem("Param", AttributeType::TecplotParam, ShaderDataType::Float);
     node = DrawAttributeNodeMenuItem("Vertex", AttributeType::Vertex, ShaderDataType::Vec4);
+    node = DrawAttributeNodeMenuItem("Index I", AttributeType::IndexI, ShaderDataType::Int);
+    node = DrawAttributeNodeMenuItem("Index J", AttributeType::IndexJ, ShaderDataType::Int);
+    node = DrawAttributeNodeMenuItem("Index K", AttributeType::IndexK, ShaderDataType::Int);
 
     return node;
 }
