@@ -133,17 +133,22 @@ static bool Splitter(bool split_vertically, float thickness, float* size1, float
     return SplitterBehavior(bb, id, split_vertically ? ImGuiAxis_X : ImGuiAxis_Y, size1, size2, min_size1, min_size2, 0.0f);
 }
 
-ImColor GetIconColor(ShaderDataType type)
+ImColor GetIconColor(NodeType type)
 {
     switch (type)
     {
-        default: return ImColor(220, 48, 48);
+    case NodeType::Attribute:       return ImColor(220, 48, 48);
+    case NodeType::Uniform:         return ImColor(68, 201, 156);
+    case NodeType::Operation:       return ImColor(147, 226, 74);
+    case NodeType::VertexOutput:    return ImColor(124, 21, 153);
+    case NodeType::FragmentOutput:  return ImColor(51, 150, 215);
+    default:                        return ImColor(220, 220, 220);
     }
 };
 
 void DrawPinIcon(const Pin& pin, bool connected, int alpha)
 {
-    ImColor color = GetIconColor(pin.Uniform.dataType);
+    ImColor color = GetIconColor(pin.Node->Type);
     color.Value.w = alpha / 255.0f;
     IconType iconType = IconType::Circle;
 
@@ -516,7 +521,7 @@ void MaterialEditor::Draw()
                             if (ed::AcceptNewItem(ImColor(128, 255, 128), 4.0f))
                             {
                                 graph->links.emplace_back(Link(GetNextId(), startPinId, endPinId));
-                                graph->links.back().Color = GetIconColor(startPin->Uniform.dataType);
+                                graph->links.back().Color = GetIconColor(startPin->Node->Type);
                             }
                         }
                     }
@@ -537,6 +542,8 @@ void MaterialEditor::Draw()
                         ed::Suspend();
                         ImGui::OpenPopup("Create New Node");
                         ed::Resume();
+
+                        BuildNodes();
                     }
                 }
             }
@@ -709,12 +716,14 @@ void MaterialEditor::Draw()
                             std::swap(startPin, endPin);
 
                         graph->links.emplace_back(Link(GetNextId(), startPin->ID, endPin->ID));
-                        graph->links.back().Color = GetIconColor(startPin->Uniform.dataType);
+                        graph->links.back().Color = GetIconColor(startPin->Node->Type);
 
                         break;
                     }
                 }
             }
+
+            BuildNodes();
         }
 
         ImGui::EndPopup();
@@ -728,6 +737,8 @@ void MaterialEditor::Draw()
     ed::Resume();
 
     ed::End();
+
+    BuildNodes();
 }
 
 void MaterialEditor::ShowLeftPane(float paneWidth)
