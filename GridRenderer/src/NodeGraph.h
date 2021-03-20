@@ -40,57 +40,57 @@ struct NodeData;
 
 struct Pin
 {
-    ed::PinId ID;
-    Node* Node;
-    std::string Name;
-    PinKind Kind;
+    ed::PinId id;
+    Node* node;
+    std::string name;
+    PinKind kind;
 
-    UniformParam Uniform;
+    UniformParam uniform;
 
     Pin(int id, const char* name, ShaderDataType dataType) :
-        ID(id), Node(nullptr), Name(name), Kind(PinKind::Input)
+        id(id), node(nullptr), name(name), kind(PinKind::Input)
     {
-        Uniform.dataType = dataType;
+        uniform.dataType = dataType;
     }
 };
 
 struct Node
 {
-    ed::NodeId ID;
-    std::string Name;
-    NodeType Type;
+    ed::NodeId id;
+    std::string name;
+    NodeType type;
 
-    std::vector<Pin> Inputs;
-    std::vector<Pin> Outputs;
+    std::vector<Pin> inputs;
+    std::vector<Pin> outputs;
 
-    NodeData* Data = nullptr;
+    NodeData* data = nullptr;
 
-    AttributeType AttributeType = AttributeType::TecplotParam;
-    int32_t AttributeParamIndex = 1;
+    AttributeType attributeType = AttributeType::TecplotParam;
+    int32_t attributeParamIndex = 1;
 
-    ImColor Color;
-    ImVec2 Size;
+    ImColor color;
+    ImVec2 size;
 
-    std::string State;
-    std::string SavedState;
+    std::string state;
+    std::string savedState;
 
     Node(int id, const char* name, ImColor color = ImColor(255, 255, 255)) :
-        ID(id), Name(name), Color(color), Type(NodeType::Operation), Size(0, 0)
+        id(id), name(name), color(color), type(NodeType::Operation), size(0, 0)
     {
     }
 };
 
 struct Link
 {
-    ed::LinkId ID;
+    ed::LinkId id;
 
-    ed::PinId StartPinID;
-    ed::PinId EndPinID;
+    ed::PinId startPinID;
+    ed::PinId endPinID;
 
-    ImColor Color;
+    ImColor color;
 
     Link(ed::LinkId id, ed::PinId startPinId, ed::PinId endPinId) :
-        ID(id), StartPinID(startPinId), EndPinID(endPinId), Color(255, 255, 255)
+        id(id), startPinID(startPinId), endPinID(endPinId), color(255, 255, 255)
     {
     }
 };

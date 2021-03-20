@@ -13,52 +13,52 @@ static std::string fragmentShaderSource;
 
 std::string GetPinVariableName(const Pin* pin, NodeGraph* graph)
 {
-    const auto link = graph->FindLinkByPin(pin->ID);
+    const auto link = graph->FindLinkByPin(pin->id);
     if (link != nullptr)
-        return "var_" + std::to_string(link->ID.Get());
+        return "var_" + std::to_string(link->id.Get());
     else
         return "MISSED_LINK";
 }
 
 void ResolveNode(const Node* node, NodeGraph* graph)
 {
-    for (const auto& input : node->Inputs)
+    for (const auto& input : node->inputs)
     {
-        const auto link = graph->FindLinkByPin(input.ID);
+        const auto link = graph->FindLinkByPin(input.id);
 
         if (link != nullptr)
         {
-            const auto output = graph->FindPin(link->StartPinID);
-            ResolveNode(output->Node, graph);
+            const auto output = graph->FindPin(link->startPinID);
+            ResolveNode(output->node, graph);
         }
     }
 
-    switch (node->Type)
+    switch (node->type)
     {
     case NodeType::VertexOutput:
         mainSource += "\tgl_Position = projection * view * model * inPosition;\r\n";
         break;
 
     case NodeType::FragmentOutput:
-        mainSource += "\toutColor = " + GetPinVariableName(&node->Inputs[0], graph) + ";\r\n";
+        mainSource += "\toutColor = " + GetPinVariableName(&node->inputs[0], graph) + ";\r\n";
         break;
 
     case NodeType::Uniform:
         uniformsSource += "uniform ";
-        uniformsSource += GetShaderTypeName(node->Outputs[0].Uniform.dataType);
+        uniformsSource += GetShaderTypeName(node->outputs[0].uniform.dataType);
         uniformsSource += " ";
-        uniformsSource += GetPinVariableName(&node->Outputs[0], graph);
+        uniformsSource += GetPinVariableName(&node->outputs[0], graph);
         uniformsSource += ";\r\n";
         break;
 
     case NodeType::Attribute:
         mainSource += "\t";
-        mainSource += GetShaderTypeName(node->Outputs[0].Uniform.dataType);
+        mainSource += GetShaderTypeName(node->outputs[0].uniform.dataType);
         mainSource += " ";
-        mainSource += GetPinVariableName(&node->Outputs[0], graph);
+        mainSource += GetPinVariableName(&node->outputs[0], graph);
         mainSource += " = ";
 
-        switch (node->AttributeType)
+        switch (node->attributeType)
         {
         case AttributeType::Vertex:
             mainSource += "position";
@@ -77,7 +77,7 @@ void ResolveNode(const Node* node, NodeGraph* graph)
             break;
 
         case AttributeType::TecplotParam:
-            mainSource += "param" + std::to_string(node->AttributeParamIndex);
+            mainSource += "param" + std::to_string(node->attributeParamIndex);
             break;
         }
 
@@ -88,13 +88,13 @@ void ResolveNode(const Node* node, NodeGraph* graph)
     case NodeType::Operation:
         fmt::dynamic_format_arg_store<fmt::format_context> expressionParams;
 
-        for (const auto& input : node->Inputs)
+        for (const auto& input : node->inputs)
             expressionParams.push_back(GetPinVariableName(&input, graph));
 
-        for (const auto& output : node->Outputs)
+        for (const auto& output : node->outputs)
             expressionParams.push_back(GetPinVariableName(&output, graph));
 
-        std::string result = fmt::vformat(node->Data->expression, expressionParams);
+        std::string result = fmt::vformat(node->data->expression, expressionParams);
         mainSource += "\t";
         mainSource += result;
         mainSource += "\r\n";
@@ -109,7 +109,7 @@ void CompileVertexShader(Material* material, NodeGraph* graph)
     mainSource = "";
     vertexShaderSource = "";
 
-    auto it = std::find_if(graph->nodes.begin(), graph->nodes.end(), [](const Node& node) { return node.Type == NodeType::VertexOutput; });
+    auto it = std::find_if(graph->nodes.begin(), graph->nodes.end(), [](const Node& node) { return node.type == NodeType::VertexOutput; });
     if (it != graph->nodes.end())
     {
         const auto& vertexOutputNode = *it;
@@ -159,7 +159,7 @@ void CompileFragmentShader(Material* material, NodeGraph* graph)
     mainSource = "";
     fragmentShaderSource = "";
 
-    auto it = std::find_if(graph->nodes.begin(), graph->nodes.end(), [](const Node& node) { return node.Type == NodeType::FragmentOutput; });
+    auto it = std::find_if(graph->nodes.begin(), graph->nodes.end(), [](const Node& node) { return node.type == NodeType::FragmentOutput; });
     if (it != graph->nodes.end())
     {
         const auto& fragmentOutputNode = *it;

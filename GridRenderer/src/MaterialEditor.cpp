@@ -94,7 +94,7 @@ static void UpdateTouch()
 
 static bool CanCreateLink(Pin* a, Pin* b)
 {
-    if (!a || !b || a == b || a->Kind == b->Kind || a->Uniform.dataType != b->Uniform.dataType || a->Node == b->Node)
+    if (!a || !b || a == b || a->kind == b->kind || a->uniform.dataType != b->uniform.dataType || a->node == b->node)
         return false;
 
     return true;
@@ -102,16 +102,16 @@ static bool CanCreateLink(Pin* a, Pin* b)
 
 static void BuildNode(Node* node)
 {
-    for (auto& input : node->Inputs)
+    for (auto& input : node->inputs)
     {
-        input.Node = node;
-        input.Kind = PinKind::Input;
+        input.node = node;
+        input.kind = PinKind::Input;
     }
 
-    for (auto& output : node->Outputs)
+    for (auto& output : node->outputs)
     {
-        output.Node = node;
-        output.Kind = PinKind::Output;
+        output.node = node;
+        output.kind = PinKind::Output;
     }
 }
 
@@ -148,7 +148,7 @@ ImColor GetIconColor(NodeType type)
 
 void DrawPinIcon(const Pin& pin, bool connected, int alpha)
 {
-    ImColor color = GetIconColor(pin.Node->Type);
+    ImColor color = GetIconColor(pin.node->type);
     color.Value.w = alpha / 255.0f;
     IconType iconType = IconType::Circle;
 
@@ -237,8 +237,8 @@ void MaterialEditor::Init(Material* material, NodeGraph* graph)
             return 0;
 
         if (data != nullptr)
-            memcpy(data, node->State.data(), node->State.size());
-        return node->State.size();
+            memcpy(data, node->state.data(), node->state.size());
+        return node->state.size();
     };
 
     config.SaveNodeSettings = [this](ed::NodeId nodeId, const char* data, size_t size, ed::SaveReasonFlags reason, void* userPointer) -> bool
@@ -247,7 +247,7 @@ void MaterialEditor::Init(Material* material, NodeGraph* graph)
         if (!node)
             return false;
 
-        node->State.assign(data, size);
+        node->state.assign(data, size);
 
         TouchNode(nodeId);
 
@@ -258,13 +258,13 @@ void MaterialEditor::Init(Material* material, NodeGraph* graph)
     ed::SetCurrentEditor(m_Editor);
 
     Node* node;
-    node = SpawnVertexShaderOutputNode();                   ed::SetNodePosition(node->ID, ImVec2(-252, 100));
-    node = SpawnFragmentShaderOutputNode();                 ed::SetNodePosition(node->ID, ImVec2(-252, 220));
-    node = SpawnInputNode("Color", ShaderDataType::Color);  ed::SetNodePosition(node->ID, ImVec2(-600, 351));
+    node = SpawnVertexShaderOutputNode();                   ed::SetNodePosition(node->id, ImVec2(-252, 100));
+    node = SpawnFragmentShaderOutputNode();                 ed::SetNodePosition(node->id, ImVec2(-252, 220));
+    node = SpawnInputNode("Color", ShaderDataType::Color);  ed::SetNodePosition(node->id, ImVec2(-600, 351));
 
     BuildNodes();
 
-    this->graph->links.push_back(Link(GetNextLinkId(), graph->nodes[2].Outputs[0].ID, graph->nodes[1].Inputs[0].ID));
+    this->graph->links.push_back(Link(GetNextLinkId(), graph->nodes[2].outputs[0].id, graph->nodes[1].inputs[0].id));
 
     ed::NavigateToContent();
 
@@ -317,31 +317,31 @@ void MaterialEditor::Draw()
 
         for (auto& node : graph->nodes)
         {
-            builder.Begin(node.ID);
+            builder.Begin(node.id);
             
-            builder.Header(node.Color);
+            builder.Header(node.color);
             ImGui::Spring(0);
-            ImGui::TextUnformatted(node.Name.c_str());
+            ImGui::TextUnformatted(node.name.c_str());
             ImGui::Spring(1);
             ImGui::Dummy(ImVec2(0, 28));
             ImGui::Spring(0);
             builder.EndHeader();
 
-            for (auto& input : node.Inputs)
+            for (auto& input : node.inputs)
             {
                 auto alpha = ImGui::GetStyle().Alpha;
                 if (newLinkPin && !CanCreateLink(newLinkPin, &input) && &input != newLinkPin)
                     alpha = alpha * (48.0f / 255.0f);
 
-                builder.Input(input.ID);
+                builder.Input(input.id);
                 ImGui::PushStyleVar(ImGuiStyleVar_Alpha, alpha);
-                DrawPinIcon(input, graph->IsPinLinked(input.ID), (int)(alpha * 255));
+                DrawPinIcon(input, graph->IsPinLinked(input.id), (int)(alpha * 255));
                 
                 ImGui::Spring(0);
                 
-                if (!input.Name.empty())
+                if (!input.name.empty())
                 {
-                    ImGui::TextUnformatted(input.Name.c_str());
+                    ImGui::TextUnformatted(input.name.c_str());
                     ImGui::Spring(0);
                 }
 
@@ -349,35 +349,35 @@ void MaterialEditor::Draw()
                 builder.EndInput();
             }
 
-            for (auto& output : node.Outputs)
+            for (auto& output : node.outputs)
             {
                 auto alpha = ImGui::GetStyle().Alpha;
                 if (newLinkPin && !CanCreateLink(newLinkPin, &output) && &output != newLinkPin)
                     alpha = alpha * (48.0f / 255.0f);
 
                 ImGui::PushStyleVar(ImGuiStyleVar_Alpha, alpha);
-                builder.Output(output.ID);
+                builder.Output(output.id);
 
-                if (node.Type == NodeType::Uniform)
+                if (node.type == NodeType::Uniform)
                 {
-                    ImGui::BeginVertical(output.ID.AsPointer());
+                    ImGui::BeginVertical(output.id.AsPointer());
                     ImGui::PushItemWidth(100.0f);
 
-                    output.Uniform.DrawUI();
+                    output.uniform.DrawUI();
                     
                     ImGui::PopItemWidth();
                     ImGui::EndVertical();
                     ImGui::Spring(0);
                 }
                 
-                if (node.Type == NodeType::Attribute)
+                if (node.type == NodeType::Attribute)
                 {
-                    if (node.AttributeType == AttributeType::TecplotParam)
+                    if (node.attributeType == AttributeType::TecplotParam)
                     {
-                        ImGui::BeginVertical(output.ID.AsPointer());
+                        ImGui::BeginVertical(output.id.AsPointer());
                         ImGui::PushItemWidth(100.0f);
 
-                        ImGui::DragInt("Index", &node.AttributeParamIndex, 1, 1, 8);
+                        ImGui::DragInt("Index", &node.attributeParamIndex, 1, 1, 8);
 
                         ImGui::PopItemWidth();
                         ImGui::EndVertical();
@@ -385,15 +385,15 @@ void MaterialEditor::Draw()
                     }
                 }
 
-                if (!output.Name.empty())
+                if (!output.name.empty())
                 {
                     ImGui::Spring(0);
-                    ImGui::TextUnformatted(output.Name.c_str());
+                    ImGui::TextUnformatted(output.name.c_str());
                 }
 
                 ImGui::Spring(0);
                 
-                DrawPinIcon(output, graph->IsPinLinked(output.ID), (int)(alpha * 255));
+                DrawPinIcon(output, graph->IsPinLinked(output.id), (int)(alpha * 255));
                 
                 ImGui::PopStyleVar();
                 builder.EndOutput();
@@ -404,7 +404,7 @@ void MaterialEditor::Draw()
 
         for (auto& node : graph->nodes)
         {
-            if (node.Type != NodeType::Comment)
+            if (node.type != NodeType::Comment)
                 continue;
 
             const float commentAlpha = 0.75f;
@@ -412,29 +412,29 @@ void MaterialEditor::Draw()
             ImGui::PushStyleVar(ImGuiStyleVar_Alpha, commentAlpha);
             ed::PushStyleColor(ed::StyleColor_NodeBg, ImColor(255, 255, 255, 64));
             ed::PushStyleColor(ed::StyleColor_NodeBorder, ImColor(255, 255, 255, 64));
-            ed::BeginNode(node.ID);
-            ImGui::PushID(node.ID.AsPointer());
+            ed::BeginNode(node.id);
+            ImGui::PushID(node.id.AsPointer());
             ImGui::BeginVertical("content");
             ImGui::BeginHorizontal("horizontal");
             ImGui::Spring(1);
-            ImGui::TextUnformatted(node.Name.c_str());
+            ImGui::TextUnformatted(node.name.c_str());
             ImGui::Spring(1);
             ImGui::EndHorizontal();
-            ed::Group(node.Size);
+            ed::Group(node.size);
             ImGui::EndVertical();
             ImGui::PopID();
             ed::EndNode();
             ed::PopStyleColor(2);
             ImGui::PopStyleVar();
 
-            if (ed::BeginGroupHint(node.ID))
+            if (ed::BeginGroupHint(node.id))
             {
                 auto bgAlpha = static_cast<int>(ImGui::GetStyle().Alpha * 255);
                 auto min = ed::GetGroupMin();
 
                 ImGui::SetCursorScreenPos(min - ImVec2(-8, ImGui::GetTextLineHeightWithSpacing() + 4));
                 ImGui::BeginGroup();
-                ImGui::TextUnformatted(node.Name.c_str());
+                ImGui::TextUnformatted(node.name.c_str());
                 ImGui::EndGroup();
 
                 auto drawList = ed::GetHintBackgroundDrawList();
@@ -456,7 +456,7 @@ void MaterialEditor::Draw()
         }
 
         for (auto& link : graph->links)
-            ed::Link(link.ID, link.StartPinID, link.EndPinID, link.Color, 2.0f);
+            ed::Link(link.id, link.startPinID, link.endPinID, link.color, 2.0f);
 
         if (!createNewNode)
         {
@@ -488,7 +488,7 @@ void MaterialEditor::Draw()
 
                     newLinkPin = startPin ? startPin : endPin;
 
-                    if (startPin->Kind == PinKind::Input)
+                    if (startPin->kind == PinKind::Input)
                     {
                         std::swap(startPin, endPin);
                         std::swap(startPinId, endPinId);
@@ -500,17 +500,17 @@ void MaterialEditor::Draw()
                         {
                             ed::RejectNewItem(ImColor(255, 0, 0), 2.0f);
                         }
-                        else if (endPin->Kind == startPin->Kind)
+                        else if (endPin->kind == startPin->kind)
                         {
-                            showLabel("x Incompatible Pin Kind", ImColor(45, 32, 32, 180));
+                            showLabel("x Incompatible Pin kind", ImColor(45, 32, 32, 180));
                             ed::RejectNewItem(ImColor(255, 0, 0), 2.0f);
                         }
-                        else if (endPin->Node == startPin->Node)
+                        else if (endPin->node == startPin->node)
                         {
                             showLabel("x Cannot connect to self", ImColor(45, 32, 32, 180));
                             ed::RejectNewItem(ImColor(255, 0, 0), 1.0f);
                         }
-                        else if (endPin->Uniform.dataType != startPin->Uniform.dataType)
+                        else if (endPin->uniform.dataType != startPin->uniform.dataType)
                         {
                             showLabel("x Incompatible Pin Type", ImColor(45, 32, 32, 180));
                             ed::RejectNewItem(ImColor(255, 128, 128), 1.0f);
@@ -521,7 +521,7 @@ void MaterialEditor::Draw()
                             if (ed::AcceptNewItem(ImColor(128, 255, 128), 4.0f))
                             {
                                 graph->links.emplace_back(Link(GetNextId(), startPinId, endPinId));
-                                graph->links.back().Color = GetIconColor(startPin->Node->Type);
+                                graph->links.back().color = GetIconColor(startPin->node->type);
                             }
                         }
                     }
@@ -561,7 +561,7 @@ void MaterialEditor::Draw()
                 {
                     if (ed::AcceptDeletedItem())
                     {
-                        auto id = std::find_if(graph->links.begin(), graph->links.end(), [linkId](auto& link) { return link.ID == linkId; });
+                        auto id = std::find_if(graph->links.begin(), graph->links.end(), [linkId](auto& link) { return link.id == linkId; });
                         if (id != graph->links.end())
                             graph->links.erase(id);
                     }
@@ -572,7 +572,7 @@ void MaterialEditor::Draw()
                 {
                     if (ed::AcceptDeletedItem())
                     {
-                        auto id = std::find_if(graph->nodes.begin(), graph->nodes.end(), [nodeId](auto& node) { return node.ID == nodeId; });
+                        auto id = std::find_if(graph->nodes.begin(), graph->nodes.end(), [nodeId](auto& node) { return node.id == nodeId; });
                         if (id != graph->nodes.end())
                             graph->nodes.erase(id);
                     }
@@ -609,9 +609,9 @@ void MaterialEditor::Draw()
         ImGui::Separator();
         if (node)
         {
-            ImGui::Text("ID: %p", node->ID.AsPointer());
-            ImGui::Text("Inputs: %d", (int)node->Inputs.size());
-            ImGui::Text("Outputs: %d", (int)node->Outputs.size());
+            ImGui::Text("ID: %p", node->id.AsPointer());
+            ImGui::Text("Inputs: %d", (int)node->inputs.size());
+            ImGui::Text("Outputs: %d", (int)node->outputs.size());
         }
         else
             ImGui::Text("Unknown node: %p", contextNodeId.AsPointer());
@@ -629,9 +629,9 @@ void MaterialEditor::Draw()
         ImGui::Separator();
         if (pin)
         {
-            ImGui::Text("ID: %p", pin->ID.AsPointer());
-            if (pin->Node)
-                ImGui::Text("Node: %p", pin->Node->ID.AsPointer());
+            ImGui::Text("ID: %p", pin->id.AsPointer());
+            if (pin->node)
+                ImGui::Text("Node: %p", pin->node->id.AsPointer());
             else
                 ImGui::Text("Node: %s", "<none>");
         }
@@ -649,9 +649,9 @@ void MaterialEditor::Draw()
         ImGui::Separator();
         if (link)
         {
-            ImGui::Text("ID: %p", link->ID.AsPointer());
-            ImGui::Text("From: %p", link->StartPinID.AsPointer());
-            ImGui::Text("To: %p", link->EndPinID.AsPointer());
+            ImGui::Text("ID: %p", link->id.AsPointer());
+            ImGui::Text("From: %p", link->startPinID.AsPointer());
+            ImGui::Text("To: %p", link->endPinID.AsPointer());
         }
         else
             ImGui::Text("Unknown link: %p", contextLinkId.AsPointer());
@@ -701,22 +701,22 @@ void MaterialEditor::Draw()
             createNewNode = false;
 
             auto newNodePostion = openPopupPosition;
-            ed::SetNodePosition(node->ID, newNodePostion);
+            ed::SetNodePosition(node->id, newNodePostion);
 
             if (auto startPin = newNodeLinkPin)
             {
-                auto& pins = startPin->Kind == PinKind::Input ? node->Outputs : node->Inputs;
+                auto& pins = startPin->kind == PinKind::Input ? node->outputs : node->inputs;
 
                 for (auto& pin : pins)
                 {
                     if (CanCreateLink(startPin, &pin))
                     {
                         auto endPin = &pin;
-                        if (startPin->Kind == PinKind::Input)
+                        if (startPin->kind == PinKind::Input)
                             std::swap(startPin, endPin);
 
-                        graph->links.emplace_back(Link(GetNextId(), startPin->ID, endPin->ID));
-                        graph->links.back().Color = GetIconColor(startPin->Node->Type);
+                        graph->links.emplace_back(Link(GetNextId(), startPin->id, endPin->id));
+                        graph->links.back().color = GetIconColor(startPin->node->type);
 
                         break;
                     }
@@ -758,7 +758,7 @@ void MaterialEditor::ShowLeftPane(float paneWidth)
     if (ImGui::Button("Show Flow"))
     {
         for (auto& link : graph->links)
-            ed::Flow(link.ID);
+            ed::Flow(link.id);
     }
 
     ImGui::Spring();
@@ -886,8 +886,8 @@ Node* MaterialEditor::DrawAttributeNodeMenuItem(const char* name, AttributeType 
 Node* MaterialEditor::SpawnVertexShaderOutputNode()
 {
     graph->nodes.emplace_back(GetNextId(), "Vertex Shader Output", ImColor(128, 255, 128));
-    graph->nodes.back().Type = NodeType::VertexOutput;
-    graph->nodes.back().Inputs.emplace_back(GetNextId(), "Vec4", ShaderDataType::Vec4);
+    graph->nodes.back().type = NodeType::VertexOutput;
+    graph->nodes.back().inputs.emplace_back(GetNextId(), "Vec4", ShaderDataType::Vec4);
 
     BuildNode(&graph->nodes.back());
 
@@ -897,8 +897,8 @@ Node* MaterialEditor::SpawnVertexShaderOutputNode()
 Node* MaterialEditor::SpawnFragmentShaderOutputNode()
 {
     graph->nodes.emplace_back(GetNextId(), "Fragment Shader Output", ImColor(255, 128, 128));
-    graph->nodes.back().Type = NodeType::FragmentOutput;
-    graph->nodes.back().Inputs.emplace_back(GetNextId(), "Vec4", ShaderDataType::Vec4);
+    graph->nodes.back().type = NodeType::FragmentOutput;
+    graph->nodes.back().inputs.emplace_back(GetNextId(), "Vec4", ShaderDataType::Vec4);
 
     BuildNode(&graph->nodes.back());
 
@@ -908,8 +908,8 @@ Node* MaterialEditor::SpawnFragmentShaderOutputNode()
 Node* MaterialEditor::SpawnInputNode(const char* name, ShaderDataType type)
 {
     graph->nodes.emplace_back(GetNextId(), name, ImColor(255, 128, 128));
-    graph->nodes.back().Type = NodeType::Uniform;
-    graph->nodes.back().Outputs.emplace_back(GetNextId(), "", type);
+    graph->nodes.back().type = NodeType::Uniform;
+    graph->nodes.back().outputs.emplace_back(GetNextId(), "", type);
 
     BuildNode(&graph->nodes.back());
 
@@ -919,14 +919,14 @@ Node* MaterialEditor::SpawnInputNode(const char* name, ShaderDataType type)
 Node* MaterialEditor::SpawnOperationNode(NodeData* nodeData)
 {
     graph->nodes.emplace_back(GetNextId(), nodeData->name.c_str(), ImColor(255, 128, 128));
-    graph->nodes.back().Type = NodeType::Operation;
-    graph->nodes.back().Data = nodeData;
+    graph->nodes.back().type = NodeType::Operation;
+    graph->nodes.back().data = nodeData;
 
     for (const auto& input : nodeData->inputs)
-        graph->nodes.back().Inputs.emplace_back(GetNextId(), input.name.c_str(), input.type);
+        graph->nodes.back().inputs.emplace_back(GetNextId(), input.name.c_str(), input.type);
 
     for (const auto& output : nodeData->outputs)
-        graph->nodes.back().Outputs.emplace_back(GetNextId(), output.name.c_str(), output.type);
+        graph->nodes.back().outputs.emplace_back(GetNextId(), output.name.c_str(), output.type);
 
     BuildNode(&graph->nodes.back());
 
@@ -936,9 +936,9 @@ Node* MaterialEditor::SpawnOperationNode(NodeData* nodeData)
 Node* MaterialEditor::SpawnAttributeParamNode(const char* name, AttributeType type, ShaderDataType dataType)
 {
     graph->nodes.emplace_back(GetNextId(), name, ImColor(128, 255, 128));
-    graph->nodes.back().Type = NodeType::Attribute;
-    graph->nodes.back().AttributeType = type;
-    graph->nodes.back().Outputs.emplace_back(GetNextId(), "Value", dataType);
+    graph->nodes.back().type = NodeType::Attribute;
+    graph->nodes.back().attributeType = type;
+    graph->nodes.back().outputs.emplace_back(GetNextId(), "Value", dataType);
 
     BuildNode(&graph->nodes.back());
 
@@ -948,8 +948,8 @@ Node* MaterialEditor::SpawnAttributeParamNode(const char* name, AttributeType ty
 Node* MaterialEditor::SpawnComment()
 {
     graph->nodes.emplace_back(GetNextId(), "Test Comment");
-    graph->nodes.back().Type = NodeType::Comment;
-    graph->nodes.back().Size = ImVec2(300, 200);
+    graph->nodes.back().type = NodeType::Comment;
+    graph->nodes.back().size = ImVec2(300, 200);
 
     return &graph->nodes.back();
 }

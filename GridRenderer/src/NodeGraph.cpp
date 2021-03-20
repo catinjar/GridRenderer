@@ -7,12 +7,12 @@ void NodeGraph::ApplyUniforms(const ShaderProgram& shaderProgram)
 {
     for (const auto& node : nodes)
     {
-        if (node.Type == NodeType::Uniform)
+        if (node.type == NodeType::Uniform)
         {
-            const auto& pin = node.Outputs[0];
-            const auto uniformName = GetPinVariableName(node.Outputs[0].ID);
+            const auto& pin = node.outputs[0];
+            const auto uniformName = GetPinVariableName(node.outputs[0].id);
             const auto location = shaderProgram[uniformName];
-            node.Outputs[0].Uniform.ApplyUniforms(location);
+            node.outputs[0].uniform.ApplyUniforms(location);
         }
     }
 }
@@ -20,7 +20,7 @@ void NodeGraph::ApplyUniforms(const ShaderProgram& shaderProgram)
 Node* NodeGraph::FindNode(ed::NodeId id)
 {
     for (auto& node : nodes)
-        if (node.ID == id)
+        if (node.id == id)
             return &node;
 
     return nullptr;
@@ -29,7 +29,7 @@ Node* NodeGraph::FindNode(ed::NodeId id)
 Link* NodeGraph::FindLink(ed::LinkId id)
 {
     for (auto& link : links)
-        if (link.ID == id)
+        if (link.id == id)
             return &link;
 
     return nullptr;
@@ -42,12 +42,12 @@ Pin* NodeGraph::FindPin(ed::PinId id)
 
     for (auto& node : nodes)
     {
-        for (auto& pin : node.Inputs)
-            if (pin.ID == id)
+        for (auto& pin : node.inputs)
+            if (pin.id == id)
                 return &pin;
 
-        for (auto& pin : node.Outputs)
-            if (pin.ID == id)
+        for (auto& pin : node.outputs)
+            if (pin.id == id)
                 return &pin;
     }
 
@@ -61,7 +61,7 @@ Link* NodeGraph::FindLinkByPin(ed::PinId id)
 
     for (auto& link : links)
     {
-        if (link.StartPinID == id || link.EndPinID == id)
+        if (link.startPinID == id || link.endPinID == id)
             return &link;
     }
 
@@ -74,7 +74,7 @@ bool NodeGraph::IsPinLinked(ed::PinId id) const
         return false;
 
     for (auto& link : links)
-        if (link.StartPinID == id || link.EndPinID == id)
+        if (link.startPinID == id || link.endPinID == id)
             return true;
 
     return false;
@@ -83,10 +83,10 @@ bool NodeGraph::IsPinLinked(ed::PinId id) const
 std::string NodeGraph::GetPinVariableName(ed::PinId id)
 {
     const auto pin = FindPin(id);
-    const auto link = FindLinkByPin(pin->ID);
+    const auto link = FindLinkByPin(pin->id);
 
     if (link != nullptr)
-        return "var_" + std::to_string(link->ID.Get());
+        return "var_" + std::to_string(link->id.Get());
     else
         return "MISSED_LINK";
 }
