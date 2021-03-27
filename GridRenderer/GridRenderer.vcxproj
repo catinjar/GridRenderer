@@ -63,6 +63,7 @@
     <ClInclude Include="src\NodeLibrary.h" />
     <ClInclude Include="src\ShaderProgram.h" />
     <ClInclude Include="src\Tecplot.h" />
+    <ClInclude Include="src\third_party\ajson\ajson.hpp" />
     <ClInclude Include="src\third_party\fmt\core.h" />
     <ClInclude Include="src\third_party\fmt\format-inl.h" />
     <ClInclude Include="src\third_party\fmt\format.h" />

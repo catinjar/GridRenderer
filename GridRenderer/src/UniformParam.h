@@ -4,7 +4,9 @@
 
 #include <GL/glew.h>
 
-enum class ShaderDataType
+#include "third_party/ajson/ajson.hpp"
+
+enum ShaderDataType
 {
 	Bool,
 	Int,
@@ -76,3 +78,11 @@ struct UniformParam
 	void ApplyUniforms(GLuint location) const;
 	void DrawUI();
 };
+
+AJSON(UniformParam,
+	name,
+	dataType,
+	boolValue,
+	intValue,
+	floatValue,
+	doubleValue)

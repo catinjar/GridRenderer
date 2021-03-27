@@ -6,7 +6,7 @@
 #include "UniformParam.h"
 #include "NodeGraph.h"
 
-enum class PinKind;
+enum PinKind;
 
 struct PinData
 {

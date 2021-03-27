@@ -2,21 +2,23 @@
 
 #include <string>
 #include <vector>
+#include <fstream>
 
 #include "third_party/imgui-node-editor/imgui_node_editor.h"
+#include "third_party/ajson/ajson.hpp"
 
 #include "UniformParam.h"
 #include "ShaderProgram.h"
 
 namespace ed = ax::NodeEditor;
 
-enum class PinKind
+enum PinKind
 {
     Output,
     Input
 };
 
-enum class NodeType
+enum NodeType
 {
     VertexOutput,
     FragmentOutput,
@@ -26,7 +28,7 @@ enum class NodeType
     Comment
 };
 
-enum class AttributeType
+enum AttributeType
 {
     Vertex,
     IndexI,
@@ -38,14 +40,22 @@ enum class AttributeType
 struct Node;
 struct NodeData;
 
+AJSON(ImVec4, x, y, z, w);
+AJSON(ImVec2, x, y);
+AJSON(ImColor, Value);
+
 struct Pin
 {
     ed::PinId id;
-    Node* node;
+    Node* node = nullptr;
+    
     std::string name;
-    PinKind kind;
-
+    PinKind kind = PinKind::Input;
     UniformParam uniform;
+
+    int32_t serializedId = -1;
+
+    Pin() { }
 
     Pin(int id, const char* name, ShaderDataType dataType) :
         id(id), node(nullptr), name(name), kind(PinKind::Input)
@@ -54,16 +64,18 @@ struct Pin
     }
 };
 
+AJSON(Pin, name, kind, uniform, serializedId)
+
 struct Node
 {
     ed::NodeId id;
+    NodeData* data = nullptr;
+    
     std::string name;
-    NodeType type;
+    NodeType type = NodeType::Uniform;
 
     std::vector<Pin> inputs;
     std::vector<Pin> outputs;
-
-    NodeData* data = nullptr;
 
     AttributeType attributeType = AttributeType::TecplotParam;
     int32_t attributeParamIndex = 1;
@@ -71,14 +83,17 @@ struct Node
     ImColor color;
     ImVec2 size;
 
-    std::string state;
-    std::string savedState;
+    int32_t serializedId = -1;
+
+    Node() { }
 
     Node(int id, const char* name, ImColor color = ImColor(255, 255, 255)) :
         id(id), name(name), color(color), type(NodeType::Operation), size(0, 0)
     {
     }
 };
+
+AJSON(Node, name, type, inputs, outputs, attributeType, attributeParamIndex, color, size, serializedId)
 
 struct Link
 {
@@ -88,12 +103,20 @@ struct Link
     ed::PinId endPinID;
 
     ImColor color;
+    
+    int32_t serializedId = -1;
+    int32_t serializedStartPinId = -1;
+    int32_t serializedEndPinId = -1;
+
+    Link() { }
 
     Link(ed::LinkId id, ed::PinId startPinId, ed::PinId endPinId) :
         id(id), startPinID(startPinId), endPinID(endPinId), color(255, 255, 255)
     {
     }
 };
+
+AJSON(Link, color, serializedId, serializedStartPinId, serializedEndPinId);
 
 struct NodeGraph
 {
@@ -109,4 +132,16 @@ struct NodeGraph
 
     std::vector<Node> nodes;
     std::vector<Link> links;
+
+    void Save()
+    {
+        ajson::save_to_file(*this, "material.json");
+    }
+
+    void Load()
+    {
+        ajson::load_from_file(*this, "material.json");
+    }
 };
+
+AJSON(NodeGraph, nodes, links);

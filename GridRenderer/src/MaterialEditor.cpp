@@ -753,6 +753,16 @@ void MaterialEditor::ShowLeftPane(float paneWidth)
         CompileMaterial(material, graph);
     }
 
+    if (ImGui::Button("Save"))
+    {
+        graph->Save();
+    }
+
+    if (ImGui::Button("Load"))
+    {
+        graph->Load();
+    }
+
     ImGui::EndHorizontal();
 
     ImGui::Text(material->GetVertexSourceCode().c_str());

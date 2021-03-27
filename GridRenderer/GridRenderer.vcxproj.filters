@@ -34,6 +34,9 @@
     <Filter Include="Source Files\third_party\fmt">
       <UniqueIdentifier>{f5ced4bf-8d35-4f40-8b31-d0db9532924c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\third_party\ajson">
+      <UniqueIdentifier>{3ffb06fc-12ec-4736-962a-e8b4bc5845a2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -229,6 +232,9 @@
     </ClInclude>
     <ClInclude Include="src\third_party\fmt\format-inl.h">
       <Filter>Source Files\third_party\fmt</Filter>
+    </ClInclude>
+    <ClInclude Include="src\third_party\ajson\ajson.hpp">
+      <Filter>Source Files\third_party\ajson</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
