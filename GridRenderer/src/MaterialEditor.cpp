@@ -227,34 +227,7 @@ void MaterialEditor::Init(Material* material, NodeGraph* graph)
 
     nodeLibrary.Load();
 
-    ed::Config config;
-    config.SettingsFile = "Blueprints.json";
-
-    config.LoadNodeSettings = [this](ed::NodeId nodeId, char* data, void* userPointer) -> size_t
-    {
-        auto node = this->graph->FindNode(nodeId);
-        if (!node)
-            return 0;
-
-        if (data != nullptr)
-            memcpy(data, node->state.data(), node->state.size());
-        return node->state.size();
-    };
-
-    config.SaveNodeSettings = [this](ed::NodeId nodeId, const char* data, size_t size, ed::SaveReasonFlags reason, void* userPointer) -> bool
-    {
-        auto node = this->graph->FindNode(nodeId);
-        if (!node)
-            return false;
-
-        node->state.assign(data, size);
-
-        TouchNode(nodeId);
-
-        return true;
-    };
-
-    m_Editor = ed::CreateEditor(&config);
+    m_Editor = ed::CreateEditor();
     ed::SetCurrentEditor(m_Editor);
 
     Node* node;
@@ -266,9 +239,9 @@ void MaterialEditor::Init(Material* material, NodeGraph* graph)
 
     this->graph->links.push_back(Link(GetNextLinkId(), graph->nodes[2].outputs[0].id, graph->nodes[1].inputs[0].id));
 
-    ed::NavigateToContent();
-
     CompileMaterial(material, graph);
+
+    ed::NavigateToContent();
 }
 
 void MaterialEditor::SetMaterial(Material* material, NodeGraph* graph)
