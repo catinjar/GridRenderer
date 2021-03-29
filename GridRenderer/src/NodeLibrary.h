@@ -16,6 +16,7 @@ struct PinData
 
 struct NodeData
 {
+	std::string id;
 	std::string name;
 	std::string expression;
 	std::vector<PinData> inputs;
@@ -35,11 +36,11 @@ struct NodeLibrary
 
 	static NodeLibrary* GetInstance();
 
-	NodeData* Get(std::string name)
+	NodeData* Get(std::string id)
 	{
 		for (auto& node : nodes)
 		{
-			if (node.name == name)
+			if (node.id == id)
 				return &node;
 		}
 

@@ -39,6 +39,7 @@ void NodeLibrary::LoadNode(const std::string& path)
 	NodeData nodeData;
 
 	std::getline(in, line);
+	nodeData.id = path;
 	nodeData.name = line;
 
 	while (in.peek() != EOF)
