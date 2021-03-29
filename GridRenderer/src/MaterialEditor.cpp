@@ -57,17 +57,6 @@ static inline ImRect ImRect_Expanded(const ImRect& rect, float x, float y)
     return result;
 }
 
-static int s_NextId = 1;
-static int GetNextId()
-{
-    return s_NextId++;
-}
-
-static ed::LinkId GetNextLinkId()
-{
-    return ed::LinkId(GetNextId());
-}
-
 static void TouchNode(ed::NodeId id)
 {
     s_NodeTouchTime[id] = s_TouchTime;
@@ -225,8 +214,6 @@ void MaterialEditor::Init(Material* material, NodeGraph* graph)
 {
     SetMaterial(material, graph);
 
-    nodeLibrary.Load();
-
     m_Editor = ed::CreateEditor();
     ed::SetCurrentEditor(m_Editor);
 
@@ -237,7 +224,7 @@ void MaterialEditor::Init(Material* material, NodeGraph* graph)
 
     BuildNodes();
 
-    this->graph->links.push_back(Link(GetNextLinkId(), graph->nodes[2].outputs[0].id, graph->nodes[1].inputs[0].id));
+    this->graph->links.push_back(Link(graph->GetNextLinkId(), graph->nodes[2].outputs[0].id, graph->nodes[1].inputs[0].id));
 
     CompileMaterial(material, graph);
 
@@ -493,7 +480,7 @@ void MaterialEditor::Draw()
                             showLabel("+ Create Link", ImColor(32, 45, 32, 180));
                             if (ed::AcceptNewItem(ImColor(128, 255, 128), 4.0f))
                             {
-                                graph->links.emplace_back(Link(GetNextId(), startPinId, endPinId));
+                                graph->links.emplace_back(Link(graph->GetNextId(), startPinId, endPinId));
                                 graph->links.back().color = GetIconColor(startPin->node->type);
                             }
                         }
@@ -688,7 +675,7 @@ void MaterialEditor::Draw()
                         if (startPin->kind == PinKind::Input)
                             std::swap(startPin, endPin);
 
-                        graph->links.emplace_back(Link(GetNextId(), startPin->id, endPin->id));
+                        graph->links.emplace_back(Link(graph->GetNextId(), startPin->id, endPin->id));
                         graph->links.back().color = GetIconColor(startPin->node->type);
 
                         break;
@@ -755,12 +742,14 @@ void MaterialEditor::ShowLeftPane(float paneWidth)
 
     if (ImGui::Button("Save"))
     {
+        BuildNodes();
         graph->Save();
     }
 
     if (ImGui::Button("Load"))
     {
         graph->Load();
+        BuildNodes();
     }
 
     ImGui::EndHorizontal();
@@ -836,7 +825,9 @@ Node* MaterialEditor::DrawOperationNodesMenu()
 {
     Node* node = nullptr;
 
-    for (auto& nodeData : nodeLibrary.nodes)
+    auto& nodes = NodeLibrary::GetInstance()->nodes;
+
+    for (auto& nodeData : nodes)
     {
         if (ImGui::MenuItem(nodeData.name.c_str()))
             return SpawnOperationNode(&nodeData);
@@ -868,9 +859,9 @@ Node* MaterialEditor::DrawAttributeNodeMenuItem(const char* name, AttributeType 
 
 Node* MaterialEditor::SpawnVertexShaderOutputNode()
 {
-    graph->nodes.emplace_back(GetNextId(), "Vertex Shader Output", ImColor(128, 255, 128));
+    graph->nodes.emplace_back(graph->GetNextId(), "Vertex Shader Output", ImColor(128, 255, 128));
     graph->nodes.back().type = NodeType::VertexOutput;
-    graph->nodes.back().inputs.emplace_back(GetNextId(), "Vec4", ShaderDataType::Vec4);
+    graph->nodes.back().inputs.emplace_back(graph->GetNextId(), "Vec4", ShaderDataType::Vec4);
 
     BuildNode(&graph->nodes.back());
 
@@ -879,9 +870,9 @@ Node* MaterialEditor::SpawnVertexShaderOutputNode()
 
 Node* MaterialEditor::SpawnFragmentShaderOutputNode()
 {
-    graph->nodes.emplace_back(GetNextId(), "Fragment Shader Output", ImColor(255, 128, 128));
+    graph->nodes.emplace_back(graph->GetNextId(), "Fragment Shader Output", ImColor(255, 128, 128));
     graph->nodes.back().type = NodeType::FragmentOutput;
-    graph->nodes.back().inputs.emplace_back(GetNextId(), "Vec4", ShaderDataType::Vec4);
+    graph->nodes.back().inputs.emplace_back(graph->GetNextId(), "Vec4", ShaderDataType::Vec4);
 
     BuildNode(&graph->nodes.back());
 
@@ -890,9 +881,9 @@ Node* MaterialEditor::SpawnFragmentShaderOutputNode()
 
 Node* MaterialEditor::SpawnInputNode(const char* name, ShaderDataType type)
 {
-    graph->nodes.emplace_back(GetNextId(), name, ImColor(255, 128, 128));
+    graph->nodes.emplace_back(graph->GetNextId(), name, ImColor(255, 128, 128));
     graph->nodes.back().type = NodeType::Uniform;
-    graph->nodes.back().outputs.emplace_back(GetNextId(), "", type);
+    graph->nodes.back().outputs.emplace_back(graph->GetNextId(), "", type);
 
     BuildNode(&graph->nodes.back());
 
@@ -901,15 +892,15 @@ Node* MaterialEditor::SpawnInputNode(const char* name, ShaderDataType type)
 
 Node* MaterialEditor::SpawnOperationNode(NodeData* nodeData)
 {
-    graph->nodes.emplace_back(GetNextId(), nodeData->name.c_str(), ImColor(255, 128, 128));
+    graph->nodes.emplace_back(graph->GetNextId(), nodeData->name.c_str(), ImColor(255, 128, 128));
     graph->nodes.back().type = NodeType::Operation;
     graph->nodes.back().data = nodeData;
 
     for (const auto& input : nodeData->inputs)
-        graph->nodes.back().inputs.emplace_back(GetNextId(), input.name.c_str(), input.type);
+        graph->nodes.back().inputs.emplace_back(graph->GetNextId(), input.name.c_str(), input.type);
 
     for (const auto& output : nodeData->outputs)
-        graph->nodes.back().outputs.emplace_back(GetNextId(), output.name.c_str(), output.type);
+        graph->nodes.back().outputs.emplace_back(graph->GetNextId(), output.name.c_str(), output.type);
 
     BuildNode(&graph->nodes.back());
 
@@ -918,10 +909,10 @@ Node* MaterialEditor::SpawnOperationNode(NodeData* nodeData)
 
 Node* MaterialEditor::SpawnAttributeParamNode(const char* name, AttributeType type, ShaderDataType dataType)
 {
-    graph->nodes.emplace_back(GetNextId(), name, ImColor(128, 255, 128));
+    graph->nodes.emplace_back(graph->GetNextId(), name, ImColor(128, 255, 128));
     graph->nodes.back().type = NodeType::Attribute;
     graph->nodes.back().attributeType = type;
-    graph->nodes.back().outputs.emplace_back(GetNextId(), "Value", dataType);
+    graph->nodes.back().outputs.emplace_back(graph->GetNextId(), "Value", dataType);
 
     BuildNode(&graph->nodes.back());
 
@@ -930,7 +921,7 @@ Node* MaterialEditor::SpawnAttributeParamNode(const char* name, AttributeType ty
 
 Node* MaterialEditor::SpawnComment()
 {
-    graph->nodes.emplace_back(GetNextId(), "Test Comment");
+    graph->nodes.emplace_back(graph->GetNextId(), "Test Comment");
     graph->nodes.back().type = NodeType::Comment;
     graph->nodes.back().size = ImVec2(300, 200);
 

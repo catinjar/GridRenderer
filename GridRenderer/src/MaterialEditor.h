@@ -33,6 +33,4 @@ private:
 
 	Material* material;
 	NodeGraph* graph;
-
-	NodeLibrary nodeLibrary;
 };

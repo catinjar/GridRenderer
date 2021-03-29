@@ -4,8 +4,18 @@
 #include <filesystem>
 
 #include "Misc.h"
+#include "NodeGraph.h"
 
 namespace fs = std::filesystem;
+
+NodeLibrary* NodeLibrary::instance = nullptr;
+
+NodeLibrary* NodeLibrary::GetInstance()
+{
+	if (instance == nullptr)
+		instance = new NodeLibrary();
+	return instance;
+}
 
 void NodeLibrary::Load()
 {

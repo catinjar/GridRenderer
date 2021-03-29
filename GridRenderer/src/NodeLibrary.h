@@ -4,7 +4,6 @@
 #include <vector>
 
 #include "UniformParam.h"
-#include "NodeGraph.h"
 
 enum PinKind;
 
@@ -29,4 +28,30 @@ struct NodeLibrary
 	void LoadNode(const std::string& path);
 
 	std::vector<NodeData> nodes;
+
+	NodeLibrary(NodeLibrary& other) = delete;
+
+	void operator=(const NodeLibrary&) = delete;
+
+	static NodeLibrary* GetInstance();
+
+	NodeData* Get(std::string name)
+	{
+		for (auto& node : nodes)
+		{
+			if (node.name == name)
+				return &node;
+		}
+
+		return nullptr;
+	}
+
+private:
+	NodeLibrary()
+	{
+		Load();
+	}
+	
+	static NodeLibrary* instance;
 };
+

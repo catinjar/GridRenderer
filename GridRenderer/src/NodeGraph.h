@@ -9,6 +9,7 @@
 
 #include "UniformParam.h"
 #include "ShaderProgram.h"
+#include "NodeLibrary.h"
 
 namespace ed = ax::NodeEditor;
 
@@ -62,6 +63,16 @@ struct Pin
     {
         uniform.dataType = dataType;
     }
+
+    void BeforeSerialize()
+    {
+        serializedId = id.Get();
+    }
+
+    void AfterSerialize()
+    {
+        id = ed::PinId(serializedId);
+    }
 };
 
 AJSON(Pin, name, kind, uniform, serializedId)
@@ -84,12 +95,40 @@ struct Node
     ImVec2 size;
 
     int32_t serializedId = -1;
+    std::string serializedDataName;
 
     Node() { }
 
     Node(int id, const char* name, ImColor color = ImColor(255, 255, 255)) :
         id(id), name(name), color(color), type(NodeType::Operation), size(0, 0)
     {
+    }
+
+    void BeforeSerialize()
+    {
+        serializedId = id.Get();
+
+        for (auto& input : inputs)
+            input.BeforeSerialize();
+
+        for (auto& output : outputs)
+            output.BeforeSerialize();
+
+        if (data != nullptr)
+            serializedDataName = data->name;
+    }
+
+    void AfterSerialize()
+    {
+        id = ed::NodeId(serializedId);
+
+        for (auto& input : inputs)
+            input.AfterSerialize();
+
+        for (auto& output : outputs)
+            output.AfterSerialize();
+
+        data = NodeLibrary::GetInstance()->Get(serializedDataName);
     }
 };
 
@@ -114,6 +153,20 @@ struct Link
         id(id), startPinID(startPinId), endPinID(endPinId), color(255, 255, 255)
     {
     }
+
+    void BeforeSerialize()
+    {
+        serializedId = id.Get();
+        serializedStartPinId = startPinID.Get();
+        serializedEndPinId = endPinID.Get();
+    }
+
+    void AfterSerialize()
+    {
+        id = ed::LinkId(serializedId);
+        startPinID = ed::PinId(serializedStartPinId);
+        endPinID = ed::PinId(serializedEndPinId);
+    }
 };
 
 AJSON(Link, color, serializedId, serializedStartPinId, serializedEndPinId);
@@ -130,18 +183,50 @@ struct NodeGraph
 
     std::string GetPinVariableName(ed::PinId id);
 
+    int nextId = 1;
+
     std::vector<Node> nodes;
     std::vector<Link> links;
 
     void Save()
     {
+        BeforeSerialize();
         ajson::save_to_file(*this, "material.json");
+    }
+
+    void BeforeSerialize()
+    {
+        for (auto& node : nodes)
+            node.BeforeSerialize();
+
+        for (auto& link : links)
+            link.BeforeSerialize();
     }
 
     void Load()
     {
         ajson::load_from_file(*this, "material.json");
+        AfterSerialize();
+    }
+
+    void AfterSerialize()
+    {
+        for (auto& node : nodes)
+            node.AfterSerialize();
+
+        for (auto& link : links)
+            link.AfterSerialize();
+    }
+
+    int GetNextId()
+    {
+        return nextId++;
+    }
+
+    ed::LinkId GetNextLinkId()
+    {
+        return ed::LinkId(GetNextId());
     }
 };
 
-AJSON(NodeGraph, nodes, links);
+AJSON(NodeGraph, nextId, nodes, links);
