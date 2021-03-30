@@ -69,7 +69,7 @@ struct Pin
         serializedId = id.Get();
     }
 
-    void AfterSerialize()
+    void AfterDeserialize()
     {
         id = ed::PinId(serializedId);
     }
@@ -93,9 +93,11 @@ struct Node
 
     ImColor color;
     ImVec2 size;
+    ImVec2 position;
 
     int32_t serializedId = -1;
     std::string serializedDataName;
+    ImVec2 serializedPosition;
 
     Node() { }
 
@@ -115,24 +117,26 @@ struct Node
             output.BeforeSerialize();
 
         if (data != nullptr)
-            serializedDataName = data->name;
+            serializedDataName = data->id;
+
+        serializedPosition = ed::GetNodePosition(id);
     }
 
-    void AfterSerialize()
+    void AfterDeserialize()
     {
         id = ed::NodeId(serializedId);
 
         for (auto& input : inputs)
-            input.AfterSerialize();
+            input.AfterDeserialize();
 
         for (auto& output : outputs)
-            output.AfterSerialize();
+            output.AfterDeserialize();
 
         data = NodeLibrary::GetInstance()->Get(serializedDataName);
     }
 };
 
-AJSON(Node, name, type, inputs, outputs, attributeType, attributeParamIndex, color, size, serializedId)
+AJSON(Node, name, type, inputs, outputs, attributeType, attributeParamIndex, color, size, serializedId, serializedDataName, serializedPosition)
 
 struct Link
 {
@@ -161,7 +165,7 @@ struct Link
         serializedEndPinId = endPinID.Get();
     }
 
-    void AfterSerialize()
+    void AfterDeserialize()
     {
         id = ed::LinkId(serializedId);
         startPinID = ed::PinId(serializedStartPinId);
@@ -206,16 +210,16 @@ struct NodeGraph
     void Load()
     {
         ajson::load_from_file(*this, "material.json");
-        AfterSerialize();
+        AfterDeserialize();
     }
 
-    void AfterSerialize()
+    void AfterDeserialize()
     {
         for (auto& node : nodes)
-            node.AfterSerialize();
+            node.AfterDeserialize();
 
         for (auto& link : links)
-            link.AfterSerialize();
+            link.AfterDeserialize();
     }
 
     int GetNextId()

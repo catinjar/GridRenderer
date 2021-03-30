@@ -21,7 +21,7 @@ void NodeLibrary::Load()
 {
 	nodes.clear();
 
-	const char* libraryPath = "nodes\\";
+	const char* libraryPath = "nodes/";
 	const char* nodeFileExtension = ".node";
 
 	for (auto& directoryEntry : fs::recursive_directory_iterator(libraryPath))

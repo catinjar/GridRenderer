@@ -748,8 +748,13 @@ void MaterialEditor::ShowLeftPane(float paneWidth)
 
     if (ImGui::Button("Load"))
     {
+        graph->nodes.clear();
+        graph->links.clear();
         graph->Load();
         BuildNodes();
+
+        for (auto& node : graph->nodes)
+            ed::SetNodePosition(node.id, node.serializedPosition);
     }
 
     ImGui::EndHorizontal();
