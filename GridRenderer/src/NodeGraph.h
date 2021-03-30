@@ -192,10 +192,10 @@ struct NodeGraph
     std::vector<Node> nodes;
     std::vector<Link> links;
 
-    void Save()
+    void Save(const std::string& path)
     {
         BeforeSerialize();
-        ajson::save_to_file(*this, "material.json");
+        ajson::save_to_file(*this, path.c_str());
     }
 
     void BeforeSerialize()
@@ -207,9 +207,12 @@ struct NodeGraph
             link.BeforeSerialize();
     }
 
-    void Load()
+    void Load(const std::string& path)
     {
-        ajson::load_from_file(*this, "material.json");
+        nodes.clear();
+        links.clear();
+
+        ajson::load_from_file(*this, path.c_str());
         AfterDeserialize();
     }
 

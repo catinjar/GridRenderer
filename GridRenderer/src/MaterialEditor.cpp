@@ -15,6 +15,7 @@
 #include "third_party/imgui/imgui.h"
 #include "third_party/imgui/imgui_internal.h"
 
+#include "NFDHelper.h"
 #include "MaterialCompiler.h"
 
 namespace ed = ax::NodeEditor;
@@ -742,19 +743,25 @@ void MaterialEditor::ShowLeftPane(float paneWidth)
 
     if (ImGui::Button("Save"))
     {
-        BuildNodes();
-        graph->Save();
+        std::string filePath;
+        if (NFD_SaveFile(filePath))
+        {
+            BuildNodes();
+            graph->Save(filePath);
+        }
     }
 
     if (ImGui::Button("Load"))
     {
-        graph->nodes.clear();
-        graph->links.clear();
-        graph->Load();
-        BuildNodes();
+        std::string filePath;
+        if (NFD_ChooseFile(filePath))
+        {
+            graph->Load(filePath);
+            BuildNodes();
 
-        for (auto& node : graph->nodes)
-            ed::SetNodePosition(node.id, node.serializedPosition);
+            for (auto& node : graph->nodes)
+                ed::SetNodePosition(node.id, node.serializedPosition);
+        }
     }
 
     ImGui::EndHorizontal();
