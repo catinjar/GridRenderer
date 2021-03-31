@@ -778,38 +778,38 @@ Node* MaterialEditor::DrawInputNodesMenu()
     Node* node = nullptr;
 
     node = DrawInputNodeMenuItem("Bool", ShaderDataType::Bool);
-    node = DrawInputNodeMenuItem("Int", ShaderDataType::Int);
-    node = DrawInputNodeMenuItem("Uint", ShaderDataType::Uint);
-    node = DrawInputNodeMenuItem("Float", ShaderDataType::Float);
-    node = DrawInputNodeMenuItem("Double", ShaderDataType::Double);
-    node = DrawInputNodeMenuItem("bVec2", ShaderDataType::bVec2);
-    node = DrawInputNodeMenuItem("bVec3", ShaderDataType::bVec3);
-    node = DrawInputNodeMenuItem("bVec4", ShaderDataType::bVec4);
-    node = DrawInputNodeMenuItem("iVec2", ShaderDataType::iVec2);
-    node = DrawInputNodeMenuItem("iVec3", ShaderDataType::iVec3);
-    node = DrawInputNodeMenuItem("iVec4", ShaderDataType::iVec4);
-    node = DrawInputNodeMenuItem("uVec2", ShaderDataType::uVec2);
-    node = DrawInputNodeMenuItem("uVec3", ShaderDataType::uVec3);
-    node = DrawInputNodeMenuItem("uVec4", ShaderDataType::uVec4);
-    node = DrawInputNodeMenuItem("Vec2", ShaderDataType::Vec2);
-    node = DrawInputNodeMenuItem("Vec3", ShaderDataType::Vec3);
-    node = DrawInputNodeMenuItem("Vec4", ShaderDataType::Vec4);
-    node = DrawInputNodeMenuItem("dVec2", ShaderDataType::dVec2);
-    node = DrawInputNodeMenuItem("dVec3", ShaderDataType::dVec3);
-    node = DrawInputNodeMenuItem("dVec4", ShaderDataType::dVec4);
-    node = DrawInputNodeMenuItem("Mat2x2", ShaderDataType::Mat2x2);
-    node = DrawInputNodeMenuItem("Mat2x3", ShaderDataType::Mat2x3);
-    node = DrawInputNodeMenuItem("Mat2x4", ShaderDataType::Mat2x4);
-    node = DrawInputNodeMenuItem("Mat3x2", ShaderDataType::Mat3x2);
-    node = DrawInputNodeMenuItem("Mat3x3", ShaderDataType::Mat3x3);
-    node = DrawInputNodeMenuItem("Mat3x4", ShaderDataType::Mat3x4);
-    node = DrawInputNodeMenuItem("Mat4x2", ShaderDataType::Mat4x2);
-    node = DrawInputNodeMenuItem("Mat4x3", ShaderDataType::Mat4x3);
-    node = DrawInputNodeMenuItem("Mat4x4", ShaderDataType::Mat4x4);
-    node = DrawInputNodeMenuItem("Mat2", ShaderDataType::Mat2);
-    node = DrawInputNodeMenuItem("Mat3", ShaderDataType::Mat3);
-    node = DrawInputNodeMenuItem("Mat4", ShaderDataType::Mat4);
-    node = DrawInputNodeMenuItem("Color", ShaderDataType::Color);
+    if (node == nullptr) node = DrawInputNodeMenuItem("Int", ShaderDataType::Int);
+    if (node == nullptr) node = DrawInputNodeMenuItem("Uint", ShaderDataType::Uint);
+    if (node == nullptr) node = DrawInputNodeMenuItem("Float", ShaderDataType::Float);
+    if (node == nullptr) node = DrawInputNodeMenuItem("Double", ShaderDataType::Double);
+    if (node == nullptr) node = DrawInputNodeMenuItem("bVec2", ShaderDataType::bVec2);
+    if (node == nullptr) node = DrawInputNodeMenuItem("bVec3", ShaderDataType::bVec3);
+    if (node == nullptr) node = DrawInputNodeMenuItem("bVec4", ShaderDataType::bVec4);
+    if (node == nullptr) node = DrawInputNodeMenuItem("iVec2", ShaderDataType::iVec2);
+    if (node == nullptr) node = DrawInputNodeMenuItem("iVec3", ShaderDataType::iVec3);
+    if (node == nullptr) node = DrawInputNodeMenuItem("iVec4", ShaderDataType::iVec4);
+    if (node == nullptr) node = DrawInputNodeMenuItem("uVec2", ShaderDataType::uVec2);
+    if (node == nullptr) node = DrawInputNodeMenuItem("uVec3", ShaderDataType::uVec3);
+    if (node == nullptr) node = DrawInputNodeMenuItem("uVec4", ShaderDataType::uVec4);
+    if (node == nullptr) node = DrawInputNodeMenuItem("Vec2", ShaderDataType::Vec2);
+    if (node == nullptr) node = DrawInputNodeMenuItem("Vec3", ShaderDataType::Vec3);
+    if (node == nullptr) node = DrawInputNodeMenuItem("Vec4", ShaderDataType::Vec4);
+    if (node == nullptr) node = DrawInputNodeMenuItem("dVec2", ShaderDataType::dVec2);
+    if (node == nullptr) node = DrawInputNodeMenuItem("dVec3", ShaderDataType::dVec3);
+    if (node == nullptr) node = DrawInputNodeMenuItem("dVec4", ShaderDataType::dVec4);
+    if (node == nullptr) node = DrawInputNodeMenuItem("Mat2x2", ShaderDataType::Mat2x2);
+    if (node == nullptr) node = DrawInputNodeMenuItem("Mat2x3", ShaderDataType::Mat2x3);
+    if (node == nullptr) node = DrawInputNodeMenuItem("Mat2x4", ShaderDataType::Mat2x4);
+    if (node == nullptr) node = DrawInputNodeMenuItem("Mat3x2", ShaderDataType::Mat3x2);
+    if (node == nullptr) node = DrawInputNodeMenuItem("Mat3x3", ShaderDataType::Mat3x3);
+    if (node == nullptr) node = DrawInputNodeMenuItem("Mat3x4", ShaderDataType::Mat3x4);
+    if (node == nullptr) node = DrawInputNodeMenuItem("Mat4x2", ShaderDataType::Mat4x2);
+    if (node == nullptr) node = DrawInputNodeMenuItem("Mat4x3", ShaderDataType::Mat4x3);
+    if (node == nullptr) node = DrawInputNodeMenuItem("Mat4x4", ShaderDataType::Mat4x4);
+    if (node == nullptr) node = DrawInputNodeMenuItem("Mat2", ShaderDataType::Mat2);
+    if (node == nullptr) node = DrawInputNodeMenuItem("Mat3", ShaderDataType::Mat3);
+    if (node == nullptr) node = DrawInputNodeMenuItem("Mat4", ShaderDataType::Mat4);
+    if (node == nullptr) node = DrawInputNodeMenuItem("Color", ShaderDataType::Color);
 
     return node;
 }
@@ -835,8 +835,6 @@ Node* MaterialEditor::DrawOuputNodesMenu()
 
 Node* MaterialEditor::DrawOperationNodesMenu()
 {
-    Node* node = nullptr;
-
     auto& nodes = NodeLibrary::GetInstance()->nodes;
 
     for (auto& nodeData : nodes)
@@ -844,8 +842,6 @@ Node* MaterialEditor::DrawOperationNodesMenu()
         if (ImGui::MenuItem(nodeData.name.c_str()))
             return SpawnOperationNode(&nodeData);
     }
-
-    return node;
 }
 
 Node* MaterialEditor::DrawAttributeNodesMenu()
@@ -853,10 +849,10 @@ Node* MaterialEditor::DrawAttributeNodesMenu()
     Node* node = nullptr;
 
     node = DrawAttributeNodeMenuItem("Param", AttributeType::TecplotParam, ShaderDataType::Float);
-    node = DrawAttributeNodeMenuItem("Vertex", AttributeType::Vertex, ShaderDataType::Vec4);
-    node = DrawAttributeNodeMenuItem("Index I", AttributeType::IndexI, ShaderDataType::Int);
-    node = DrawAttributeNodeMenuItem("Index J", AttributeType::IndexJ, ShaderDataType::Int);
-    node = DrawAttributeNodeMenuItem("Index K", AttributeType::IndexK, ShaderDataType::Int);
+    if (node == nullptr) node = DrawAttributeNodeMenuItem("Vertex", AttributeType::Vertex, ShaderDataType::Vec4);
+    if (node == nullptr) node = DrawAttributeNodeMenuItem("Index I", AttributeType::IndexI, ShaderDataType::Int);
+    if (node == nullptr) node = DrawAttributeNodeMenuItem("Index J", AttributeType::IndexJ, ShaderDataType::Int);
+    if (node == nullptr) node = DrawAttributeNodeMenuItem("Index K", AttributeType::IndexK, ShaderDataType::Int);
 
     return node;
 }
