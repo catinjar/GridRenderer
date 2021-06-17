@@ -1,0 +1,5 @@
+Int Equals
+in int first
+in int second
+out bool result
+bool {2} = {0} == {1};

@@ -1,0 +1,5 @@
+Modulo
+in int value
+in int module
+out int result
+int {2} = {0} % {1};
